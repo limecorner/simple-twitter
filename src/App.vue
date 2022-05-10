@@ -1,7 +1,5 @@
 <template>
   <div id="app">
-    <h1>Simple Twitter</h1>
-    <button type="button" class="btn btn-info">Info</button>
     <router-view />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>NotFound</h1>
+    <h1>ReplyCard</h1>
   </div>
 </template>
