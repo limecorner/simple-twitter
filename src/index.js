@@ -5,7 +5,6 @@ import TweetCard from '@/components/TweetCard'
 import ReplyCard from '@/components/ReplyCard'
 import LikeCard from '@/components/LikeCard'
 import NotFound from './../views/NotFound'
-import login from "./../views/loginPage"
 
 Vue.use(VueRouter)
 
@@ -32,27 +31,8 @@ const routes = [
       },
     ]
   },
-  {
-    path: '/',
-    name: 'root',
-    redirect: '/login'
-  },
-  {
-    path: '/regist',
-    name: 'regist',
-    component: () => import('./../views/registPage'),
-  },
-  {
-    path: '/setting',
-    name: 'setting',
-    component: () => import('./../views/settingPage'),
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: login
-  },
 
+  
 
   {
     path: '*',
