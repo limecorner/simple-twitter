@@ -67,6 +67,7 @@
 
 
 <script>
+import authorizationAPI from "./../apis/authorization";
 export default {
   data() {
     return {
@@ -81,28 +82,27 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        if (!this.email || !this.password) {
+        if (!this.account || !this.password) {
           console.log("try");
 
           return;
         }
 
         //要再設定過
-        /*      const response = await authorizationAPI.signIn({
-          email: this.email,
+        const response = await authorizationAPI.signIn({
+          account: this.account,
           password: this.password,
         });
+        console.log("response", response);
+        // const { data } = response;
 
-        const { data } = response;
-
-        if (data.status !== "success") {
-          throw new Error(data.message);
-        }
-        // 將 token 存放在 localStorage 內
+        // if (data.status !== "success") {
+        //   throw new Error(data.message);
+        // }
+        // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
-        // 成功登入後轉址到..... 要再設定
-        this.$router.push("/");
-        */
+        // // 成功登入後轉址到..... 要再設定
+        this.$router.push("/user/page");
       } catch (error) {
         // 將密碼欄位清空
         this.password = "";
