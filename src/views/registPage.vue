@@ -180,12 +180,10 @@ export default {
         const { data } = await authorizationAPI.regist({
           account: this.account,
           name: this.name,
-          //  待修改 : 後端 email
-          //   email: this.email,
+          email: this.email,
           password: this.password,
           checkPassword: this.checkPassword,
         });
-        console.log(data);
 
         if (data.status === "error") {
           throw new Error(data.message);
@@ -197,7 +195,6 @@ export default {
           icon: "warning",
           title: error,
         });
-        console.log("err");
       }
     },
   },

@@ -1,8 +1,10 @@
 <template>
-  <div class="d-flex">
-    <div>NavBar</div>
+  <div class="user-page d-flex justify-content-between">
+    <!-- NavBar -->
+    <NavBar class="sidebar" />
 
-    <div>
+    <div class="setting-area">
+      <div>帳戶設定</div>
       <form @submit.prevent.stop="handleSubmit">
         <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
           <label for="account">帳號</label>
@@ -99,10 +101,31 @@
         </div>
       </form>
     </div>
-
-    <div>pop 不顯示</div>
+    <div class="sidebar"></div>
   </div>
 </template>
 
 
+<script>
+import NavBar from "./../components/NavBar.vue";
 
+export default {
+  components: {
+    NavBar,
+  },
+};
+</script>
+
+<style scoped>
+.sidebar {
+  width: 16%;
+}
+
+.user-section {
+  width: 55%;
+}
+
+.setting-area {
+  width: 40%;
+}
+</style>
