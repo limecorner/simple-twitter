@@ -44,6 +44,16 @@
   </div>
 </template>
 
+<script>
+export default {
+  created() {
+    console.log("Tweet");
+    // fetch
+  },
+};
+</script>
+
+
 <style scoped>
 .tweet-card {
   display: flex;

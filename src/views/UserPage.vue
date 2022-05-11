@@ -60,6 +60,20 @@
 import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 
+const currentUser = {
+  user: {
+    id: 124,
+    name: "user1",
+    account: "user1",
+    email: "user1@example.com",
+    avatar: "https://loremflickr.com/280/280/admin",
+    role: "user",
+    introduction: "Nihil nulla necessitatibus fugiat.",
+    createdAt: "2022-05-10T13:57:23.000Z",
+    updatedAt: "2022-05-10T13:57:23.000Z",
+  },
+};
+
 export default {
   components: {
     NavBar,

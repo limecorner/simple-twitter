@@ -89,11 +89,11 @@ export default {
         }
 
         //要再設定過
-        const response = await authorizationAPI.signIn({
+        const { data } = await authorizationAPI.signIn({
           account: this.account,
           password: this.password,
         });
-        console.log("response", response);
+        // console.log("response", response);
         // const { data } = response;
 
         // if (data.status !== "success") {
