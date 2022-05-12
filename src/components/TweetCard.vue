@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="tweet-card">
+    <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
       <img
         class="avatar mr-2"
         src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
@@ -8,13 +8,11 @@
       />
       <div>
         <div class="d-flex">
-          <h4>John Doe</h4>
-          <p>@heyjohn・3 小時</p>
+          <h4>{{ tweet.name }}</h4>
+          <p>{{ tweet.account }} {{ tweet.createdAt | fromNow }}</p>
         </div>
         <p>
-          Nulla Lorem mollit cupidatat irure. Laborum magna nulla duis ullamco
-          cillum dolor. Voluptate exercitation incididunt aliquip deserunt
-          reprehenderit elit laborum.
+          {{ tweet.tweetText }}
         </p>
         <div class="d-flex">
           <div class="icon-group mr-5">
@@ -23,8 +21,10 @@
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
             />
-            <p class="font-size-14 m-0">13</p>
+            <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
+          .
+
           <div class="icon-group">
             <img
               class="icon"
@@ -36,13 +36,82 @@
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""
             />
-            <p class="font-size-14 m-0">13</p>
+            <p class="font-size-14 m-0">{{ tweet.likeCount }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import usersAPI from "./../apis/users";
+import { fromNowFilter } from "./../utils/mixins";
+const dummyData = {
+  tweets: [
+    {
+      id: 1,
+      account: "limecorner",
+      name: "limecorner",
+      avatar: "https://loremflickr.com/280/280/admin",
+      createdAt: new Date(),
+      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      replyCount: 1,
+      likeCount: 11,
+    },
+    {
+      id: 2,
+      account: "limecorner",
+
+      name: "limecorner",
+      avatar: "https://loremflickr.com/280/280/admin",
+      createdAt: new Date(),
+      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      replyCount: 2,
+      likeCount: 22,
+    },
+    {
+      id: 3,
+      account: "limecorner",
+      name: "limecorner",
+      avatar: "https://loremflickr.com/280/280/admin",
+      createdAt: new Date(),
+      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      replyCount: 3,
+      likeCount: 33,
+    },
+  ],
+};
+
+export default {
+  mixins: [fromNowFilter],
+  data() {
+    return {
+      tweets: [],
+    };
+  },
+  created() {
+    const userId = this.$route.params.id;
+    console.log("id tweet", userId);
+    this.fetchTweets(userId);
+  },
+  methods: {
+    async fetchTweets(userId) {
+      try {
+        // const response = await usersAPI.getUserTweet(userId);
+        // console.log("response", response);
+        // const { data } = response;
+        // this.tweets = data.tweets;
+        // this.tweets = dummyData.tweets;
+        console.log(this.tweets);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+};
+</script>
+
 
 <style scoped>
 .tweet-card {
