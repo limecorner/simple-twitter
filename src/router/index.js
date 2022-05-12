@@ -6,6 +6,10 @@ import ReplyCard from '@/components/ReplyCard'
 import LikeCard from '@/components/LikeCard'
 import NotFound from './../views/NotFound'
 import login from "./../views/loginPage"
+import UserFollowShip from "./../views/UserFollowShip"
+import Follower from "./../views/Follower"
+import Following from "./../views/Following"
+
 
 Vue.use(VueRouter)
 
@@ -29,6 +33,23 @@ const routes = [
         path: ':id/like',
         name: 'user-like',
         component: LikeCard
+      },
+    ]
+  },
+  {
+    path: '/users/',
+    // name: 'user-page',
+    component: UserFollowShip,
+    children: [
+      {
+        path: ':id/follower',
+        name: 'user-follower',
+        component: Follower
+      },
+      {
+        path: ':id/following',
+        name: 'user-following',
+        component: Following
       },
     ]
   },

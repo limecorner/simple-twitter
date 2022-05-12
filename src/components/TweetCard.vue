@@ -23,6 +23,8 @@
             />
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
+          .
+
           <div class="icon-group">
             <img
               class="icon"
@@ -60,6 +62,7 @@ const dummyData = {
     {
       id: 2,
       account: "limecorner",
+
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
@@ -98,8 +101,8 @@ export default {
         // const response = await usersAPI.getUserTweet(userId);
         // console.log("response", response);
         // const { data } = response;
-        // this.tweets = data.tweets; 改名
-        this.tweets = dummyData.tweets;
+        // this.tweets = data.tweets;
+        // this.tweets = dummyData.tweets;
         console.log(this.tweets);
       } catch (error) {
         console.log(error);

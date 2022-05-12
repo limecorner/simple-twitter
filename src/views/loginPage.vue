@@ -100,7 +100,7 @@ export default {
         // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
         // // 成功登入後轉址到.....
-        this.$router.push("/user/1/tweet");
+        this.$router.push("/users/1/tweet");
       } catch (error) {
         // 將密碼欄位清空
         this.password = "";

@@ -175,13 +175,13 @@ export default {
   methods: {
     async fetchCurrentUser(userId) {
       try {
-        // const response = await usersAPI.getUser(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.user = data.user;
+        const response = await usersAPI.getUser(userId);
+        console.log("response", response);
+        const { data } = response;
+        this.user = data.user;
         // 改名;
 
-        this.user = currentUser.user;
+        // this.user = currentUser.user;
         // console.log(this.user);
       } catch (error) {
         console.log(error);
