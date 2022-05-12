@@ -84,25 +84,23 @@ export default {
       try {
         if (!this.account || !this.password) {
           console.log("try");
-
           return;
         }
 
-        //要再設定過
-        const { data } = await authorizationAPI.signIn({
+        const response = await authorizationAPI.signIn({
           account: this.account,
           password: this.password,
         });
-        // console.log("response", response);
-        // const { data } = response;
+        console.log("response", response);
+        const { data } = response;
 
-        // if (data.status !== "success") {
-        //   throw new Error(data.message);
-        // }
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
         // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
-        // // 成功登入後轉址到..... 要再設定
-        this.$router.push("/user/page");
+        // // 成功登入後轉址到.....
+        this.$router.push("/user/1/tweet");
       } catch (error) {
         // 將密碼欄位清空
         this.password = "";

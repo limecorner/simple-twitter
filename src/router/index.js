@@ -11,23 +11,23 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/user/page',
+    path: '/users/',
     // name: 'user-page',
     component: UserPage,
     children: [
       {
-        path: '',
-        name: 'tweet',
+        path: ':id/tweet',
+        name: 'user-tweet',
         component: TweetCard
       },
       {
-        path: 'reply',
-        name: 'reply',
+        path: ':id/reply',
+        name: 'user-reply',
         component: ReplyCard
       },
       {
-        path: 'like',
-        name: 'like',
+        path: ':id/like',
+        name: 'user-like',
         component: LikeCard
       },
     ]
