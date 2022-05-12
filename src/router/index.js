@@ -68,12 +68,22 @@ const routes = [
     name: 'setting',
     component: () => import('./../views/settingPage'),
   },
+
   {
     path: '/login',
     name: 'login',
     component: login
   },
-
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('./../views/admin-login')
+  },
+  {
+    path: '/home/:id',
+    name: 'home',
+    component: () => import('./../views/mainPage')
+  },
 
   {
     path: '*',
