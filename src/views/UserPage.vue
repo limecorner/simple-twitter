@@ -1,7 +1,7 @@
 <template>
   <div class="user-page d-flex justify-content-between border border-secondary">
     <!-- NavBar -->
-    <NavBar class="sidebar" />
+    <NavBar  />
 
     <!-- UserSection -->
     <section class="user-section">
@@ -210,10 +210,6 @@ export default {
   border: solid 1px;
 }
 
-.sidebar {
-  width: 16%;
-}
-
 .user-section {
   width: 55%;
 }
@@ -254,5 +250,15 @@ export default {
 .router-link-exact-active {
   color: #ff6600;
   border-bottom: solid 1px #ff6600;
+}
+
+/* modal */
+
+.background-img {
+  position: relative;
+  background: url("https://ibw.bwnet.com.tw/ac_gallery/2019/10/50e5bba8-a1bd-5410-9f7e-0a5e4bb83b76_620.jpg");
+  width: 100%;
+  height: 50px;
+  margin-bottom: 16px;
 }
 </style>

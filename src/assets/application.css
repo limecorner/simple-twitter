@@ -122,3 +122,10 @@ h5 {
   width: 88px;
   border-radius: 50px;
 }
+
+.btn-w64 {
+  background-color: #FF6600;
+  height: 40px;
+  width: 64px;
+  border-radius: 50px;
+}

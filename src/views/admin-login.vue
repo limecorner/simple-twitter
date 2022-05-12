@@ -8,19 +8,19 @@
         alt=""
       />
     </div>
-    <h3 class="text-center font-weight-bold">登入 Alphitter</h3>
+    <h3 class="text-center font-weight-bold">後台登入</h3>
 
     <form @submit.prevent.stop="handleSubmit">
       <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
-        <label for="account">帳號</label>
+        <label for="email">E-mail</label>
         <div>
           <input
-            id="account"
-            v-model="account"
-            name="account"
-            type="text"
+            id="email"
+            v-model="email"
+            name="email"
+            type="email"
             class="form"
-            placeholder="請輸入帳號"
+            placeholder="請輸入E-mail"
             required
             autofocus
           />
@@ -58,9 +58,7 @@
       </div>
     </form>
     <div class="d-flex mt-4 justify-content-end">
-      <router-link class="mx-1" to="/regist"> 註冊 </router-link>
-      ・
-      <router-link class="mx-1" to="/admin/login"> 後台登入 </router-link>
+      <router-link class="mx-1" to="/login"> 前台登入 </router-link>
     </div>
   </div>
 </template>
@@ -71,7 +69,7 @@ import authorizationAPI from "./../apis/authorization";
 export default {
   data() {
     return {
-      account: "",
+      email: "",
       password: "",
       isProcessing: false,
       error: false,
@@ -82,12 +80,12 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        if (!this.account || !this.password) {
+        if (!this.email || !this.password) {
           return;
         }
 
         const response = await authorizationAPI.signIn({
-          account: this.account,
+          email: this.email,
           password: this.password,
         });
 
@@ -111,3 +109,5 @@ export default {
   },
 };
 </script>
+
+
