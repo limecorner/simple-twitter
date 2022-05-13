@@ -1,11 +1,7 @@
 <template>
   <div>
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-      <img
-        class="avatar mr-2"
-        src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-        alt=""
-      />
+      <img class="avatar mr-2" :src="tweet.avatar" alt="" />
       <div>
         <div class="d-flex">
           <h4>{{ tweet.name }}</h4>
@@ -24,7 +20,6 @@
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
           .
-
           <div class="icon-group">
             <img
               class="icon"
@@ -61,22 +56,21 @@ const dummyData = {
     },
     {
       id: 2,
-      account: "limecorner",
-
-      name: "limecorner",
+      account: "limecorner2",
+      name: "limecorner2",
       avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      tweetText: "2Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 2,
       likeCount: 22,
     },
     {
       id: 3,
-      account: "limecorner",
-      name: "limecorner",
+      account: "limecorner3",
+      name: "limecorner3",
       avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      tweetText: "3Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 3,
       likeCount: 33,
     },
@@ -92,17 +86,17 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("id tweet", userId);
+    // console.log("id tweet", userId);
     this.fetchTweets(userId);
   },
   methods: {
     async fetchTweets(userId) {
       try {
-        // const response = await usersAPI.getUserTweet(userId);
-        // console.log("response", response);
-        // const { data } = response;
+        this.tweets = dummyData.tweets;
+        const response = await usersAPI.getUserTweet(userId);
+        const { data } = response;
+        console.log(data);
         // this.tweets = data.tweets;
-        // this.tweets = dummyData.tweets;
         console.log(this.tweets);
       } catch (error) {
         console.log(error);
@@ -111,7 +105,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .tweet-card {

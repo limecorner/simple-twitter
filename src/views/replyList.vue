@@ -5,36 +5,11 @@
 
     <!-- home twitter -->
     <section class="user-section">
-      <div class="home-title">首頁</div>
-      <div class="d-flex">
-        <img
-          class="avatar mr-1"
-          src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-          alt=""
-        />
-        <form @submit.prevent.stop="handleSubmit">
-          <textarea
-            required
-            cols="40"
-            rows="3"
-            class="form-control"
-            placeholder="有什麼新鮮事？"
-            aria-label="With textarea"
-            v-model="twitterMessage"
-          >
-          </textarea>
-          <button
-            type="submit"
-            class="btn btn-info btn-w88"
-            :disabled="!twitterMessage.length || activeTwitterMessageBotton"
-            @click.prevent.stop="submittwitterMessage"
-          >
-            {{ activeTwitterMessageBotton ? "處理中" : "推文" }}
-          </button>
-        </form>
-      </div>
-      <!-- 巢狀路由 -->
+      <div class="home-title">← 推文</div>
+      <!--  -->
+      <div></div>
 
+      <!-- 巢狀路由 -->
       <TweetCard />
     </section>
 
@@ -42,6 +17,8 @@
     <PopularUsers class="popular-users" />
   </div>
 </template>
+
+
 
 <script>
 import NavBar from "./../components/NavBar.vue";

@@ -14,11 +14,12 @@
       <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
         <label for="email">E-mail</label>
         <div>
+          <!-- 後續要將 type 改為 email -->
           <input
             id="email"
             v-model="email"
             name="email"
-            type="email"
+            type="text"
             class="form"
             placeholder="請輸入E-mail"
             required
@@ -66,6 +67,7 @@
 
 <script>
 import authorizationAPI from "./../apis/authorization";
+
 export default {
   data() {
     return {
@@ -83,21 +85,19 @@ export default {
         if (!this.email || !this.password) {
           return;
         }
-
-        const response = await authorizationAPI.signIn({
-          email: this.email,
+        const response = await authorizationAPI.adminSignIn({
+          // 要將 account 改為 email
+          account: this.email,
           password: this.password,
         });
-
         const { data } = response;
+        console.log(data);
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-        // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
-        // // 成功登入後轉址到.....
-        const id = data.user.id;
-        this.$router.push(`/home/${id}`);
+        // 成功登入後轉址到.....
+        this.$router.push(`/admin/tweet`);
       } catch (error) {
         // 將密碼欄位清空
         this.password = "";
