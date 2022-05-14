@@ -12,13 +12,12 @@
 
     <form @submit.prevent.stop="handleSubmit">
       <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
-        <label for="email">E-mail</label>
+        <label for="account">帳號</label>
         <div>
-          <!-- 後續要將 type 改為 email -->
           <input
-            id="email"
-            v-model="email"
-            name="email"
+            id="account"
+            v-model="account"
+            name="account"
             type="text"
             class="form"
             placeholder="請輸入E-mail"
@@ -71,7 +70,7 @@ import authorizationAPI from "./../apis/authorization";
 export default {
   data() {
     return {
-      email: "",
+      account: "",
       password: "",
       isProcessing: false,
       error: false,
@@ -82,12 +81,11 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        if (!this.email || !this.password) {
+        if (!this.account || !this.password) {
           return;
         }
         const response = await authorizationAPI.adminSignIn({
-          // 要將 account 改為 email
-          account: this.email,
+          account: this.account,
           password: this.password,
         });
         const { data } = response;
@@ -99,9 +97,7 @@ export default {
         // 成功登入後轉址到.....
         this.$router.push(`/admin/tweet`);
       } catch (error) {
-        // 將密碼欄位清空
         this.password = "";
-        // 顯示錯誤提示
         this.isProcessing = false;
         console.log("error", error);
       }

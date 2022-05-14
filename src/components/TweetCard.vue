@@ -5,7 +5,7 @@
       <div>
         <div class="d-flex">
           <h4>{{ tweet.name }}</h4>
-          <p>{{ tweet.account }} {{ tweet.createdAt | fromNow }}</p>
+          <p>@{{ tweet.account }} {{ tweet.createdAt | fromNow }}</p>
         </div>
         <p>
           {{ tweet.tweetText }}
@@ -85,17 +85,17 @@ export default {
     };
   },
   created() {
-    const userId = this.$route.params.id;
+    // const userId = this.$route.params.id;
     // console.log("id tweet", userId);
-    this.fetchTweets(userId);
+    this.fetchTweets();
   },
   methods: {
-    async fetchTweets(userId) {
+    async fetchTweets() {
       try {
         this.tweets = dummyData.tweets;
-        const response = await usersAPI.getUserTweet(userId);
+        const response = await usersAPI.getUserTweet();
+        console.log(response);
         const { data } = response;
-        console.log(data);
         // this.tweets = data.tweets;
         console.log(this.tweets);
       } catch (error) {

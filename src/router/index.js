@@ -82,7 +82,7 @@ const routes = [
 
   /**********以下為 新增路由***********/
   {
-    path: '/home/tweet',
+    path: '/home/tweet/:id',
     name: 'tweetMessage',
     component: () => import('./../views/replyList')
   },

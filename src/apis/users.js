@@ -8,7 +8,9 @@ export default {
     })
   },
   getUserTweet(userId) {
-    return apiHelper.get(`/users/${userId}/tweets`, {
+    // 原本設定有id  , 記得 discord 有提到 是 顯示全部
+    // return apiHelper.get(`/users/${userId}/tweets`, {
+    return apiHelper.get(`/users/tweets`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
@@ -32,4 +34,22 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+
+  //  以下為新增
+  getTweetDetail(tweetId) {
+    return apiHelper.get(`/tweets/${tweetId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+  getTweetreplies(tweetId) {
+    return apiHelper.get(`/tweets/${tweetId}/replies`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+
+
+  // 以上為新增
+
 }
