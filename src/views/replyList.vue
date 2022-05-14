@@ -8,10 +8,10 @@
       <div class="home-title">← 推文</div>
 
       <div class="d-flex">
-        <img class="avatar" :src="tweet.User.avatar" alt="" />
+        <img class="avatar" :src="user.avatar" alt="" />
         <div>
-          <div>{{ tweet.User.name }}</div>
-          <div>@{{ tweet.User.account }}</div>
+          <div>{{ user.name }}</div>
+          <div>@{{ user.account }}</div>
         </div>
       </div>
       <div>
@@ -66,19 +66,19 @@
               <div>
                 <div class="d-flex">
                   <div>
-                    <img class="avatar" :src="tweet.User.avatar" alt="" />
+                    <img class="avatar" :src="user.avatar" alt="" />
                   </div>
                   <div>
                     <div>
-                      <span>{{ tweet.User.name }}</span>
-                      <span> @{{ tweet.User.account }} </span>
+                      <span>{{ user.name }}</span>
+                      <span> @{{ user.account }} </span>
                       <span>
                         待後續: 補發推特的時間
                         <!-- {{  tweet.createdAt | fromNow }} -->
                       </span>
                     </div>
                     <p>{{ tweet.description }}</p>
-                    <p>回覆給@{{ tweet.User.account }}</p>
+                    <p>回覆給@{{ user.account }}</p>
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@
                 </div>
                 <button
                   type="button"
-                  @click.prevent.stop="postTweetModal"
+                  @click.prevent.stop="postReplyHandler()"
                   class="btn btn-info btn-w64"
                 >
                   推文
@@ -107,8 +107,9 @@
         </div>
       </div>
       <!-- Modal -->
+
       <!-- 巢狀路由 -->
-      <TweetReplyCard :postTweetAccount="tweet.User.account" />
+      <showTweetReply :postTweetAccount="user.account" />
     </section>
 
     <!-- PopularUsers -->
@@ -116,59 +117,62 @@
   </div>
 </template>
 
-
-
 <script>
 import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
-import TweetReplyCard from "./../components/TweetReplyCard.vue";
+import showTweetReply from "./../components/showTweetReply.vue";
 import { fromNowFilter } from "./../utils/mixins";
-import { usersAPI } from "./../apis/users";
-
-const dummyTweet = {
-  id: 105,
-  description:
-    "Voluptates accusantium ut et excepturi delectus necessitatibus in error eum.",
-  user_id: 14,
-  likeCounts: 0,
-  replyCounts: 3,
-  User: {
-    name: "user1",
-    account: "user1",
-    avatar: "https://loremflickr.com/280/280/admin",
-  },
-};
+import tweetsAPI from "./../apis/tweets.js";
 
 export default {
   components: {
     NavBar,
     PopularUsers,
-    TweetReplyCard,
+    showTweetReply,
   },
   mixins: [fromNowFilter],
   data() {
     return {
+      tweetId: "",
       tweet: {},
       replyMessage: "",
+      user: {
+        account: "",
+        avatar: "",
+        name: "",
+      },
     };
   },
   methods: {
     async fetchTweetData(tweetId) {
       try {
-        // 改為路由 後 要調整 註解位置
-        this.tweet = dummyTweet;
-        const response = await usersAPI.getTweetDetail(tweetId);
+        const response = await tweetsAPI.getTweetDetail(tweetId);
+        const { data } = response;
+        this.tweet = data;
+        this.user = {
+          account: data.User.account,
+          avatar: data.User.avatar,
+          name: data.User.name,
+        };
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async postReplyHandler() {
+      try {
+        const response = await tweetsAPI.postTweetReply({
+          tweetId: this.tweetId,
+          description: this.replyMessage,
+        });
         console.log(response);
-        const data = response;
-        // this.tweet = data;
       } catch (error) {
         console.log(error);
       }
     },
   },
   created() {
-    const tweetId = this.$route.params.id;
-    this.fetchTweetData(tweetId);
+    this.tweetId = this.$route.params.id;
+    this.fetchTweetData(this.tweetId);
   },
 };
 </script>

@@ -1,11 +1,11 @@
 <template>
   <div>
     <div v-for="reply in replies" :key="reply.id" class="tweet-card">
-      <img class="avatar mr-2" :src="reply.user.avatar" alt="" />
+      <img class="avatar mr-2" :src="reply.User.avatar" alt="" />
       <div>
         <div class="d-flex">
-          <h4>{{ reply.user.name }}</h4>
-          <p>@{{ reply.user.account }} {{ reply.createdAt | fromNow }}</p>
+          <h4>{{ reply.User.name }}</h4>
+          <p>@{{ reply.User.account }} {{ reply.createdAt | fromNow }}</p>
         </div>
 
         <div>
@@ -47,52 +47,8 @@
 </template>
 
 <script>
-import usersAPI from "./../apis/users";
-import { fromNowFilter } from "./../utils/mixins";
-
-const dummyData = {
-  replies: [
-    {
-      id: 1214,
-      comment: "Sint dolor aperiam enim consequatur voluptas officia ea ut.",
-      userId: 14,
-      tweetId: 105,
-      createdAt: "2022-05-10T09:57:32.000Z",
-      updatedAt: "2022-05-13T12:23:09.000Z",
-      user: {
-        name: "user12",
-        account: "user12",
-        avatar: "https://loremflickr.com/280/280/admin",
-      },
-    },
-    {
-      id: 1216,
-      comment: "Autem nemo natus minus.",
-      userId: 16,
-      tweetId: 105,
-      createdAt: "2022-05-12T20:17:48.000Z",
-      updatedAt: "2022-05-13T12:23:09.000Z",
-      user: {
-        name: "limecorner",
-        account: "limecorner",
-        avatar: "https://loremflickr.com/280/280/admin",
-      },
-    },
-    {
-      id: 1215,
-      comment: "Voluptatem mollitia tempore optio nam minus veritatis.",
-      userId: 15,
-      tweetId: 105,
-      createdAt: "2022-05-12T17:41:01.000Z",
-      updatedAt: "2022-05-13T12:23:09.000Z",
-      user: {
-        name: "austin",
-        account: "austin",
-        avatar: "https://loremflickr.com/280/280/admin",
-      },
-    },
-  ],
-};
+import tweetsAPI from "./../apis/tweets.js";
+import { fromNowFilter } from "../utils/mixins";
 
 export default {
   props: {
@@ -109,20 +65,14 @@ export default {
   },
   created() {
     const tweetId = this.$route.params.id;
-    console.log("網頁id", tweetId);
     this.fetchTweetReplies(tweetId);
   },
   methods: {
     async fetchTweetReplies(tweetId) {
       try {
-        this.replies = dummyData.replies;
-        // 載入 路由  要調整註解
-        console.log(`api前:`);
-        const response = await usersAPI.getTweetreplies(tweetId);
-        console.log(`response內容:`);
-        console.log(response);
-        const { data } = response;
-        // this.replies = data.replies;
+        const response = await tweetsAPI.getTweetreplies(tweetId);
+        const data = response.data.data;
+        this.replies = data.replies;
       } catch (error) {
         console.log(error);
       }

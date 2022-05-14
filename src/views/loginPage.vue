@@ -92,7 +92,7 @@ export default {
         });
 
         const { data } = response;
-        if (data.status !== "success") {
+        if (data.status === "error") {
           throw new Error(data.message);
         }
         // // 將 token 存放在 localStorage 內

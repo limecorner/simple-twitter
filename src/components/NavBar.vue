@@ -8,7 +8,7 @@
           alt=""
         />
 
-        <div @click.stop.prevent="handleNavbar('home')" class="tab">
+        <div @click.stop.prevent="navbarHandler('home')" class="tab">
           <img
             v-if="!navbarHome"
             class="icon"
@@ -24,7 +24,7 @@
           <p :class="{ active: navbarHome }">首頁</p>
         </div>
 
-        <div @click.stop.prevent="handleNavbar('profile')" class="tab">
+        <div @click.stop.prevent="navbarHandler('profile')" class="tab">
           <img
             v-if="!navbarprofile"
             class="icon"
@@ -40,7 +40,7 @@
           <p :class="{ active: navbarprofile }">個人資料</p>
         </div>
 
-        <div @click.stop.prevent="handleNavbar('Setting')" class="tab">
+        <div @click.stop.prevent="navbarHandler('Setting')" class="tab">
           <img
             v-if="!navbarSetting"
             class="icon"
@@ -64,7 +64,7 @@
         </button>
       </div>
 
-      <div class="d-flex ml-2">
+      <div @click.prevent.stop="logoutHandler" class="d-flex ml-2">
         <img
           class="logout"
           src="https://i.postimg.cc/NjVnH4Yp/logoOut.png"
@@ -127,6 +127,7 @@
 
 <script>
 import { Toast } from "./../utils/helpers";
+import tweetsAPI from "./../apis/tweets.js";
 
 export default {
   data() {
@@ -139,7 +140,7 @@ export default {
     };
   },
   methods: {
-    postTweetModal() {
+    async postTweetModal() {
       if (this.twitterMessage.length === 0) {
         console.log(this.twitterMessage.length);
         Toast.fire({
@@ -147,8 +148,10 @@ export default {
           title: "內容不可空白",
         });
       }
+      const response = await tweetsAPI.postTweet(this.twitterMessage);
+      console.log(response);
     },
-    handleNavbar(name) {
+    navbarHandler(name) {
       if (name === "home") {
         this.navbarHome = true;
         this.navbarprofile = false;
@@ -166,6 +169,7 @@ export default {
         this.$router.push("/setting");
       }
     },
+    logoutHandler() {},
   },
   created() {},
 };
