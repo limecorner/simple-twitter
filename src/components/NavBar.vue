@@ -178,7 +178,7 @@ export default {
         this.navbarprofile = true;
         this.navbarSetting = false;
         this.$router.push("/users");
-      } else if ((name = "Setting")) {
+      } else if (name === "Setting") {
         this.navbarHome = false;
         this.navbarprofile = false;
         this.navbarSetting = true;
