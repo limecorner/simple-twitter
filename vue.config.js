@@ -1,8 +1,8 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true,
-  lintOnSave: false,
-})
+// const { defineConfig } = require('@vue/cli-service')
+// module.exports = defineConfig({
+//   transpileDependencies: true,
+//   lintOnSave: false,
+// })
 
 
 // /*  後續 部屬  要有以下內容 
