@@ -126,6 +126,22 @@
 
 
 <script>
+/***********
+
+import { mapState } from 'vuex'
+  // Step1：移除 dummyUser
+
+export default {
+  // Step2：移除 data 屬性
+  // Step3：移除 created 和 fetchUser 的方法
+  
+  // Step4：新增 `mapState` 方法
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+}
+*******/ ////
+
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
 

@@ -90,7 +90,7 @@ export default {
         });
         const { data } = response;
         console.log(data);
-        if (data.status !== "success") {
+        if (data.status === "error") {
           throw new Error(data.message);
         }
         localStorage.setItem("token", data.token);

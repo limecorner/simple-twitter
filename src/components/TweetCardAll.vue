@@ -21,7 +21,7 @@
               data-toggle="modal"
               data-target="#replyTwitterModal"
             />
-            <p class="font-size-14 m-0">{{ tweet.replyCounts }}</p>
+            <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
           .
           <div class="icon-group">
@@ -39,7 +39,7 @@
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""
             />
-            <p class="font-size-14 m-0">{{ tweet.likeCounts }}</p>
+            <p class="font-size-14 m-0">{{ tweet.likeCount }}</p>
           </div>
         </div>
       </div>
@@ -128,6 +128,7 @@ export default {
     return {
       tweets: [],
       replyMessage: "",
+      isLike: "",
     };
   },
   created() {
@@ -146,15 +147,29 @@ export default {
     },
     async addlike(tweetId) {
       try {
-        const response = await tweets.likeTweet(tweetId);
-        console.log(response);
+        const response = await tweetsAPI.likeTweet(tweetId);
+        console.log(this.tweets);
+
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              likeCount: tweet.likeCount + 1,
+            };
+          } else {
+            return tweet;
+          }
+        });
+
+
       } catch (error) {
         console.log(error);
       }
     },
     async unlike(tweetId) {
       try {
-        const response = await tweets.unlikeTweet(tweetId);
+        const response = await tweetsAPI.unlikeTweet(tweetId);
+        this.tweet.likeCounts = this.tweet.likeCounts - 1;
         console.log(response);
       } catch (error) {
         console.log(error);

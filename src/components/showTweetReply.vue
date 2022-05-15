@@ -17,6 +17,7 @@
             {{ reply.comment }}
           </p>
         </div>
+
         <div class="d-flex">
           <div class="icon-group mr-5">
             <img
@@ -24,9 +25,9 @@
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
             />
-            <p class="font-size-14 m-0"></p>
+            <p class="font-size-14 m-0">13</p>
           </div>
-          .
+
           <div class="icon-group">
             <img
               class="icon"
@@ -38,7 +39,7 @@
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""
             />
-            <p class="font-size-14 m-0"></p>
+            <p class="font-size-14 m-0">76</p>
           </div>
         </div>
       </div>
@@ -71,8 +72,10 @@ export default {
     async fetchTweetReplies(tweetId) {
       try {
         const response = await tweetsAPI.getTweetreplies(tweetId);
+        // 後續 資料 會再更動
         const data = response.data.data;
         this.replies = data.replies;
+        console.log(this.replies[2]);
       } catch (error) {
         console.log(error);
       }
