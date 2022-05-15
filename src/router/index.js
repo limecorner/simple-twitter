@@ -7,8 +7,8 @@ import LikeCard from '@/components/LikeCard'
 import NotFound from './../views/NotFound'
 import login from "./../views/loginPage"
 import UserFollowShip from "./../views/UserFollowShip"
-import Follower from "./../views/Follower"
-import Following from "./../views/Following"
+import UserFollowers from "./../components/UserFollowers"
+import UserFollowings from "./../components/UserFollowings"
 
 
 Vue.use(VueRouter)
@@ -20,18 +20,18 @@ const routes = [
     component: UserPage,
     children: [
       {
-        path: ':id/tweet',
-        name: 'user-tweet',
+        path: ':id/tweets',
+        name: 'user-tweets',
         component: TweetCard
       },
       {
-        path: ':id/reply',
-        name: 'user-reply',
+        path: ':id/replies',
+        name: 'user-replies',
         component: ReplyCard
       },
       {
-        path: ':id/like',
-        name: 'user-like',
+        path: ':id/likes',
+        name: 'user-likes',
         component: LikeCard
       },
     ]
@@ -42,14 +42,14 @@ const routes = [
     component: UserFollowShip,
     children: [
       {
-        path: ':id/follower',
-        name: 'user-follower',
-        component: Follower
+        path: ':id/followers',
+        name: 'user-followers',
+        component: UserFollowers
       },
       {
-        path: ':id/following',
-        name: 'user-following',
-        component: Following
+        path: ':id/followings',
+        name: 'user-followings',
+        component: UserFollowings
       },
     ]
   },

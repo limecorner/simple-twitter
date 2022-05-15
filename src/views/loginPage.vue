@@ -90,9 +90,9 @@ export default {
           account: this.account,
           password: this.password,
         });
-
+        // console.log("login response", response);
         const { data } = response;
-        if (data.status !== "success") {
+        if (data.status !== "OK") {
           throw new Error(data.message);
         }
         // // 將 token 存放在 localStorage 內

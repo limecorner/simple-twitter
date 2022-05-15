@@ -9,12 +9,12 @@
       <div>
         <div class="mb-4">
           <router-link
-            :to="{ name: 'user-follower', params: { id: 1 } }"
+            :to="{ name: 'user-followers', params: { id: userId } }"
             class="mr-3"
             >追隨者</router-link
           >
           <router-link
-            :to="{ name: 'user-following', params: { id: 1 } }"
+            :to="{ name: 'user-followings', params: { id: userId } }"
             class="mr-3"
             >正在追隨</router-link
           >
@@ -53,23 +53,38 @@ export default {
   data() {
     return {
       user: {},
+      userId: 1,
     };
   },
   created() {
-    const userId = this.$route.params.id;
-    console.log("currentUser ", userId);
-    this.fetchCurrentUser(userId);
+    this.userId = this.$route.params.id;
+    console.log("UserFollowShip created userId ", this.userId);
+    this.fetchClickedUser(this.userId);
   },
+  beforeRouteUpdate(to, from, next) {
+    // const { id } = from.params;
+    const id = this.$route.params.id;
+
+    this.userId = id;
+    console.log("beforeRouteUpdate clickedUser id", this.userId);
+    next();
+  },
+
   methods: {
-    async fetchCurrentUser(userId) {
+    async fetchClickedUser(userId) {
       try {
-        // const response = await usersAPI.getUser(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.user = data.user;
+        const response = await usersAPI.getUser(userId);
+        console.log(
+          "clickedUser response:",
+          response,
+          "clickedUser id:",
+          response.data.id
+        );
+        const { data } = response;
+        this.user = data;
         // 改名;
 
-        this.user = currentUser.user;
+        // this.user = currentUser.user;
         // console.log(this.user);
       } catch (error) {
         console.log(error);

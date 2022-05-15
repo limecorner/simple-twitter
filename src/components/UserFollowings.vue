@@ -1,11 +1,20 @@
 <template>
   <div>
-    <div v-for="following in followings" :key="following.id" class="d-flex">
-      <img class="avatar" :src="following.avatar" alt="" />
+    <div
+      v-for="following in followings"
+      :key="following.followingId"
+      class="d-flex"
+    >
+      <router-link
+        :to="{ name: 'user-tweets', params: { id: following.followingId } }"
+      >
+        <img class="avatar" :src="following.avatar" alt="" />
+      </router-link>
+
       <div>
         <div class="d-flex justify-content-between">
           <p>{{ following.name }}</p>
-          <button>跟隨</button>
+          <button>{{ following.isFollowing }}</button>
         </div>
         <div>
           <p>{{ following.introduction }}</p>
@@ -16,30 +25,33 @@
 </template>
 
 <script>
-import usersAPI from "./../apis/users";
-import { fromNowFilter } from "./../utils/mixins";
+import usersAPI from "../apis/users";
+import { fromNowFilter } from "../utils/mixins";
 const dummyData = {
   followings: [
     {
-      id: 1,
-      account: "limecorner",
+      followingId: 1,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: true,
+      // userId: 10,
     },
     {
-      id: 2,
-      account: "limecorner",
+      followingId: 2,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: true,
+      // userId: 20,
     },
     {
-      id: 3,
-      account: "limecorner",
+      followingId: 3,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: true,
+      // userId: 30,
     },
   ],
 };
@@ -59,12 +71,12 @@ export default {
   methods: {
     async fetchFollowings(userId) {
       try {
-        // const response = await usersAPI.getUserFollowings(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.followings = data.followings; 改名
-        this.followings = dummyData.followings;
-        console.log(this.followings);
+        const response = await usersAPI.getUserFollowings(userId);
+        console.log("followings response", response);
+        const { data } = response;
+        this.followings = data;
+        // this.followings = dummyData.followings;
+        // console.log(this.followings);
       } catch (error) {
         console.log(error);
       }
