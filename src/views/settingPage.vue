@@ -47,7 +47,7 @@
           <div>
             <input
               id="name"
-              v-model="name"
+              v-model="email"
               name="name"
               type="email"
               class="form"
@@ -68,23 +68,21 @@
               type="password"
               class="form"
               placeholder="請輸入密碼"
-              autocomplete="current-password"
               required
             />
           </div>
         </div>
 
         <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
-          <label for="password">密碼確認</label>
+          <label for="checkPassword">密碼確認</label>
           <div>
             <input
-              id="password"
-              v-model="password"
-              name="password"
+              id="checkPassword"
+              v-model="checkPassword"
+              name="checkPassword"
               type="password"
               class="form"
               placeholder="請再次輸入密碼"
-              autocomplete="current-password"
               required
             />
           </div>
@@ -112,6 +110,15 @@ import NavBar from "./../components/NavBar.vue";
 export default {
   components: {
     NavBar,
+  },
+  data() {
+    return {
+      account: "",
+      name: "",
+      email: "",
+      password: "",
+      checkPassword: "",
+    };
   },
 };
 </script>

@@ -1,20 +1,20 @@
 <template>
-  <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
-  <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
   <div>
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-      <img class="avatar mr-2" :src="tweet.avatar" alt="" />
+      <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
       <div>
-        <div class="d-flex">
-          <h4>{{ tweet.name }}</h4>
-          <p>@{{ tweet.account }} {{ tweet.createdAt | fromNow }}</p>
+        <div @click="toReplyList(tweet.id)" class="d-flex">
+          <h4>{{ tweet.User.name }}</h4>
+          <p>@{{ tweet.User.account }} {{ tweet.createdAt | fromNow }}</p>
         </div>
-        <p>
-          {{ tweet.tweetText }}
+        <p @click="toReplyList(tweet.id)">
+          {{ tweet.description }}
         </p>
         <div class="d-flex">
           <div class="icon-group mr-5">
+            <!-- 這邊 user_id 後續 可以用來 連結 到 該使用者 首頁  -->
             <img
+              :id="tweet.user_id"
               class="icon"
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
@@ -29,8 +29,11 @@
               class="icon"
               src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
               alt=""
+              @click.prevent.stop="addlike(tweet.id)"
             />
             <img
+              v-if="false"
+              @click.prevent.stop="unlike(tweet.id)"
               class="icon"
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""
@@ -69,19 +72,18 @@
               <div>
                 <div class="d-flex">
                   <div>
-                    <img class="avatar" :src="tweet.avatar" alt="" />
+                    <img class="avatar" :src="tweet.User.avatar" alt="" />
                   </div>
                   <div>
                     <div>
-                      <span>{{ tweet.name }}</span>
-                      <span> @{{ tweet.account }} </span>
+                      <span>{{ tweet.User.name }}</span>
+                      <span> @{{ tweet.User.account }} </span>
                       <span>
-                        待後續: 補發推特的時間
-                        <!-- {{  tweet.createdAt | fromNow }} -->
+                        {{ tweet.createdAt | fromNow }}
                       </span>
                     </div>
-                    <p>{{ tweet.tweetText }}</p>
-                    <p>回覆給@{{ tweet.account }}</p>
+                    <p>{{ tweet.description }}</p>
+                    <p>回覆給@{{ tweet.User.account }}</p>
                   </div>
                 </div>
               </div>
@@ -99,7 +101,7 @@
                 </div>
                 <button
                   type="button"
-                  @click.prevent.stop="postTweetModal"
+                  @click.prevent.stop="postReplyHandler(tweet.id)"
                   class="btn btn-info btn-w64"
                 >
                   推文
@@ -115,67 +117,85 @@
 </template>
 
 <script>
-import usersAPI from "./../apis/users";
+import tweetsAPI from "./../apis/tweets.js";
 import { fromNowFilter } from "./../utils/mixins";
-const dummyData = {
-  tweets: [
-    {
-      id: 1,
-      account: "limecorner",
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
-      createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 1,
-      likeCount: 11,
-    },
-    {
-      id: 2,
-      account: "limecorner2",
-      name: "limecorner2",
-      avatar: "https://loremflickr.com/280/280/admin",
-      createdAt: new Date(),
-      tweetText: "2Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 2,
-      likeCount: 22,
-    },
-    {
-      id: 3,
-      account: "limecorner3",
-      name: "limecorner3",
-      avatar: "https://loremflickr.com/280/280/admin",
-      createdAt: new Date(),
-      tweetText: "3Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 3,
-      likeCount: 33,
-    },
-  ],
-};
 
 export default {
   mixins: [fromNowFilter],
   data() {
     return {
       tweets: [],
+      replyMessage: "",
+      isLike: "",
     };
   },
   created() {
-    const userId = this.$route.params.id;
-    console.log("id tweet", userId);
     this.fetchTweets();
   },
   methods: {
     async fetchTweets() {
       try {
-        // this.tweets = dummyData.tweets;
-        const response = await usersAPI.getUserTweet();
-        console.log(response);
+        const response = await tweetsAPI.getAllTweet();
         const { data } = response;
-        this.tweets = data.tweets;
+        this.tweets = data;
         console.log(this.tweets);
       } catch (error) {
         console.log(error);
       }
+    },
+    async addlike(tweetId) {
+      try {
+        const response = await tweetsAPI.likeTweet(tweetId);
+        console.log(response);
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              likeCount: tweet.likeCount + 1,
+              isLiked: !tweet.isLiked,
+            };
+          } else {
+            return tweet;
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async unlike(tweetId) {
+      try {
+        const response = await tweetsAPI.unlikeTweet(tweetId);
+        console.log(response);
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              likeCount: tweet.likeCount - 1,
+              isLiked: !tweet.isLiked,
+            };
+          } else {
+            return tweet;
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async postReplyHandler(tweetId) {
+      try {
+        const response = await tweetsAPI.postTweetReply({
+          tweetId: tweetId,
+          description: this.replyMessage,
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    toReplyList(tweetId) {
+      console.log("toda");
+      this.$router.push(`/home/tweet/${tweetId}`);
     },
   },
 };

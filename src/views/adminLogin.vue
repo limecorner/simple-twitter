@@ -8,7 +8,7 @@
         alt=""
       />
     </div>
-    <h3 class="text-center font-weight-bold">登入 Alphitter</h3>
+    <h3 class="text-center font-weight-bold">後台登入</h3>
 
     <form @submit.prevent.stop="handleSubmit">
       <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
@@ -20,7 +20,7 @@
             name="account"
             type="text"
             class="form"
-            placeholder="請輸入帳號"
+            placeholder="請輸入E-mail"
             required
             autofocus
           />
@@ -58,9 +58,7 @@
       </div>
     </form>
     <div class="d-flex mt-4 justify-content-end">
-      <router-link class="mx-1" to="/regist"> 註冊 </router-link>
-      ・
-      <router-link class="mx-1" to="/admin/login"> 後台登入 </router-link>
+      <router-link class="mx-1" to="/login"> 前台登入 </router-link>
     </div>
   </div>
 </template>
@@ -68,6 +66,7 @@
 
 <script>
 import authorizationAPI from "./../apis/authorization";
+
 export default {
   data() {
     return {
@@ -85,35 +84,20 @@ export default {
         if (!this.account || !this.password) {
           return;
         }
-
-        const response = await authorizationAPI.signIn({
+        const response = await authorizationAPI.adminSignIn({
           account: this.account,
           password: this.password,
         });
-<<<<<<< HEAD
-
         const { data } = response;
-        if (data.status !== "success") {
-=======
-        console.log(response);
-        const { data } = response;
+        console.log(data);
         if (data.status === "error") {
->>>>>>> feature/setting
           throw new Error(data.message);
         }
-        // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
-        // 透過 setCurrentUser  將資料 傳給 vuex
-        // this.$store.commit('vuex, store的方法名稱' , 帶入的資料 )
-        // this.$store.commit('setCurrentUser',data.user)
-
-        // // 成功登入後轉址到.....
-        const id = data.user.id;
-        this.$router.push(`/home/${id}`);
+        // 成功登入後轉址到.....
+        this.$router.push(`/admin/tweet`);
       } catch (error) {
-        // 將密碼欄位清空
         this.password = "";
-        // 顯示錯誤提示
         this.isProcessing = false;
         console.log("error", error);
       }
@@ -121,3 +105,5 @@ export default {
   },
 };
 </script>
+
+
