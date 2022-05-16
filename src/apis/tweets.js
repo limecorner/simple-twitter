@@ -22,17 +22,16 @@ export default {
     })
   },
 
-
   likeTweet(tweetId) {
-    console.log('tweetId', tweetId)
-    return apiHelper.post(`/tweets/${tweetId}/like`, {
+    console.log('add , tweetId', tweetId)
+    return apiHelper.post(`/tweets/${tweetId}/like`, null, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
 
   unlikeTweet(tweetId) {
     console.log('tweetId', tweetId)
-    return apiHelper.post(`/tweets/${tweetId}/unlike`, {
+    return apiHelper.post(`/tweets/${tweetId}/unlike`, null, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
@@ -50,7 +49,5 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-
-
 }
 

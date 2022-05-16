@@ -23,16 +23,17 @@
             />
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
-          .
+
           <div class="icon-group">
             <img
+              v-if="!tweet.isLiked"
               class="icon"
               src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
               alt=""
               @click.prevent.stop="addlike(tweet.id)"
             />
             <img
-              v-if="false"
+              v-else
               @click.prevent.stop="unlike(tweet.id)"
               class="icon"
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"

@@ -92,7 +92,6 @@
                   <textarea
                     cols="40"
                     rows="5"
-                    v-model="replyMessage"
                     placeholder="推你的回覆"
                     required
                   ></textarea>
