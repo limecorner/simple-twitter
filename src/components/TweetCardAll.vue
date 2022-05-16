@@ -3,11 +3,11 @@
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
       <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
       <div>
-        <div class="d-flex">
+        <div @click="toReplyList(tweet.id)" class="d-flex">
           <h4>{{ tweet.User.name }}</h4>
           <p>@{{ tweet.User.account }} {{ tweet.createdAt | fromNow }}</p>
         </div>
-        <p>
+        <p @click="toReplyList(tweet.id)">
           {{ tweet.description }}
         </p>
         <div class="d-flex">
@@ -25,15 +25,14 @@
           </div>
           .
           <div class="icon-group">
-            加愛心
             <img
               class="icon"
               src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
               alt=""
               @click.prevent.stop="addlike(tweet.id)"
             />
-            dis愛心
             <img
+              v-if="false"
               @click.prevent.stop="unlike(tweet.id)"
               class="icon"
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
@@ -80,8 +79,7 @@
                       <span>{{ tweet.User.name }}</span>
                       <span> @{{ tweet.User.account }} </span>
                       <span>
-                        待後續: 補發推特的時間
-                        <!-- {{  tweet.createdAt | fromNow }} -->
+                        {{ tweet.createdAt | fromNow }}
                       </span>
                     </div>
                     <p>{{ tweet.description }}</p>
@@ -148,20 +146,18 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log(this.tweets);
-
+        console.log(response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
               ...tweet,
               likeCount: tweet.likeCount + 1,
+              isLiked: !tweet.isLiked,
             };
           } else {
             return tweet;
           }
         });
-
-
       } catch (error) {
         console.log(error);
       }
@@ -169,12 +165,23 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        this.tweet.likeCounts = this.tweet.likeCounts - 1;
         console.log(response);
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              likeCount: tweet.likeCount - 1,
+              isLiked: !tweet.isLiked,
+            };
+          } else {
+            return tweet;
+          }
+        });
       } catch (error) {
         console.log(error);
       }
     },
+
     async postReplyHandler(tweetId) {
       try {
         const response = await tweetsAPI.postTweetReply({
@@ -185,6 +192,10 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    toReplyList(tweetId) {
+      console.log("toda");
+      this.$router.push(`/home/tweet/${tweetId}`);
     },
   },
 };

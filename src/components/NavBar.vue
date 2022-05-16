@@ -177,7 +177,7 @@ export default {
         this.navbarHome = false;
         this.navbarprofile = true;
         this.navbarSetting = false;
-        this.$router.push("/users");
+        this.$router.push(`/users/${this.$route.params.id}/tweets`);
       } else if (name === "Setting") {
         this.navbarHome = false;
         this.navbarprofile = false;
