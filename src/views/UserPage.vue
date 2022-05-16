@@ -1,7 +1,7 @@
 <template>
   <div class="user-page d-flex justify-content-between border border-secondary">
     <!-- NavBar -->
-    <NavBar  />
+    <NavBar />
 
     <!-- UserSection -->
     <section class="user-section">
@@ -10,7 +10,9 @@
           <div>上頁</div>
           <div class="ml-4">
             <h3 class="font-weight-bold font-size-18">{{ user.name }}</h3>
-            <p class="text-secondary font-size-14">25 推文</p>
+            <p class="text-secondary font-size-14">
+              {{ user.tweetCount }} 推文
+            </p>
           </div>
         </div>
         <div class="cover-image">
@@ -36,8 +38,22 @@
             {{ user.introduction }}
           </p>
           <div class="d-flex">
-            <p class="font-size-14">XX 個跟隨中</p>
-            <p class="font-size-14">XX 位跟隨者</p>
+            <router-link
+              :to="{
+                name: 'user-followings',
+                params: { id: userId },
+              }"
+              class="mr-5"
+              >{{ user.folloingCount }}個跟隨中
+              <!--  -->
+            </router-link>
+            <router-link
+              :to="{
+                name: 'user-followers',
+                params: { id: userId },
+              }"
+              >{{ user.followerCount }}位跟隨者
+            </router-link>
           </div>
         </div>
       </div>
@@ -46,16 +62,16 @@
       <div>
         <div class="mb-4">
           <router-link
-            :to="{ name: 'user-tweet', params: { id: 1 } }"
+            :to="{ name: 'user-tweets', params: { id: userId } }"
             class="mr-3"
             >推文</router-link
           >
           <router-link
-            :to="{ name: 'user-reply', params: { id: 1 } }"
+            :to="{ name: 'user-replies', params: { id: userId } }"
             class="mr-3"
             >回覆</router-link
           >
-          <router-link :to="{ name: 'user-like', params: { id: 1 } }"
+          <router-link :to="{ name: 'user-likes', params: { id: userId } }"
             >喜歡的內容</router-link
           >
         </div>
@@ -152,6 +168,9 @@ const currentUser = {
     avatar: "https://loremflickr.com/280/280/admin",
     role: "user",
     introduction: "Nihil nulla necessitatibus fugiat.",
+    followingCount: 10,
+    followerCount: 20,
+    tweetCount: 4,
   },
 };
 
@@ -165,24 +184,38 @@ export default {
       user: {},
       name: "",
       introduction: "",
+      userId: 1,
     };
   },
   created() {
-    const userId = this.$route.params.id;
-    console.log("currentUser ", userId);
-    this.fetchCurrentUser(userId);
+    this.userId = this.$route.params.id; // id從首頁來
+    // this.userId = 14; // id從首頁來
+    console.log("UserPage created clickedUser id ", this.userId);
+    this.fetchClickedUser(this.userId);
+  },
+  beforeRouteUpdate(to, from, next) {
+    const id = this.$route.params.id;
+
+    this.userId = id;
+    console.log("beforeRouteUpdate clickedUser id", this.userId);
+    this.fetchClickedUser(this.userId);
+    next();
   },
   methods: {
-    async fetchCurrentUser(userId) {
+    async fetchClickedUser(userId) {
       try {
         const response = await usersAPI.getUser(userId);
-        console.log("response", response);
+        console.log(
+          "clickedUser response:",
+          response,
+          "clickedUser id:",
+          response.data.id
+        );
         const { data } = response;
-        this.user = data.user;
-        // 改名;
+        this.user = data;
 
         // this.user = currentUser.user;
-        // console.log(this.user);
+        // console.log("user", this.user);
       } catch (error) {
         console.log(error);
       }

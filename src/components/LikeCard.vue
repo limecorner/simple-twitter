@@ -1,19 +1,17 @@
 <template>
   <div>
-    <div v-for="like in likes" :key="like.id" class="like-card">
-      <img
-        class="avatar mr-2"
-        src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-        alt=""
-      />
+    <div v-for="like in likes" :key="like.TweetId" class="like-card">
+      <router-link
+        :to="{ name: 'user-tweets', params: { id: like.Tweet.User.id } }"
+      >
+        <img class="avatar mr-2" :src="like.Tweet.User.avatar" alt="" />
+      </router-link>
       <div>
         <div class="d-flex">
-          <h4>{{ like.name }}</h4>
-          <p>{{ like.account }} {{ like.createdAt | fromNow }}</p>
+          <h4>{{ like.Tweet.User.name }}</h4>
+          <p>{{ like.Tweet.User.account }} {{ like.createdAt | fromNow }}</p>
         </div>
-        <p>
-          {{ like.tweetText }}
-        </p>
+        <p>{{ like.Tweet.description }}</p>
         <div class="d-flex">
           <div class="icon-group mr-5">
             <img
@@ -48,34 +46,49 @@ import { fromNowFilter } from "./../utils/mixins";
 const dummyData = {
   likes: [
     {
-      id: 1,
-      account: "limecorner",
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
+      TweetId: 1,
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 1,
-      likeCount: 11,
+      likeCount: 1,
+      Tweet: {
+        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+        User: {
+          id: 14,
+          avatar: "https://loremflickr.com/280/280/admin",
+          name: "Austin",
+          account: "Austin",
+        },
+      },
     },
     {
-      id: 2,
-      account: "limecorner",
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
+      TweetId: 2,
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 2,
-      likeCount: 22,
+      replyCounts: 2,
+      likeCounts: 2,
+      Tweet: {
+        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+        User: {
+          id: 24,
+          avatar: "https://loremflickr.com/280/280/admin",
+          name: "Austin",
+          account: "Austin",
+        },
+      },
     },
     {
-      id: 3,
-      account: "limecorner",
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
+      TweetId: 3,
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 3,
-      likeCount: 33,
+      replyCounts: 3,
+      likeCounts: 3,
+      Tweet: {
+        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+        User: {
+          id: 34,
+          avatar: "https://loremflickr.com/280/280/admin",
+          name: "Austin",
+          account: "Austin",
+        },
+      },
     },
   ],
 };
@@ -88,20 +101,19 @@ export default {
     };
   },
   created() {
-    const userId = this.$route.params.id;
-    console.log("id like", userId);
-    this.fetchLikes(userId);
+    const likedUserId = this.$route.params.id;
+    console.log("like clickedUser id", likedUserId);
+    this.fetchLikes(likedUserId);
   },
   methods: {
     async fetchLikes(userId) {
       try {
-        // const response = await usersAPI.getUserLike(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.tweets = data.tweets;
-        // 改名;
-        this.likes = dummyData.likes;
-        console.log(this.likes);
+        const response = await usersAPI.getUserLikes(userId);
+        console.log("like response", response);
+        const { data } = response;
+        this.likes = data; // data.likes
+        // this.likes = dummyData.likes;
+        // console.log("likes", this.likes);
       } catch (error) {
         console.log(error);
       }

@@ -90,15 +90,9 @@ export default {
           account: this.account,
           password: this.password,
         });
-<<<<<<< HEAD
-
-        const { data } = response;
-        if (data.status !== "success") {
-=======
         console.log(response);
         const { data } = response;
         if (data.status === "error") {
->>>>>>> feature/setting
           throw new Error(data.message);
         }
         // // 將 token 存放在 localStorage 內
