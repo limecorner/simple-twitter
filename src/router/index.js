@@ -68,7 +68,6 @@ const routes = [
     name: 'setting',
     component: () => import('./../views/settingPage'),
   },
-
   {
     path: '/login',
     name: 'login',
@@ -80,17 +79,26 @@ const routes = [
     component: () => import('./../views/admin-login')
   },
   {
+    path: '/home/tweet/:id',
+    name: 'tweetMessage',
+    component: () => import('./../views/replyList')
+  },
+  {
+    path: "/admin/tweet",
+    name: "admimTweet",
+    component: () => import('./../views/admimTweet')
+
+  },
+  {
     path: '/home/:id',
     name: 'home',
     component: () => import('./../views/mainPage')
   },
-
   {
     path: '*',
     name: 'not-found',
     component: NotFound
   },
-
 ]
 
 const router = new VueRouter({
