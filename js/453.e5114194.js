@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunksimple_twitter"]=self["webpackChunksimple_twitter"]||[]).push([[453],{7453:function(e,t,n){n.r(t),n.d(t,{default:function(){return c}});var r=function(){var e=this,t=e.$createElement;e._self._c;return e._m(0)},l=[function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",[e._v(" 這是後台 "),n("div")])}],u=n(1001),i={},s=(0,u.Z)(i,r,l,!1,null,null,null),c=s.exports}}]);
+//# sourceMappingURL=453.e5114194.js.map
