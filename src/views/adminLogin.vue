@@ -20,7 +20,7 @@
             name="account"
             type="text"
             class="form"
-            placeholder="請輸入E-mail"
+            placeholder="請輸入帳號"
             required
             autofocus
           />

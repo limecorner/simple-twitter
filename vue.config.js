@@ -1,11 +1,10 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
-  lintOnSave: false,
 })
 
 
-// /*  後續 部屬  要有以下內容 
+// /*  後續 部屬  要有以下內容
 
 // module.exports = {
 //   publicPath: process.env.NODE_ENV === 'production'
