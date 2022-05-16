@@ -185,7 +185,10 @@ export default {
         this.$router.push("/setting");
       }
     },
-    logoutHandler() {},
+    logoutHandler() {
+      localStorage.setItem("token", "");
+      this.$router.push("/login");
+    },
   },
   created() {},
 };

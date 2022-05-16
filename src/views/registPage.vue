@@ -177,14 +177,15 @@ export default {
           return;
         }
 
-        const { data } = await authorizationAPI.regist({
+        const { response } = await authorizationAPI.regist({
           account: this.account,
           name: this.name,
           email: this.email,
           password: this.password,
           checkPassword: this.checkPassword,
         });
-
+        const { data } = response;
+        console.log(response);
         if (data.status === "error") {
           throw new Error(data.message);
         }
