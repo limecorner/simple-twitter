@@ -35,6 +35,7 @@
               alt=""
             />
             <img
+              v-if="false"
               class="icon"
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""

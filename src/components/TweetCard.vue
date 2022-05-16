@@ -92,7 +92,6 @@
                   <textarea
                     cols="40"
                     rows="5"
-                    v-model="replyMessage"
                     placeholder="推你的回覆"
                     required
                   ></textarea>
@@ -174,11 +173,14 @@ export default {
     this.fetchTweets(userId);
   },
   methods: {
-    async fetchTweets() {
+    async fetchTweets(userId) {
       try {
         const response = await usersAPI.getUserTweets(userId);
         console.log("tweet response", response);
         const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
         this.tweets = data;
         // this.tweets = dummyData.tweets;
         // console.log(this.tweets);

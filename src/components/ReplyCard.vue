@@ -92,6 +92,11 @@ export default {
         const response = await usersAPI.getUserReplies(userId);
         console.log("reply response", response);
         const { data } = response;
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
         this.replies = data;
 
         // this.replies = dummyData.replies;

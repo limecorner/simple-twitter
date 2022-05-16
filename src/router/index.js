@@ -75,8 +75,8 @@ const routes = [
   },
   {
     path: '/admin/login',
-    name: 'admin-login',
-    component: () => import('./../views/admin-login')
+    name: 'adminLogin',
+    component: () => import('./../views/adminLogin')
   },
   {
     path: '/home/tweet/:id',

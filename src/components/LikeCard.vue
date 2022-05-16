@@ -111,7 +111,13 @@ export default {
         const response = await usersAPI.getUserLikes(userId);
         console.log("like response", response);
         const { data } = response;
-        this.likes = data; // data.likes
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.likes = data;
+
         // this.likes = dummyData.likes;
         // console.log("likes", this.likes);
       } catch (error) {

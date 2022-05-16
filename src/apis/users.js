@@ -32,9 +32,4 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  editUser(userId) {
-    return apiHelper.put(`/users/${userId}`, formData, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
-  }
 }
