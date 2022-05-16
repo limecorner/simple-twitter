@@ -7,12 +7,17 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  getUserReply(userId) {
+  getUserTweets(userId) {
+    return apiHelper.get(`/users/${userId}/tweets`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  getUserReplies(userId) {
     return apiHelper.get(`/users/${userId}/replied_tweets`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  getUserLike(userId) {
+  getUserLikes(userId) {
     return apiHelper.get(`/users/${userId}/likes`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
@@ -27,8 +32,9 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-
-
-  // 跟對方要程式碼 避免覆蓋對方檔案 
-
+  editUser(userId) {
+    return apiHelper.put(`/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  }
 }

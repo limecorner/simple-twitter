@@ -1,11 +1,19 @@
 <template>
   <div>
-    <div v-for="follower in followers" :key="follower.id" class="d-flex">
-      <img class="avatar" :src="follower.avatar" alt="" />
+    <div
+      v-for="follower in followers"
+      :key="follower.followerId"
+      class="d-flex"
+    >
+      <router-link
+        :to="{ name: 'user-tweets', params: { id: follower.followerId } }"
+      >
+        <img class="avatar" :src="follower.avatar" alt="" />
+      </router-link>
       <div>
         <div class="d-flex justify-content-between">
           <p>{{ follower.name }}</p>
-          <button>跟隨</button>
+          <button>{{ follower.isFollowing }}</button>
         </div>
         <div>
           <p>{{ follower.introduction }}</p>
@@ -16,30 +24,33 @@
 </template>
 
 <script>
-import usersAPI from "./../apis/users";
-import { fromNowFilter } from "./../utils/mixins";
+import usersAPI from "../apis/users";
+import { fromNowFilter } from "../utils/mixins";
 const dummyData = {
   followers: [
     {
-      id: 1,
-      account: "limecorner",
+      followerId: 1,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: false,
+      // userId: 10,
     },
     {
-      id: 2,
-      account: "limecorner",
+      followerId: 2,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: true,
+      // userId: 20,
     },
     {
-      id: 3,
-      account: "limecorner",
+      followerId: 3,
       name: "limecorner",
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      isFollowing: false,
+      // userId: 30,
     },
   ],
 };
@@ -53,18 +64,18 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("id followers", userId);
+    console.log("followers userId", userId);
     this.fetchFollowers(userId);
   },
   methods: {
     async fetchFollowers(userId) {
       try {
-        // const response = await usersAPI.getUserFollowers(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.followers = data.followers; 改名
-        this.followers = dummyData.followers;
-        console.log(this.followers);
+        const response = await usersAPI.getUserFollowers(userId);
+        console.log("follower response", response);
+        const { data } = response;
+        this.followers = data;
+        // this.followers = dummyData.followers;
+        // console.log(this.followers);
       } catch (error) {
         console.log(error);
       }

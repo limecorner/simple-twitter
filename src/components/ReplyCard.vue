@@ -1,20 +1,18 @@
 <template>
   <div>
     <div v-for="reply in replies" :key="reply.id" class="reply-card">
-      <img
-        class="avatar mr-2"
-        src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-        alt=""
-      />
+      <router-link
+        :to="{ name: 'user-tweets', params: { id: reply.Tweet.User.id } }"
+      >
+        <img class="avatar mr-2" :src="reply.Tweet.User.avatar" alt="" />
+      </router-link>
       <div>
         <div class="d-flex">
-          <h4>{{ reply.name }}</h4>
-          <p>{{ reply.account }} {{ reply.createdAt | fromNow }}</p>
+          <h4>{{ reply.User.name }}</h4>
+          <p>{{ reply.User.account }} {{ reply.createdAt | fromNow }}</p>
         </div>
-        <p>回復 {{ reply.repliedAccount }}</p>
-        <p>
-          {{ reply.repliedText }}
-        </p>
+        <p>回復 {{ reply.Tweet.User.account }}</p>
+        <p>{{ reply.comment }}</p>
       </div>
     </div>
   </div>
@@ -27,30 +25,51 @@ const dummyData = {
   replies: [
     {
       id: 1,
-      account: "limecorner",
-      name: "limecorner",
-      repliedAccount: "apple",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      repliedText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      Tweet: {
+        User: {
+          id: 14,
+          avatar: "https://loremflickr.com/280/280/admin",
+          account: "limecorner",
+        },
+      },
+      User: {
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
     {
       id: 2,
-      account: "limecorner",
-      name: "limecorner",
-      repliedAccount: "apple",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      repliedText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      Tweet: {
+        User: {
+          id: 24,
+          avatar: "https://loremflickr.com/280/280/admin",
+          account: "limecorner",
+        },
+      },
+      User: {
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
     {
       id: 3,
-      account: "limecorner",
-      name: "limecorner",
-      repliedAccount: "apple",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      repliedText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      Tweet: {
+        User: {
+          id: 34,
+          avatar: "https://loremflickr.com/280/280/admin",
+          account: "limecorner",
+        },
+      },
+      User: {
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
   ],
 };
@@ -63,20 +82,20 @@ export default {
     };
   },
   created() {
-    const userId = this.$route.params.id;
-    console.log("id reply", userId);
-    this.fetchReplies(userId);
+    const repliedUserId = this.$route.params.id;
+    console.log("reply clickedUser id", repliedUserId);
+    this.fetchReplies(repliedUserId);
   },
   methods: {
     async fetchReplies(userId) {
       try {
-        // const response = await usersAPI.getUserReply(userId);
-        // console.log("response", response);
-        // const { data } = response;
-        // this.replies = data.replies;
-        // 改名;
-        this.replies = dummyData.replies;
-        console.log(this.replies);
+        const response = await usersAPI.getUserReplies(userId);
+        console.log("reply response", response);
+        const { data } = response;
+        this.replies = data;
+
+        // this.replies = dummyData.replies;
+        // console.log("replies", this.replies);
       } catch (error) {
         console.log(error);
       }

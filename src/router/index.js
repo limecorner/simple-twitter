@@ -68,7 +68,6 @@ const routes = [
     name: 'setting',
     component: () => import('./../views/settingPage'),
   },
-
   {
     path: '/login',
     name: 'login',
@@ -78,6 +77,17 @@ const routes = [
     path: '/admin/login',
     name: 'admin-login',
     component: () => import('./../views/admin-login')
+  },
+  {
+    path: '/home/tweet/:id',
+    name: 'tweetMessage',
+    component: () => import('./../views/replyList')
+  },
+  {
+    path: "/admin/tweet",
+    name: "admimTweet",
+    component: () => import('./../views/admimTweet')
+
   },
   {
     path: '/home/:id',

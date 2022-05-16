@@ -3,15 +3,15 @@
   <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
   <div>
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-      <img class="avatar mr-2" :src="tweet.avatar" alt="" />
+      <router-link :to="{ name: 'user-tweets', params: { id: tweet.User.id } }">
+        <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+      </router-link>
       <div>
         <div class="d-flex">
-          <h4>{{ tweet.name }}</h4>
-          <p>@{{ tweet.account }} {{ tweet.createdAt | fromNow }}</p>
+          <h4>{{ tweet.User.name }}</h4>
+          <p>{{ tweet.User.account }} {{ tweet.createdAt | fromNow }}</p>
         </div>
-        <p>
-          {{ tweet.tweetText }}
-        </p>
+        <p>{{ tweet.description }}</p>
         <div class="d-flex">
           <div class="icon-group mr-5">
             <img
@@ -121,33 +121,42 @@ const dummyData = {
   tweets: [
     {
       id: 1,
-      account: "limecorner",
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      tweetText: "Nulla Lorem mollit cupidatat irure. Laborum magna",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 1,
-      likeCount: 11,
+      likeCount: 1,
+      User: {
+        id: 14,
+        avatar: "https://loremflickr.com/280/280/admin",
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
     {
       id: 2,
-      account: "limecorner2",
-      name: "limecorner2",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      tweetText: "2Nulla Lorem mollit cupidatat irure. Laborum magna",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 2,
-      likeCount: 22,
+      likeCount: 2,
+      User: {
+        id: 24,
+        avatar: "https://loremflickr.com/280/280/admin",
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
     {
       id: 3,
-      account: "limecorner3",
-      name: "limecorner3",
-      avatar: "https://loremflickr.com/280/280/admin",
       createdAt: new Date(),
-      tweetText: "3Nulla Lorem mollit cupidatat irure. Laborum magna",
+      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
       replyCount: 3,
-      likeCount: 33,
+      likeCount: 3,
+      User: {
+        id: 34,
+        avatar: "https://loremflickr.com/280/280/admin",
+        name: "limecorner",
+        account: "limecorner",
+      },
     },
   ],
 };
@@ -161,18 +170,18 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("id tweet", userId);
-    this.fetchTweets();
+    console.log("tweet clickedUser id", userId);
+    this.fetchTweets(userId);
   },
   methods: {
     async fetchTweets() {
       try {
-        // this.tweets = dummyData.tweets;
-        const response = await usersAPI.getUserTweet();
-        console.log(response);
+        const response = await usersAPI.getUserTweets(userId);
+        console.log("tweet response", response);
         const { data } = response;
-        this.tweets = data.tweets;
-        console.log(this.tweets);
+        this.tweets = data;
+        // this.tweets = dummyData.tweets;
+        // console.log(this.tweets);
       } catch (error) {
         console.log(error);
       }
