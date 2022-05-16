@@ -7,11 +7,6 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  getUserTweet(userId) {
-    return apiHelper.get(`/users/${userId}/tweets`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
-  },
   getUserReply(userId) {
     return apiHelper.get(`/users/${userId}/replied_tweets`, {
       headers: { Authorization: `Bearer ${getToken()}` }
@@ -32,4 +27,8 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+
+
+  // 跟對方要程式碼 避免覆蓋對方檔案 
+
 }

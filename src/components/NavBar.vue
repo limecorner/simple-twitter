@@ -8,7 +8,7 @@
           alt=""
         />
 
-        <div @click.stop.prevent="handleNavbar('home')" class="tab">
+        <div @click.stop.prevent="navbarHandler('home')" class="tab">
           <img
             v-if="!navbarHome"
             class="icon"
@@ -24,7 +24,7 @@
           <p :class="{ active: navbarHome }">首頁</p>
         </div>
 
-        <div @click.stop.prevent="handleNavbar('profile')" class="tab">
+        <div @click.stop.prevent="navbarHandler('profile')" class="tab">
           <img
             v-if="!navbarprofile"
             class="icon"
@@ -40,7 +40,7 @@
           <p :class="{ active: navbarprofile }">個人資料</p>
         </div>
 
-        <div @click.stop.prevent="handleNavbar('Setting')" class="tab">
+        <div @click.stop.prevent="navbarHandler('Setting')" class="tab">
           <img
             v-if="!navbarSetting"
             class="icon"
@@ -63,55 +63,8 @@
           推文
         </button>
       </div>
-      <!-- Modal -->
-      <div>
-        <div
-          class="modal fade"
-          id="postTwitterModal"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="postTwitterModal"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="postTwitterModal">
-                  後續 不需要文字 且 將關閉"X"符號 往左邊移動
-                </h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form action="">
-                <div>
-                  <textarea
-                    cols="40"
-                    rows="5"
-                    v-model="twitterMessage"
-                    required
-                  ></textarea>
-                </div>
-                <button
-                  type="button"
-                  @click.prevent.stop="postTweetModal"
-                  class="btn btn-info btn-w64"
-                >
-                  推文
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal -->
 
-      <div class="d-flex ml-2">
+      <div @click.prevent.stop="logoutHandler" class="d-flex ml-2">
         <img
           class="logout"
           src="https://i.postimg.cc/NjVnH4Yp/logoOut.png"
@@ -120,13 +73,77 @@
         <p class="ml-2">登出</p>
       </div>
     </section>
+    <!-- Modal -->
+    <div>
+      <div
+        class="modal fade"
+        id="postTwitterModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="postTwitterModal"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="postTwitterModal">
+                後續 不需要文字 且 將關閉"X"符號 往左邊移動
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form action="">
+              <div>
+                <textarea
+                  cols="40"
+                  rows="5"
+                  v-model="twitterMessage"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                @click.prevent.stop="postTweetModal"
+                class="btn btn-info btn-w64"
+              >
+                推文
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
   </div>
 </template>
 
 
 
 <script>
+/***********
+
+import { mapState } from 'vuex'
+  // Step1：移除 dummyUser
+
+export default {
+  // Step2：移除 data 屬性
+  // Step3：移除 created 和 fetchUser 的方法
+  
+  // Step4：新增 `mapState` 方法
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
+  },
+}
+*******/ ////
+
 import { Toast } from "./../utils/helpers";
+import tweetsAPI from "./../apis/tweets.js";
 
 export default {
   data() {
@@ -135,10 +152,11 @@ export default {
       navbarHome: false,
       navbarprofile: false,
       navbarSetting: false,
+      id: "",
     };
   },
   methods: {
-    postTweetModal() {
+    async postTweetModal() {
       if (this.twitterMessage.length === 0) {
         console.log(this.twitterMessage.length);
         Toast.fire({
@@ -146,13 +164,30 @@ export default {
           title: "內容不可空白",
         });
       }
+      const response = await tweetsAPI.postTweet(this.twitterMessage);
+      console.log(response);
     },
-    handleNavbar(name) {
+    navbarHandler(name) {
       if (name === "home") {
-        this.navbarHome === true;
+        this.navbarHome = true;
+        this.navbarprofile = false;
+        this.navbarSetting = false;
+        this.$router.push(`/home/${this.$route.params.id}`);
+      } else if (name === "profile") {
+        this.navbarHome = false;
+        this.navbarprofile = true;
+        this.navbarSetting = false;
+        this.$router.push(`/users/${this.$route.params.id}/tweets`);
+      } else if (name === "Setting") {
+        this.navbarHome = false;
+        this.navbarprofile = false;
+        this.navbarSetting = true;
+        this.$router.push("/setting");
       }
     },
+    logoutHandler() {},
   },
+  created() {},
 };
 </script>
 

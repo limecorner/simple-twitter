@@ -9,8 +9,13 @@ export default {
     })
   },
   regist(data) {
-    console.log("inapi")
     return apiHelper.post('/users', {
+      ...data
+    })
+  },
+  adminSignIn(data) {
+    console.log('in.api')
+    return apiHelper.post('/admin/login', {
       ...data
     })
   }

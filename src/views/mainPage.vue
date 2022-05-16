@@ -12,7 +12,7 @@
           src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
           alt=""
         />
-        <form @submit.prevent.stop="handleSubmit">
+        <form>
           <textarea
             required
             cols="40"
@@ -29,12 +29,13 @@
             :disabled="!twitterMessage.length || activeTwitterMessageBotton"
             @click.prevent.stop="submittwitterMessage"
           >
-            {{ activeTwitterMessageBotton ? "處理中" : "送出" }}
+            {{ activeTwitterMessageBotton ? "處理中" : "推文" }}
           </button>
         </form>
       </div>
-
       <!-- 巢狀路由 -->
+
+      <TweetCardAll />
     </section>
 
     <!-- PopularUsers -->
@@ -43,13 +44,16 @@
 </template>
 
 <script>
-import NavBar from "../components/NavBar.vue";
-import PopularUsers from "../components/PopularUsers.vue";
+import NavBar from "./../components/NavBar.vue";
+import PopularUsers from "./../components/PopularUsers.vue";
+import TweetCardAll from "./../components/TweetCardAll.vue";
+import tweetsAPI from "./../apis/tweets.js";
 
 export default {
   components: {
     NavBar,
     PopularUsers,
+    TweetCardAll,
   },
   data() {
     return {
@@ -58,10 +62,12 @@ export default {
     };
   },
   methods: {
-    submittwitterMessage() {
+    async submittwitterMessage() {
       this.activeTwitterMessageBotton = true;
       console.log(this.twitterMessage);
       /// 以下程式碼 設定 將資料 傳給伺服器
+      const response = await tweetsAPI.postTweet(this.twitterMessage);
+      console.log(response);
     },
   },
 };
