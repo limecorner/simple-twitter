@@ -10,7 +10,6 @@ export default {
     })
   },
 
-
   getTweetDetail(tweetId) {
     return apiHelper.get(`/tweets/${tweetId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
@@ -36,10 +35,9 @@ export default {
     })
   },
 
-  postTweetReply({ tweetId, description }) {
-    console.log('tweetId', tweetId)
-    console.log(`description`, description)
-    return apiHelper.post(`/tweets/${tweetId}/replies`, description, {
+  postTweetReply({ tweetId, comment }) {
+    console.log(`comment`, comment)
+    return apiHelper.post(`/tweets/${tweetId}/replies`, { comment }, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
@@ -49,5 +47,7 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+
+
 }
 

@@ -20,8 +20,8 @@
         <!-- {{  tweet.createdAt | fromNow }} -->
       </div>
       <div>
-        <span>{{ tweet.replyCounts }} 回覆 </span>
-        <span> {{ tweet.likeCounts }} 喜歡次數</span>
+        <span>{{ tweet.replyCount }} 回覆 </span>
+        <span> {{ tweet.likeCount }} 喜歡次數</span>
       </div>
       <div>
         <img
@@ -32,8 +32,17 @@
           data-target="#replyTwitterModal"
         />
         <img
+          v-if="!tweet.isLiked"
           class="icon"
           src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
+          alt=""
+          @click.prevent.stop="addlike(tweet.id)"
+        />
+        <img
+          v-else
+          @click.prevent.stop="unlike(tweet.id)"
+          class="icon"
+          src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
           alt=""
         />
       </div>
@@ -163,9 +172,27 @@ export default {
       try {
         const response = await tweetsAPI.postTweetReply({
           tweetId: this.tweetId,
-          description: this.replyMessage,
+          comment: this.replyMessage,
         });
         console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async addlike(tweetId) {
+      try {
+        const response = await tweetsAPI.likeTweet(tweetId);
+        console.log(response);
+        this.tweet.isLiked = true;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async unlike(tweetId) {
+      try {
+        const response = await tweetsAPI.unlikeTweet(tweetId);
+        console.log(response);
+        this.tweet.isLiked = false;
       } catch (error) {
         console.log(error);
       }

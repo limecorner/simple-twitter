@@ -142,7 +142,6 @@ export default {
       email: "",
       password: "",
       checkPassword: "",
-
       accountError: false,
       nameError: false,
       emailError: false,

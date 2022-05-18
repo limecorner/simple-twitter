@@ -64,10 +64,8 @@ export default {
   methods: {
     async submittwitterMessage() {
       this.activeTwitterMessageBotton = true;
-      console.log(this.twitterMessage);
       /// 以下程式碼 設定 將資料 傳給伺服器
       const response = await tweetsAPI.postTweet(this.twitterMessage);
-      console.log(response);
     },
   },
 };
