@@ -2,7 +2,7 @@ import { apiHelper } from './../utils/helpers'
 const getToken = () => localStorage.getItem('token')
 
 export default {
-  getUser(userId) {
+  getUser(userId) { // ClickedUser
     return apiHelper.get(`/users/${userId}`, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
@@ -32,4 +32,58 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  addUserFollowing(followerId) {
+    return apiHelper.post(`/followships`, { id: followerId }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  deleteUserFollowing(followingId) {
+    return apiHelper.delete(`/followships/${followingId
+      }`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  getCurrentUser() {
+    return apiHelper.get(`/users/login_user`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  editCurrentUserInfo(userId) {
+    return apiHelper.put(`/users/${userId
+      }`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+  getAccountInfo() {
+    return apiHelper.get('/users/setting', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  putAccountInfo({ data }) {
+    console.log('inapi')
+    console.log({ ...data })
+    return apiHelper.put(`/users/setting`, { ...data }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+  getTopUsers() {
+    return apiHelper.get('/users/top', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+  addFollowing(followingId) {
+    return apiHelper.post('/followships', { id: followingId }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
+  cancelFollowing(id) {
+    return apiHelper.delete(`followships/${id
+      }`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  }
 }

@@ -99,7 +99,7 @@ export default {
         localStorage.setItem("token", data.token);
         // 透過 setCurrentUser  將資料 傳給 vuex
         // this.$store.commit('vuex, store的方法名稱' , 帶入的資料 )
-        // this.$store.commit('setCurrentUser',data.user)
+        // this.$store.commit("setCurrentUser", data.user);
 
         // // 成功登入後轉址到.....
         const id = data.user.id;

@@ -9,18 +9,22 @@
         <div class="d-flex align-items-center ml-4 mt-2">
           <div>上頁</div>
           <div class="ml-4">
-            <h3 class="font-weight-bold font-size-18">{{ user.name }}</h3>
+            <h3 class="font-weight-bold font-size-18">
+              {{ user.name }}
+            </h3>
             <p class="text-secondary font-size-14">
               {{ user.tweetCount }} 推文
             </p>
           </div>
         </div>
-        <div class="cover-image">
+        <div class="image-wrapper mb-3">
+          <img class="cover-image" :src="user.cover_image" alt="" />
           <img class="avatar" :src="user.avatar" alt="" />
         </div>
         <div class="d-flex justify-content-end">
           <!-- user-info-edit-modal btn-->
           <button
+            v-if="Number(currentUser.id) === Number(userId)"
             class="btn-edit-info mr-3 mb-4"
             data-toggle="modal"
             data-target="#user-info-edit-modal"
@@ -107,19 +111,21 @@
             </button>
           </div>
           <form action="">
-            <div class="cover-image">
+            <div class="image-wrapper mb-5">
               <img
-                class="avatar"
-                src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
+                class="cover_image"
+                :src="currentUser.cover_image"
+                style="width: 498px"
                 alt=""
               />
+              <img class="avatar" :src="currentUser.avatar" alt="" />
             </div>
             <div>
-              <label for="account">名稱</label>
+              <label for="account"></label>
               <div class="form-wrapper mt-2">
                 <input
                   id="name"
-                  v-model="name"
+                  v-model="currentUser.name"
                   name="name"
                   type="text"
                   class="form"
@@ -128,11 +134,11 @@
                 />
               </div>
 
-              <label for="introduction">自我介紹</label>
+              <label for="introduction"></label>
               <div class="form-wrapper mt-2">
                 <textarea
                   id="introduction"
-                  v-model="introduction"
+                  v-model="currentUser.introduction"
                   name="introduction"
                   type="text"
                   class="form"
@@ -142,7 +148,13 @@
               </div>
             </div>
 
-            <button type="button" class="btn btn-info btn-w64">儲存</button>
+            <button
+              @click.stop.prevent="editInfo"
+              type="button"
+              class="btn btn-info btn-w64"
+            >
+              儲存
+            </button>
           </form>
           <div class="modal-footer"></div>
         </div>
@@ -158,8 +170,9 @@
 import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 import usersAPI from "./../apis/users";
+import { mapState } from "vuex";
 
-const currentUser = {
+const dummyUser = {
   user: {
     id: 124,
     account: "limecorner",
@@ -181,11 +194,14 @@ export default {
   },
   data() {
     return {
-      user: {},
+      user: {}, // 此 user 是 clickedUser
       name: "",
       introduction: "",
-      userId: 1,
+      userId: 1, // 此 userId 是 clickedUser 的
     };
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
   created() {
     this.userId = this.$route.params.id; // id從首頁來
@@ -205,20 +221,20 @@ export default {
     async fetchClickedUser(userId) {
       try {
         const response = await usersAPI.getUser(userId);
-        console.log(
-          "clickedUser response:",
-          response,
-          "clickedUser id:",
-          response.data.id
-        );
         const { data } = response;
         this.user = data;
 
-        // this.user = currentUser.user;
-        // console.log("user", this.user);
+        // this.user = dummyUser.user;
+        console.log("UserPage user", this.user);
       } catch (error) {
         console.log(error);
       }
+    },
+
+    async editInfo() {
+      const response = await usersAPI.editCurrentUserInfo(this.currentUser.id);
+      console.log("editInfo");
+      // console.log("editInfo", response.data);
     },
   },
 };
@@ -252,11 +268,15 @@ export default {
 }
 
 /* user-section  */
-.cover-image {
+.image-wrapper {
   position: relative;
-  background: url("https://ibw.bwnet.com.tw/ac_gallery/2019/10/50e5bba8-a1bd-5410-9f7e-0a5e4bb83b76_620.jpg");
   width: 100%;
   height: 200px;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
   margin-bottom: 16px;
 }
 

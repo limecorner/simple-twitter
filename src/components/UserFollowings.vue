@@ -14,7 +14,15 @@
       <div>
         <div class="d-flex justify-content-between">
           <p>{{ following.name }}</p>
-          <button>{{ following.isFollowing }}</button>
+          <!-- <button
+            v-if="!following.isFollowing"
+            @click.prevent.stop="addFollowing(following.followingId)"
+          >
+            跟隨
+          </button> -->
+          <button @click.prevent.stop="deleteFollowing(following.followingId)">
+            正在跟隨
+          </button>
         </div>
         <div>
           <p>{{ following.introduction }}</p>
@@ -27,6 +35,9 @@
 <script>
 import usersAPI from "../apis/users";
 import { fromNowFilter } from "../utils/mixins";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
+
 const dummyData = {
   followings: [
     {
@@ -35,7 +46,7 @@ const dummyData = {
       avatar: "https://loremflickr.com/280/280/admin",
       introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
       isFollowing: true,
-      // userId: 10,
+      // followingId: 10,
     },
     {
       followingId: 2,
@@ -61,7 +72,11 @@ export default {
   data() {
     return {
       followings: [],
+      // following:{}
     };
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
   created() {
     const userId = this.$route.params.id;
@@ -74,10 +89,49 @@ export default {
         const response = await usersAPI.getUserFollowings(userId);
         console.log("followings response", response);
         const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
         this.followings = data;
         // this.followings = dummyData.followings;
         // console.log(this.followings);
       } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "沒有追隨者名單",
+        });
+        console.log(error);
+      }
+    },
+    async deleteFollowing(followingId) {
+      try {
+        console.log("deleteFollowing ");
+
+        const response = await usersAPI.deleteUserFollowing(followingId);
+        console.log("deleteFollowing response", response);
+        const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+
+        this.followings = this.followings.map((following) => {
+          if (following.followingId === followingId) {
+            return {
+              ...following,
+              isFollowing: false,
+            };
+          } else {
+            return following;
+          }
+        });
+        this.followings = this.followings.filter(
+          (following) => following.followingId !== followingId
+        );
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤",
+        });
         console.log(error);
       }
     },
