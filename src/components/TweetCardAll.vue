@@ -5,7 +5,7 @@
       <div>
         <div @click="toReplyList(tweet.id)" class="d-flex">
           <h4>{{ tweet.User.name }}</h4>
-          <p>@{{ tweet.User.account }} {{ tweet.createdAt | fromNow }}</p>
+          <p>@{{ tweet.User.account }} ˙ {{ tweet.createdAt | fromNow }}</p>
         </div>
         <p @click="toReplyList(tweet.id)">
           {{ tweet.description }}
@@ -122,6 +122,7 @@ import tweetsAPI from "./../apis/tweets.js";
 import { fromNowFilter } from "./../utils/mixins";
 
 export default {
+  computed: {},
   mixins: [fromNowFilter],
   data() {
     return {
@@ -139,7 +140,6 @@ export default {
         const response = await tweetsAPI.getAllTweet();
         const { data } = response;
         this.tweets = data;
-        console.log(this.tweets);
       } catch (error) {
         console.log(error);
       }
@@ -147,7 +147,6 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log(response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -166,7 +165,6 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        console.log(response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -182,20 +180,17 @@ export default {
         console.log(error);
       }
     },
-
     async postReplyHandler(tweetId) {
       try {
         const response = await tweetsAPI.postTweetReply({
           tweetId: tweetId,
-          description: this.replyMessage,
+          comment: this.replyMessage,
         });
-        console.log(response);
       } catch (error) {
         console.log(error);
       }
     },
     toReplyList(tweetId) {
-      console.log("toda");
       this.$router.push(`/home/tweet/${tweetId}`);
     },
   },

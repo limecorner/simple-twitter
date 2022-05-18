@@ -6,12 +6,12 @@
     <div class="setting-area">
       <div>帳戶設定</div>
       <form @submit.prevent.stop="handleSubmit">
-        <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+        <div class="form-wrapper mt-4" height="54px">
           <label for="account">帳號</label>
           <div>
             <input
               id="account"
-              v-model="account"
+              v-model="user.account"
               name="account"
               type="text"
               class="form"
@@ -31,7 +31,7 @@
           <div>
             <input
               id="name"
-              v-model="name"
+              v-model="user.name"
               name="name"
               type="text"
               class="form"
@@ -46,9 +46,9 @@
           <label for="account">Email</label>
           <div>
             <input
-              id="name"
-              v-model="email"
-              name="name"
+              id="email"
+              v-model="user.email"
+              name="email"
               type="email"
               class="form"
               placeholder="請輸入 Email"
@@ -90,6 +90,7 @@
 
         <div class="mt-4">
           <button
+            @click.prevent.stop="handleSubmit"
             :disabled="isProcessing"
             type="submit"
             class="btn btn-info btn-w88"
@@ -106,6 +107,7 @@
 
 <script>
 import NavBar from "./../components/NavBar.vue";
+import userAPI from "./../apis/users";
 
 export default {
   components: {
@@ -113,12 +115,50 @@ export default {
   },
   data() {
     return {
-      account: "",
-      name: "",
-      email: "",
+      user: {
+        id: "",
+        account: "",
+        name: "",
+        email: "",
+      },
       password: "",
       checkPassword: "",
+      isProcessing: false,
+      error: false,
+      errorMesssage: "帳號不存在",
     };
+  },
+
+  methods: {
+    async getAccountInfo() {
+      try {
+        const response = await userAPI.getAccountInfo();
+        console.log(response);
+        this.user = { ...response.data.user };
+        console.log(this.user);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async handleSubmit() {
+      try {
+        const response = await userAPI.putAccountInfo({
+          data: {
+            account: this.user.account,
+            name: this.user.name,
+            email: this.user.email,
+            password: this.password,
+            checkPassword: this.checkPassword,
+          },
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+  created() {
+    this.getAccountInfo();
   },
 };
 </script>

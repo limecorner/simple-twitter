@@ -144,6 +144,7 @@ export default {
 
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
+import userAPI from "./../apis/users";
 
 export default {
   data() {
@@ -172,12 +173,12 @@ export default {
         this.navbarHome = true;
         this.navbarprofile = false;
         this.navbarSetting = false;
-        this.$router.push(`/home/${this.$route.params.id}`);
+        this.$router.push(`/home/${this.id}`);
       } else if (name === "profile") {
         this.navbarHome = false;
         this.navbarprofile = true;
         this.navbarSetting = false;
-        this.$router.push(`/users/${this.$route.params.id}/tweets`);
+        this.$router.push(`/users/${this.id}/tweets`);
       } else if (name === "Setting") {
         this.navbarHome = false;
         this.navbarprofile = false;
@@ -189,8 +190,18 @@ export default {
       localStorage.setItem("token", "");
       this.$router.push("/login");
     },
+    async getAccountInfo() {
+      try {
+        const response = await userAPI.getAccountInfo();
+        this.id = response.data.user.id;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
-  created() {},
+  created() {
+    this.getAccountInfo();
+  },
 };
 </script>
 
