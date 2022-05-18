@@ -16,8 +16,7 @@
       </div>
       <div>
         <p>{{ tweet.description }}</p>
-        <p>待後續: 補發推特的時間</p>
-        <!-- {{  tweet.createdAt | fromNow }} -->
+        <p>{{ tweet.createdAt | fromNow }}</p>
       </div>
       <div>
         <span>{{ tweet.replyCount }} 回覆 </span>
@@ -150,6 +149,7 @@ export default {
         avatar: "",
         name: "",
       },
+      replies: [],
     };
   },
   methods: {
@@ -157,8 +157,8 @@ export default {
       try {
         const response = await tweetsAPI.getTweetDetail(tweetId);
         const { data } = response;
-        console.log(data);
         this.tweet = data;
+        console.log("tweet", data);
         this.user = {
           account: data.User.account,
           avatar: data.User.avatar,
@@ -197,10 +197,20 @@ export default {
         console.log(error);
       }
     },
+    async fetchTweetReplies(tweetId) {
+      try {
+        const response = await tweetsAPI.getTweetreplies(tweetId);
+        this.replies = response.data;
+        console.log(this.replies);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   created() {
     this.tweetId = this.$route.params.id;
     this.fetchTweetData(this.tweetId);
+    this.fetchTweetReplies(this.tweetId);
   },
 };
 </script>
