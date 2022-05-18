@@ -23,11 +23,15 @@
           </div>
           <div class="icon-group">
             <img
+              v-if="!like.isLiked"
+              @click.prevent.stop="addlike(like.TweetId)"
               class="icon"
               src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
               alt=""
             />
             <img
+              v-else
+              @click.prevent.stop="unlike(like.TweetId)"
               class="icon"
               src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
               alt=""
@@ -43,6 +47,9 @@
 <script>
 import usersAPI from "./../apis/users";
 import { fromNowFilter } from "./../utils/mixins";
+import { Toast } from "./../utils/helpers";
+import tweetsAPI from "./../apis/tweets.js";
+
 const dummyData = {
   likes: [
     {
@@ -50,6 +57,7 @@ const dummyData = {
       createdAt: new Date(),
       replyCount: 1,
       likeCount: 1,
+      isLiked: true,
       Tweet: {
         description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
         User: {
@@ -63,8 +71,9 @@ const dummyData = {
     {
       TweetId: 2,
       createdAt: new Date(),
-      replyCounts: 2,
-      likeCounts: 2,
+      replyCount: 2,
+      likeCount: 2,
+      isLiked: true,
       Tweet: {
         description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
         User: {
@@ -78,8 +87,9 @@ const dummyData = {
     {
       TweetId: 3,
       createdAt: new Date(),
-      replyCounts: 3,
-      likeCounts: 3,
+      replyCount: 3,
+      likeCount: 3,
+      isLiked: true,
       Tweet: {
         description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
         User: {
@@ -120,6 +130,49 @@ export default {
 
         // this.likes = dummyData.likes;
         // console.log("likes", this.likes);
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "沒有喜歡的推文",
+        });
+        console.log(error);
+      }
+    },
+    async addlike(tweetId) {
+      try {
+        const response = await tweetsAPI.likeTweet(tweetId);
+        console.log("addLike response", response);
+        this.likes = this.likes.map((like) => {
+          if (like.TweetId === tweetId) {
+            return {
+              ...like,
+              likeCount: like.likeCount + 1,
+              isLiked: true,
+            };
+          } else {
+            return like;
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async unlike(tweetId) {
+      try {
+        const response = await tweetsAPI.unlikeTweet(tweetId);
+        console.log("unlike response", response);
+        this.likes = this.likes.map((like) => {
+          if (like.TweetId === tweetId) {
+            return {
+              ...like,
+              likeCount: like.likeCount - 1,
+              isLiked: false,
+            };
+          } else {
+            return like;
+          }
+        });
+        this.likes = this.likes.filter((like) => like.TweetId !== tweetId);
       } catch (error) {
         console.log(error);
       }

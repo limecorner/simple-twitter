@@ -188,6 +188,7 @@ export default {
     },
     logoutHandler() {
       localStorage.setItem("token", "");
+      this.$store.commit("revokeAuthentication");
       this.$router.push("/login");
     },
     async getAccountInfo() {

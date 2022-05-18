@@ -9,6 +9,7 @@ import login from "./../views/loginPage"
 import UserFollowShip from "./../views/UserFollowShip"
 import UserFollowers from "./../components/UserFollowers"
 import UserFollowings from "./../components/UserFollowings"
+import store from './../store'
 
 
 Vue.use(VueRouter)
@@ -90,6 +91,11 @@ const routes = [
 
   },
   {
+    path: "/admin/user",
+    name: "admimUser",
+    component: () => import('./../views/admimUser')
+  },
+  {
     path: '/home/:id',
     name: 'home',
     component: () => import('./../views/mainPage')
@@ -103,6 +109,13 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  // console.log('beforeEach to', to)
+  // console.log('beforeEach from', from)
+  store.dispatch('fetchCurrentUser')
+  next()
 })
 
 export default router

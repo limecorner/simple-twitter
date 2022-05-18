@@ -21,6 +21,7 @@
 <script>
 import usersAPI from "./../apis/users";
 import { fromNowFilter } from "./../utils/mixins";
+import { Toast } from "./../utils/helpers";
 const dummyData = {
   replies: [
     {
@@ -102,6 +103,10 @@ export default {
         // this.replies = dummyData.replies;
         // console.log("replies", this.replies);
       } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "沒有回覆過的推文",
+        });
         console.log(error);
       }
     },

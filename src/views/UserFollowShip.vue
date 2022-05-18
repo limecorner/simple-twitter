@@ -74,12 +74,12 @@ export default {
     async fetchClickedUser(userId) {
       try {
         const response = await usersAPI.getUser(userId);
-        console.log(
-          "clickedUser response:",
-          response,
-          "clickedUser id:",
-          response.data.id
-        );
+        // console.log(
+        //   "clickedUser response:",
+        //   response,
+        //   "clickedUser id:",
+        //   response.data.id
+        // );
         const { data } = response;
         this.user = data;
         // 改名;
