@@ -261,25 +261,23 @@ export default {
     ...mapState(["currentUser"]),
   },
   created() {
-    this.userId = this.$route.params.id; // id從首頁來
+    this.userId = this.$route.params.id; // 點頁籤前看到的網址
     // this.userId = 14; // id從首頁來
     console.log("UserPage created this.$route.params.id ", this.userId);
     this.fetchClickedUser(this.userId);
     this.fetchCurrentUserInfo();
   },
   beforeRouteUpdate(to, from, next) {
-    console.log(" this.$route.params.id", this.$route.params.id);
-    console.log(" to.params", to.params.id);
+    console.log("this.$route.params.id", this.$route.params.id);
+    console.log("to.params", to.params.id);
 
-    this.userId = this.$route.params.id;
     const { id } = to.params;
-    // console.log("beforeRouteUpdate clickedUser id", this.userId);
+
+    // 若點頁籤前後的userId不同
     if (Number(this.$route.params.id) !== Number(id)) {
-      this.fetchClickedUser(id);
-    } else {
+      this.userId = id; // userId 給新值
       this.fetchClickedUser(this.userId);
     }
-
     next();
   },
   methods: {

@@ -9,8 +9,11 @@
           <img class="avatar" :src="reply.Tweet.User.avatar" alt="" />
         </router-link>
       </div>
-
       <div class="col-11">
+        <!-- <router-link
+        class="col-11"
+        :to="{ name: 'tweetMessage', params: { id: reply.id } }"
+      > -->
         <div class="row pl-2">
           <h5 class="user-name">{{ reply.User.name }}</h5>
           <h6 class="account-time">
@@ -33,6 +36,7 @@
         <div class="row pl-2">
           <p class="comment">{{ reply.comment }}</p>
         </div>
+        <!-- </router-link> -->
       </div>
     </div>
   </div>

@@ -13,15 +13,23 @@
       </div>
 
       <div class="col-11">
-        <div class="row">
+        <router-link
+          class="row"
+          :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
+        >
           <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
           <h6 class="account-time">
             @{{ tweet.User.account }} · {{ tweet.createdAt | fromNow }}
           </h6>
-        </div>
-        <div class="row">
+        </router-link>
+
+        <router-link
+          class="row"
+          :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
+        >
           <p class="description">{{ tweet.description }}</p>
-        </div>
+        </router-link>
+
         <!-- style="outline: 1px black solid" -->
         <div class="row">
           <div class="icon-group mr-5">
@@ -29,8 +37,9 @@
               class="icon"
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
+              :id="tweet.id"
               data-toggle="modal"
-              data-target="#replyTwitterModal"
+              :data-target="'#replyTwitterModal' + tweet.id"
             />
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
@@ -54,12 +63,11 @@
           </div>
         </div>
       </div>
-
       <!-- Modal -->
       <div>
         <div
           class="modal fade"
-          id="replyTwitterModal"
+          :id="'replyTwitterModal' + tweet.id"
           tabindex="-1"
           role="dialog"
           aria-labelledby="replyTwitterModal"
@@ -78,11 +86,7 @@
               <div class="row p-2">
                 <div class="col-1">
                   <div class="avatar-container pl-4">
-                    <img
-                      class="avatar"
-                      src="https://loremflickr.com/280/280/"
-                      alt=""
-                    />
+                    <img class="avatar" :src="tweet.User.avatar" alt="" />
                   </div>
                   <div
                     class="ml-4 mt-3"
@@ -94,13 +98,14 @@
                   <div class="row pl-4">
                     <div>
                       <div>
-                        <span class="user-name">Apple{{ tweet.name }}</span>
+                        <span class="user-name">{{ tweet.User.name }}</span>
                         <span class="account-time"
-                          >@apple{{ tweet.account }} · 3小時</span
-                        >
+                          >@{{ tweet.User.account }} ·
+                          {{ tweet.createdAt | fromNow }}
+                        </span>
                       </div>
                       <p class="description">
-                        Hi, we are twitter teammates.{{ tweet.tweetText }}
+                        {{ tweet.description }}
                       </p>
 
                       <p class="account-time">
@@ -113,7 +118,7 @@
                             line-height: 22px;
                           "
                         >
-                          @Mitsubushi
+                          @{{ tweet.User.account }}
                         </span>
                       </p>
                     </div>
@@ -124,11 +129,7 @@
               <div class="p-2 row">
                 <div class="col-1">
                   <div class="avatar-container pl-4">
-                    <img
-                      class="avatar"
-                      src="https://loremflickr.com/280/280/"
-                      alt=""
-                    />
+                    <img class="avatar" :src="currentUser.avatar" alt="" />
                   </div>
                 </div>
                 <div class="col-11">
@@ -137,6 +138,7 @@
                       <textarea
                         cols="45"
                         rows="8"
+                        v-model="replyMessage"
                         placeholder="推你的回覆"
                         required
                       ></textarea>
@@ -144,9 +146,18 @@
                         class="d-flex justify-content-end"
                         style="width: 430px"
                       >
+                        <span v-show="replyMessage.length > 140"
+                          >錯誤提示文字:字數不可超過140字
+                        </span>
+                        <span
+                          v-show="blankContent && replyMessage.length === 0"
+                        >
+                          錯誤提示文字:內容不可空白
+                        </span>
+
                         <button
                           type="button"
-                          @click.prevent.stop="postTweetModal"
+                          @click.prevent.stop="postReplyHandler(tweet.id)"
                           class="replyBtn"
                         >
                           回覆
@@ -170,6 +181,7 @@ import usersAPI from "./../apis/users";
 import { fromNowFilter } from "./../utils/mixins";
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
+import { mapState } from "vuex";
 
 const dummyData = {
   tweets: [
@@ -223,10 +235,16 @@ export default {
   data() {
     return {
       tweets: [],
+      replyMessage: "",
+      isLike: "",
+      blankContent: false,
     };
   },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   created() {
-    const userId = this.$route.params.id;
+    const userId = this.$route.params.id; // 點大頭貼連錯了
     console.log("tweet this.$route.params.id", userId);
     this.fetchTweets(userId);
   },
@@ -284,6 +302,33 @@ export default {
             return tweet;
           }
         });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async postReplyHandler(tweetId) {
+      try {
+        if (this.replyMessage.trim().length === 0) {
+          this.blankContent = true;
+          return;
+        }
+        if (this.replyMessage.length > 140) return;
+        const response = await tweetsAPI.postTweetReply({
+          tweetId: tweetId,
+          comment: this.replyMessage,
+        });
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              replyCount: Number(tweet.replyCount) + 1,
+            };
+          } else {
+            return tweet;
+          }
+        });
+        this.replyMessage = "";
+        this.blankContent = false;
       } catch (error) {
         console.log(error);
       }

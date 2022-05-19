@@ -62,11 +62,13 @@ export default {
     this.fetchClickedUser(this.userId);
   },
   beforeRouteUpdate(to, from, next) {
-    // const { id } = from.params;
-    const id = this.$route.params.id;
+    const { id } = to.params;
 
-    this.userId = id;
-    console.log("beforeRouteUpdate clickedUser id", this.userId);
+    // 若點頁籤前後的userId不同
+    if (Number(this.$route.params.id) !== Number(id)) {
+      this.userId = id; // userId 給新值
+      this.fetchClickedUser(this.userId);
+    }
     next();
   },
 
