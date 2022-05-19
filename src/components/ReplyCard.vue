@@ -1,18 +1,38 @@
 <template>
   <div>
-    <div v-for="reply in replies" :key="reply.id" class="reply-card">
-      <router-link
-        :to="{ name: 'user-tweets', params: { id: reply.Tweet.User.id } }"
-      >
-        <img class="avatar mr-2" :src="reply.Tweet.User.avatar" alt="" />
-      </router-link>
-      <div>
-        <div class="d-flex">
-          <h4>{{ reply.User.name }}</h4>
-          <p>{{ reply.User.account }} {{ reply.createdAt | fromNow }}</p>
+    <div v-for="reply in replies" :key="reply.id" class="reply-card row">
+      <div class="col-1">
+        <router-link
+          class="avatar-container"
+          :to="{ name: 'user-tweets', params: { id: reply.Tweet.User.id } }"
+        >
+          <img class="avatar" :src="reply.Tweet.User.avatar" alt="" />
+        </router-link>
+      </div>
+
+      <div class="col-11">
+        <div class="row pl-2">
+          <h5 class="user-name">{{ reply.User.name }}</h5>
+          <h6 class="account-time">
+            @{{ reply.User.account }} · {{ reply.createdAt | fromNow }}
+          </h6>
         </div>
-        <p>回復 {{ reply.Tweet.User.account }}</p>
-        <p>{{ reply.comment }}</p>
+        <div class="row pl-2">
+          <span class="account-time" style="margin-left: 0px">回覆</span>
+          <span
+            class="repliedAccount"
+            style="
+              color: #ff6600;
+              font-family: 'Roboto', sans-serif;
+              margin-left: 5px;
+              line-height: 22px;
+            "
+            >@{{ reply.Tweet.User.account }}</span
+          >
+        </div>
+        <div class="row pl-2">
+          <p class="comment">{{ reply.comment }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -84,14 +104,14 @@ export default {
   },
   created() {
     const repliedUserId = this.$route.params.id;
-    console.log("reply clickedUser id", repliedUserId);
+    console.log("reply this.$route.params.id", repliedUserId);
     this.fetchReplies(repliedUserId);
   },
   methods: {
     async fetchReplies(userId) {
       try {
         const response = await usersAPI.getUserReplies(userId);
-        console.log("reply response", response);
+        // console.log("reply response", response);
         const { data } = response;
 
         if (data.status === "error") {
@@ -119,25 +139,69 @@ export default {
 .reply-card {
   display: flex;
   border: solid 1px #e6ecf0;
-  padding: 10px 20px;
+  padding: 10px 10px;
 }
 
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.avatar:hover {
+  cursor: pointer;
+}
 .avatar {
-  width: 50px;
-  height: 50px;
+  max-width: 60px;
+  align-self: center;
   border-radius: 50%;
 }
 
+.user-name:hover {
+  cursor: pointer;
+}
+.user-name {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+.account-time:hover {
+  color: #808080;
+  cursor: default;
+}
+.account-time {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+  margin-left: 5px;
+  line-height: 22px;
+}
+
 .icon-group {
-  outline: solid 1px green;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 38px;
 }
 
+.icon:hover {
+  cursor: pointer;
+}
 .icon {
   width: 13px;
   height: 13px;
+}
+
+.comment:hover {
+  cursor: pointer;
+}
+.comment {
+  font-family: "Roboto", sans-serif;
+}
+
+.repliedAccount:hover {
+  cursor: pointer;
 }
 </style>

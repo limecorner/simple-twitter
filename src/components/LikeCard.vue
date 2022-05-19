@@ -1,18 +1,26 @@
 <template>
   <div>
-    <div v-for="like in likes" :key="like.TweetId" class="like-card">
-      <router-link
-        :to="{ name: 'user-tweets', params: { id: like.Tweet.User.id } }"
-      >
-        <img class="avatar mr-2" :src="like.Tweet.User.avatar" alt="" />
-      </router-link>
-      <div>
-        <div class="d-flex">
-          <h4>{{ like.Tweet.User.name }}</h4>
-          <p>{{ like.Tweet.User.account }} {{ like.createdAt | fromNow }}</p>
+    <div v-for="like in likes" :key="like.TweetId" class="like-card row">
+      <div class="col-1">
+        <router-link
+          class="avatar-container"
+          :to="{ name: 'user-tweets', params: { id: like.Tweet.User.id } }"
+        >
+          <img class="avatar mr-2" :src="like.Tweet.User.avatar" alt="" />
+        </router-link>
+      </div>
+
+      <div class="col-11">
+        <div class="row">
+          <h5 class="user-name text-center">{{ like.Tweet.User.name }}</h5>
+          <h6 class="account-time">
+            @{{ like.Tweet.User.account }} · {{ like.createdAt | fromNow }}
+          </h6>
         </div>
-        <p>{{ like.Tweet.description }}</p>
-        <div class="d-flex">
+        <div class="row">
+          <p>{{ like.Tweet.description }}</p>
+        </div>
+        <div class="row">
           <div class="icon-group mr-5">
             <img
               class="icon"
@@ -112,14 +120,14 @@ export default {
   },
   created() {
     const likedUserId = this.$route.params.id;
-    console.log("like clickedUser id", likedUserId);
+    console.log("like clickedUser id", this.$route.params.id);
     this.fetchLikes(likedUserId);
   },
   methods: {
     async fetchLikes(userId) {
       try {
         const response = await usersAPI.getUserLikes(userId);
-        console.log("like response", response);
+        // console.log("like response", response);
         const { data } = response;
 
         if (data.status === "error") {
@@ -188,22 +196,67 @@ export default {
   padding: 10px 20px;
 }
 
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.avatar {
+  max-width: 60px;
+  align-self: center;
+  border-radius: 50%;
+}
+
+.icon-group {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 38px;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+.icon {
+  width: 13px;
+  height: 13px;
+}
+
+.user-name:hover {
+  cursor: pointer;
+}
+.user-name {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+.account-time:hover {
+  color: #808080;
+  cursor: default;
+}
+.account-time {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+  margin-left: 5px;
+  line-height: 22px;
+}
+
+.avatar:hover {
+  cursor: pointer;
+}
 .avatar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
 
-.icon-group {
-  outline: solid 1px green;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 38px;
+.description:hover {
+  cursor: pointer;
 }
-
-.icon {
-  width: 13px;
-  height: 13px;
+.description {
+  font-family: "Roboto", sans-serif;
 }
 </style>

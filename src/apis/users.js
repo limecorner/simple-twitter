@@ -48,9 +48,14 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
-  editCurrentUserInfo(userId) {
+  getOriginalInfo() {
+    return apiHelper.get(`/users/edit_page`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  editCurrentUserInfo(userId, formData) {
     return apiHelper.put(`/users/${userId
-      }`, {
+      }`, formData, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },

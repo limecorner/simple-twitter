@@ -10,7 +10,11 @@
           <div>上頁</div>
           <div class="ml-4">
             <h3 class="font-weight-bold font-size-18">
-              {{ user.name }}
+              {{
+                Number(currentUser.id) === Number(userId)
+                  ? currentUserInfo.name
+                  : user.name
+              }}
             </h3>
             <p class="text-secondary font-size-14">
               {{ user.tweetCount }} 推文
@@ -18,8 +22,24 @@
           </div>
         </div>
         <div class="image-wrapper mb-3">
-          <img class="cover-image" :src="user.cover_image" alt="" />
-          <img class="avatar" :src="user.avatar" alt="" />
+          <img
+            class="cover-image"
+            :src="
+              Number(currentUser.id) === Number(userId)
+                ? currentUserInfo.cover_image
+                : user.cover_image
+            "
+            alt=""
+          />
+          <img
+            class="avatar"
+            :src="
+              Number(currentUser.id) === Number(userId)
+                ? currentUserInfo.avatar
+                : user.cover_image
+            "
+            alt=""
+          />
         </div>
         <div class="d-flex justify-content-end">
           <!-- user-info-edit-modal btn-->
@@ -35,11 +55,21 @@
 
         <div>
           <div>
-            <h4 class="font-size-18">{{ user.name }}</h4>
+            <h4 class="font-size-18">
+              {{
+                Number(currentUser.id) === Number(userId)
+                  ? currentUserInfo.name
+                  : user.name
+              }}
+            </h4>
             <p class="font-size-14">{{ user.account }}</p>
           </div>
           <p>
-            {{ user.introduction }}
+            {{
+              Number(currentUser.id) === Number(userId)
+                ? currentUserInfo.introduction
+                : user.introduction
+            }}
           </p>
           <div class="d-flex">
             <router-link
@@ -76,8 +106,8 @@
             >回覆</router-link
           >
           <router-link :to="{ name: 'user-likes', params: { id: userId } }"
-            >喜歡的內容</router-link
-          >
+            >喜歡的內容
+          </router-link>
         </div>
         <router-view />
       </div>
@@ -110,22 +140,43 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="">
+          <form
+            @submit.stop.prevent="handleSubmit"
+            method="PUT"
+            enctype="multipart/form-data"
+          >
             <div class="image-wrapper mb-5">
+              <!-- <label for="image">Image</label> -->
+              <input
+                id="image1"
+                type="file"
+                name="cover_image"
+                accept="image/*"
+                class="form-control-file"
+                @change="handleFile1Change"
+              />
               <img
-                class="cover_image"
-                :src="currentUser.cover_image"
+                class="cover-image"
+                :src="currentUserInfo.cover_image"
                 style="width: 498px"
                 alt=""
               />
-              <img class="avatar" :src="currentUser.avatar" alt="" />
+              <input
+                id="image2"
+                type="file"
+                name="avatar"
+                accept="image/*"
+                class="form-control-file"
+                @change="handleFile2Change"
+              />
+              <img class="avatar" :src="currentUserInfo.avatar" alt="" />
             </div>
             <div>
-              <label for="account"></label>
+              <label for="name"></label>
               <div class="form-wrapper mt-2">
                 <input
                   id="name"
-                  v-model="currentUser.name"
+                  v-model="currentUserInfo.name"
                   name="name"
                   type="text"
                   class="form"
@@ -138,7 +189,7 @@
               <div class="form-wrapper mt-2">
                 <textarea
                   id="introduction"
-                  v-model="currentUser.introduction"
+                  v-model="currentUserInfo.introduction"
                   name="introduction"
                   type="text"
                   class="form"
@@ -147,14 +198,14 @@
                 ></textarea>
               </div>
             </div>
-
-            <button
+            <input type="submit" value="儲存" />
+            <!-- <button
               @click.stop.prevent="editInfo"
-              type="button"
+              type="submit"
               class="btn btn-info btn-w64"
             >
               儲存
-            </button>
+            </button> -->
           </form>
           <div class="modal-footer"></div>
         </div>
@@ -198,6 +249,12 @@ export default {
       name: "",
       introduction: "",
       userId: 1, // 此 userId 是 clickedUser 的
+      currentUserInfo: {
+        cover_image: "",
+        avatar: "",
+        name: "",
+        introduction: "",
+      },
     };
   },
   computed: {
@@ -206,15 +263,23 @@ export default {
   created() {
     this.userId = this.$route.params.id; // id從首頁來
     // this.userId = 14; // id從首頁來
-    console.log("UserPage created clickedUser id ", this.userId);
+    console.log("UserPage created this.$route.params.id ", this.userId);
     this.fetchClickedUser(this.userId);
+    this.fetchCurrentUserInfo();
   },
   beforeRouteUpdate(to, from, next) {
-    const id = this.$route.params.id;
+    console.log(" this.$route.params.id", this.$route.params.id);
+    console.log(" to.params", to.params.id);
 
-    this.userId = id;
-    console.log("beforeRouteUpdate clickedUser id", this.userId);
-    this.fetchClickedUser(this.userId);
+    this.userId = this.$route.params.id;
+    const { id } = to.params;
+    // console.log("beforeRouteUpdate clickedUser id", this.userId);
+    if (Number(this.$route.params.id) !== Number(id)) {
+      this.fetchClickedUser(id);
+    } else {
+      this.fetchClickedUser(this.userId);
+    }
+
     next();
   },
   methods: {
@@ -225,16 +290,74 @@ export default {
         this.user = data;
 
         // this.user = dummyUser.user;
-        console.log("UserPage user", this.user);
+        // console.log("UserPage user", this.user);
       } catch (error) {
         console.log(error);
       }
     },
+    async fetchCurrentUserInfo() {
+      try {
+        const response = await usersAPI.getOriginalInfo();
+        // console.log("fetchCurrentUserInfo", response);
+        const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.currentUserInfo = { ...data.user };
+        // console.log("currentUserInfo", this.currentUserInfo);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    handleFile1Change(e) {
+      const files = e.target.files;
+      console.log("files", files);
+      if (files.length === 0) {
+        // 使用者沒有選擇上傳的檔案
+        this.currentUserInfo.cover_image = "";
+        return;
+      } else {
+        // 否則產生預覽圖
+        const imageURL = window.URL.createObjectURL(files[0]);
+        this.currentUserInfo.cover_image = imageURL;
+      }
+    },
+    handleFile2Change(e) {
+      const files = e.target.files;
+      console.log("files", files);
+      if (files.length === 0) {
+        // 使用者沒有選擇上傳的檔案
+        this.currentUserInfo.avatar = "";
+        return;
+      } else {
+        // 否則產生預覽圖
+        const imageURL = window.URL.createObjectURL(files[0]);
+        this.currentUserInfo.avatar = imageURL;
+      }
+    },
 
-    async editInfo() {
-      const response = await usersAPI.editCurrentUserInfo(this.currentUser.id);
-      console.log("editInfo");
-      // console.log("editInfo", response.data);
+    async handleSubmit(e) {
+      const form = e.target;
+      const formData = new FormData(form);
+      console.log("this.currentUser.id", this.currentUser.id);
+      // console.log("formData", formData);
+      for (let [name, value] of formData.entries()) {
+        console.log(name + ": " + value);
+      }
+      const response = await usersAPI.editCurrentUserInfo(
+        this.currentUser.id,
+        formData
+      );
+      console.log("handleSubmit", response);
+      const { avatar, cover_image, name, introduction } = response.data;
+      this.currentUserInfo = {
+        ...this.currentUserInfo,
+        avatar,
+        cover_image,
+        name,
+        introduction,
+      };
+      console.log("currentUserInfo", this.currentUserInfo);
     },
   },
 };

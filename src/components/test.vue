@@ -17,27 +17,23 @@
         <div class="p-1 d-flex justify-content-between align-items-center">
           <h5 class="font-size-18">{{ follower.name }}</h5>
 
-          <template
-            v-if="Number(currentUser.id) !== Number(follower.followerId)"
+          <button
+            class="btn-not-following"
+            v-if="!follower.isFollowing"
+            @click.prevent.stop="addFollowing(follower.followerId)"
           >
-            <button
-              v-if="!follower.isFollowing"
-              class="btn-not-following"
-              @click.prevent.stop="addFollowing(follower.followerId)"
-            >
-              <!-- addFollowing(this.currentUser.id) -->
-              跟隨
-            </button>
-            <button
-              v-else
-              class="btn-is-following"
-              @click.prevent.stop="deleteFollowing(follower.followerId)"
-            >
-              正在跟隨
-            </button>
-          </template>
+            <!-- addFollowing(this.currentUser.id) -->
+            跟隨
+          </button>
+          <button
+            class="btn-is-following"
+            v-else
+            @click.prevent.stop="deleteFollowing(follower.followerId)"
+          >
+            正在跟隨
+          </button>
         </div>
-        <div>
+        <div class="p-1 font-size-16">
           <p>{{ follower.introduction }}</p>
         </div>
       </div>
@@ -85,7 +81,7 @@ export default {
   data() {
     return {
       followers: [],
-      // currentUserFollowers: [],
+      currentUserFollowers: [],
     };
   },
   computed: {
@@ -94,7 +90,9 @@ export default {
   created() {
     const userId = this.$route.params.id;
     console.log("followers userId", userId);
+    this.fetchCurrentUserFollowers(this.currentUser.id);
     this.fetchFollowers(userId);
+    // 這樣顯示部分會錯
   },
   methods: {
     async fetchFollowers(userId) {
@@ -106,6 +104,25 @@ export default {
           throw new Error(data.message);
         }
         this.followers = data;
+        // this.followers = dummyData.followers;
+        // console.log(this.followers);
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "沒有粉絲名單",
+        });
+        console.log(error);
+      }
+    },
+    async fetchCurrentUserFollowers(userId) {
+      try {
+        const response = await usersAPI.getUserFollowers(userId);
+        console.log("follower response", response);
+        const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.currentUserFollowers = data;
         // this.followers = dummyData.followers;
         // console.log(this.followers);
       } catch (error) {
@@ -154,11 +171,6 @@ export default {
         const response = await usersAPI.addUserFollowing(followerId);
         console.log("addFollowing response", response);
 
-        const { data } = response;
-        if (data.status === "error") {
-          throw new Error(data.message);
-        }
-
         this.followers = this.followers.map((follower) => {
           if (follower.followerId === followerId) {
             return {
@@ -169,10 +181,15 @@ export default {
             return follower;
           }
         });
+
+        // const { data } = response;
+        // if (data.status === "error") {
+        //   throw new Error(data.message);
+        // }
       } catch (error) {
         Toast.fire({
           icon: "error",
-          title: "無法追蹤",
+          title: "無法取消追蹤",
         });
         console.log(error);
       }
