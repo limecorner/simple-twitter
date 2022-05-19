@@ -2,17 +2,28 @@
   <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
   <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
   <div>
-    <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-      <router-link :to="{ name: 'user-tweets', params: { id: tweet.User.id } }">
-        <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
-      </router-link>
-      <div>
-        <div class="d-flex">
-          <h4>{{ tweet.User.name }}</h4>
-          <p>{{ tweet.User.account }} {{ tweet.createdAt | fromNow }}</p>
+    <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card row">
+      <div class="col-1">
+        <router-link
+          class="avatar-container"
+          :to="{ name: 'user-tweets', params: { id: tweet.User.id } }"
+        >
+          <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+        </router-link>
+      </div>
+
+      <div class="col-11">
+        <div class="row">
+          <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
+          <h6 class="account-time">
+            @{{ tweet.User.account }} · {{ tweet.createdAt | fromNow }}
+          </h6>
         </div>
-        <p>{{ tweet.description }}</p>
-        <div class="d-flex">
+        <div class="row">
+          <p class="description">{{ tweet.description }}</p>
+        </div>
+        <!-- style="outline: 1px black solid" -->
+        <div class="row">
           <div class="icon-group mr-5">
             <img
               class="icon"
@@ -23,7 +34,7 @@
             />
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
-          .
+
           <div class="icon-group">
             <img
               v-if="!tweet.isLiked"
@@ -57,57 +68,94 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title">
-                  後續 不需要文字 且 將關閉"X"符號 往左邊移動
-                </h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-
-              <div>
-                <div class="d-flex">
-                  <div>
-                    <img class="avatar" :src="tweet.avatar" alt="" />
-                  </div>
-                  <div>
-                    <div>
-                      <span>{{ tweet.name }}</span>
-                      <span> @{{ tweet.account }} </span>
-                      <span>
-                        待後續: 補發推特的時間
-                        <!-- {{  tweet.createdAt | fromNow }} -->
-                      </span>
-                    </div>
-                    <p>{{ tweet.tweetText }}</p>
-                    <p>回覆給@{{ tweet.account }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <form action="">
                 <div>
-                  <p>這邊要放當前使用者頭像</p>
-                  <textarea
-                    cols="40"
-                    rows="5"
-                    placeholder="推你的回覆"
-                    required
-                  ></textarea>
+                  <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  @click.prevent.stop="postTweetModal"
-                  class="btn btn-info btn-w64"
-                >
-                  推文
-                </button>
-              </form>
+              </div>
+
+              <div class="row p-2">
+                <div class="col-1">
+                  <div class="avatar-container pl-4">
+                    <img
+                      class="avatar"
+                      src="https://loremflickr.com/280/280/"
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    class="ml-4 mt-3"
+                    style="border-left: 2px solid #92929d; height: 45%"
+                  ></div>
+                </div>
+
+                <div class="col-11">
+                  <div class="row pl-4">
+                    <div>
+                      <div>
+                        <span class="user-name">Apple{{ tweet.name }}</span>
+                        <span class="account-time"
+                          >@apple{{ tweet.account }} · 3小時</span
+                        >
+                      </div>
+                      <p class="description">
+                        Hi, we are twitter teammates.{{ tweet.tweetText }}
+                      </p>
+
+                      <p class="account-time">
+                        回覆給
+                        <span
+                          class="repliedAccount"
+                          style="
+                            color: #ff6600;
+                            font-family: 'Roboto', sans-serif;
+                            line-height: 22px;
+                          "
+                        >
+                          @Mitsubushi
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-2 row">
+                <div class="col-1">
+                  <div class="avatar-container pl-4">
+                    <img
+                      class="avatar"
+                      src="https://loremflickr.com/280/280/"
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div class="col-11">
+                  <div class="d-flex justify-content-center">
+                    <form class="pl-3">
+                      <textarea
+                        cols="45"
+                        rows="8"
+                        placeholder="推你的回覆"
+                        required
+                      ></textarea>
+                      <div
+                        class="d-flex justify-content-end"
+                        style="width: 430px"
+                      >
+                        <button
+                          type="button"
+                          @click.prevent.stop="postTweetModal"
+                          class="replyBtn"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -179,14 +227,14 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("tweet clickedUser id", userId);
+    console.log("tweet this.$route.params.id", userId);
     this.fetchTweets(userId);
   },
   methods: {
     async fetchTweets(userId) {
       try {
         const response = await usersAPI.getUserTweets(userId);
-        console.log("tweet response", response);
+        // console.log("tweet response", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -251,22 +299,110 @@ export default {
   padding: 10px 20px;
 }
 
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.avatar {
+  max-width: 60px;
+  align-self: center;
+  border-radius: 50%;
+}
+
+.icon-group {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 38px;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+.icon {
+  width: 13px;
+  height: 13px;
+}
+
+.user-name:hover {
+  cursor: pointer;
+}
+.user-name {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+.account-time:hover {
+  color: #808080;
+  cursor: default;
+}
+.account-time {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+  margin-left: 5px;
+  line-height: 22px;
+}
+
+.avatar:hover {
+  cursor: pointer;
+}
 .avatar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
 
-.icon-group {
-  outline: solid 1px green;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 38px;
+.description:hover {
+  cursor: default;
+}
+.description {
+  font-family: "Roboto", sans-serif;
 }
 
-.icon {
-  width: 13px;
-  height: 13px;
+/* modal */
+.close {
+  color: orangered;
+  font-size: 45px;
+  line-height: 18px;
+  padding-left: 5px;
+}
+.modal-header {
+  height: 50px;
+  padding-left: 0px;
+}
+
+.modal-content {
+  width: 500px;
+}
+
+.replyBtn {
+  outline: none;
+  width: 15%;
+  height: 40px;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
+}
+
+textarea {
+  margin-top: 10px;
+  outline: none;
+  resize: none;
+  border-color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+}
+textarea::placeholder {
+  font-family: "Roboto", sans-serif;
+  color: #92929d;
+  font-weight: 400;
+  font-size: 14px;
 }
 </style>
