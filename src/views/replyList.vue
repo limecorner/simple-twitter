@@ -8,7 +8,9 @@
       <div class="home-title">← 推文</div>
 
       <div class="d-flex">
-        <img class="avatar" :src="user.avatar" alt="" />
+        <router-link :to="{ name: 'user-tweets', params: { id: UserId } }">
+          <img class="avatar" :src="user.avatar" alt="" />
+        </router-link>
         <div>
           <div>{{ user.name }}</div>
           <div>@{{ user.account }}</div>
@@ -81,8 +83,7 @@
                       <span>{{ user.name }}</span>
                       <span> @{{ user.account }} </span>
                       <span>
-                        待後續: 補發推特的時間
-                        <!-- {{  tweet.createdAt | fromNow }} -->
+                        {{ tweet.createdAt | fromNow }}
                       </span>
                     </div>
                     <p>{{ tweet.description }}</p>
@@ -117,9 +118,63 @@
       <!-- Modal -->
 
       <!-- 巢狀路由 -->
-      <showTweetReply :postTweetAccount="user.account" />
-    </section>
+      <div>
+        <div v-for="reply in replies" :key="reply.id" class="tweet-card">
+          <router-link
+            :to="{
+              name: 'user-tweets',
+              params: { id: reply.UserId },
+            }"
+          >
+            <img class="avatar mr-2" :src="reply.User.avatar" alt="" />
+          </router-link>
+          <div>
+            <div class="d-flex">
+              <h4>{{ reply.User.name }}</h4>
+              <p>@{{ reply.User.account }} {{ reply.createdAt | fromNow }}</p>
+            </div>
 
+            <div>
+              <p>回覆@{{ user.account }}</p>
+            </div>
+
+            <div>
+              <p>
+                {{ reply.comment }}
+              </p>
+            </div>
+
+            <div class="d-flex">
+              <div class="icon-group mr-5">
+                <img
+                  class="icon"
+                  src="https://i.postimg.cc/3Rb08d24/message.png"
+                  alt=""
+                />
+                <p class="font-size-14 m-0">13</p>
+              </div>
+
+              <div class="icon-group">
+                <img
+                  class="icon"
+                  src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
+                  alt=""
+                />
+                <img
+                  v-if="false"
+                  class="icon"
+                  src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
+                  alt=""
+                />
+                <p class="font-size-14 m-0">76</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 巢狀路由 -->
+    </section>
     <!-- PopularUsers -->
     <PopularUsers class="popular-users" />
   </div>
@@ -128,15 +183,18 @@
 <script>
 import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
-import showTweetReply from "./../components/showTweetReply.vue";
+import { mapState } from "vuex";
 import { fromNowFilter } from "./../utils/mixins";
+import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
 
 export default {
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   components: {
     NavBar,
     PopularUsers,
-    showTweetReply,
   },
   mixins: [fromNowFilter],
   data() {
@@ -149,6 +207,7 @@ export default {
         avatar: "",
         name: "",
       },
+      UserId: "",
       replies: [],
     };
   },
@@ -158,23 +217,41 @@ export default {
         const response = await tweetsAPI.getTweetDetail(tweetId);
         const { data } = response;
         this.tweet = data;
-        console.log("tweet", data);
         this.user = {
           account: data.User.account,
           avatar: data.User.avatar,
           name: data.User.name,
         };
+        this.UserId = data.UserId;
       } catch (error) {
         console.log(error);
       }
     },
     async postReplyHandler() {
       try {
+        if (this.replyMessage.trim().length === 0) {
+          Toast.fire({
+            icon: "warning",
+            title: "內容不可空白！",
+          });
+          return;
+        }
         const response = await tweetsAPI.postTweetReply({
           tweetId: this.tweetId,
           comment: this.replyMessage,
         });
-        console.log(response);
+        this.replies.unshift({
+          TweetId: this.tweetId,
+          User: {
+            account: this.currentUser.account,
+            avatar: this.currentUser.avatar,
+            name: this.currentUser.name,
+          },
+          UserId: this.currentUser.id,
+          comment: this.replyMessage,
+          createdAt: new Date(),
+        });
+        this.replyMessage = "";
       } catch (error) {
         console.log(error);
       }
@@ -182,7 +259,7 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log(response);
+
         this.tweet.isLiked = true;
       } catch (error) {
         console.log(error);
@@ -191,7 +268,7 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        console.log(response);
+
         this.tweet.isLiked = false;
       } catch (error) {
         console.log(error);
@@ -201,7 +278,6 @@ export default {
       try {
         const response = await tweetsAPI.getTweetreplies(tweetId);
         this.replies = response.data;
-        console.log(this.replies);
       } catch (error) {
         console.log(error);
       }
@@ -256,5 +332,18 @@ export default {
 .router-link-exact-active {
   color: #ff6600;
   border-bottom: solid 1px #ff6600;
+}
+
+.icon-group {
+  outline: solid 1px green;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 38px;
+}
+.tweet-card {
+  display: flex;
+  border: solid 1px #e6ecf0;
+  padding: 10px 20px;
 }
 </style>

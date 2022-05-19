@@ -1,7 +1,7 @@
 <template>
   <div class="user-page d-flex justify-content-between border border-secondary">
     <!-- NavBar -->
-    <NavBar @modal-sbmit="submitTweetMessage" />
+    <NavBar @modal-sbmit="submitTweetMessageModal" />
 
     <!-- home twitter -->
     <section class="user-section">
@@ -26,17 +26,23 @@
           <button
             type="submit"
             class="btn btn-info btn-w88"
-            :disabled="!tweetMessage.length || activeTwitterMessageBotton"
             @click.prevent.stop="submitTweetMessage"
           >
-            {{ activeTwitterMessageBotton ? "處理中" : "推文" }}
+            推文
           </button>
         </form>
       </div>
       <!-- 巢狀路由 -->
       <div>
         <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-          <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+          <router-link
+            :to="{
+              name: 'user-tweets',
+              params: { id: tweet.UserId },
+            }"
+          >
+            <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+          </router-link>
           <div>
             <div @click="toReplyList(tweet.id)" class="d-flex">
               <h4>{{ tweet.User.name }}</h4>
@@ -170,6 +176,7 @@ import PopularUsers from "./../components/PopularUsers.vue";
 import tweetsAPI from "./../apis/tweets.js";
 import { fromNowFilter } from "./../utils/mixins";
 import { mapState } from "vuex";
+import { Toast } from "./../utils/helpers";
 
 export default {
   mixins: [fromNowFilter],
@@ -180,7 +187,6 @@ export default {
   data() {
     return {
       tweetMessage: "",
-      activeTwitterMessageBotton: false,
       tweets: [],
       replyMessage: "",
       isLike: "",
@@ -193,12 +199,41 @@ export default {
     ...mapState(["currentUser"]),
   },
   methods: {
-    async submitTweetMessage(modalMessage) {
-      console.log("main");
-      if (modalMessage !== "") {
-        this.tweetMessage = modalMessage;
+    async submitTweetMessage() {
+      try {
+        if (this.tweetMessage.trim().length === 0) {
+          Toast.fire({
+            icon: "warning",
+            title: "內容不可空白！",
+          });
+          return;
+        }
+        const response = await tweetsAPI.postTweet(this.tweetMessage);
+        console.log(response);
+        const newTweet = response.data.newTweet;
+        this.tweets.unshift({
+          User: {
+            account: this.currentUser.account,
+            avatar: this.currentUser.avatar,
+            name: this.currentUser.name,
+          },
+          UserId: newTweet.UserId,
+          createdAt: newTweet.createdAt,
+          description: newTweet.description,
+          id: newTweet.id,
+          isLiked: false,
+          isReplied: false,
+          likeCount: 0,
+          replyCount: 0,
+        });
+        console.log(this.tweets[0]);
+        this.tweetMessage = "";
+      } catch (error) {
+        console.log(error);
       }
-      this.activeTwitterMessageBotton = true;
+    },
+    async submitTweetMessageModal(modalMessage) {
+      this.tweetMessage = modalMessage;
       try {
         const response = await tweetsAPI.postTweet(this.tweetMessage);
         console.log(response);
@@ -219,12 +254,12 @@ export default {
           replyCount: 0,
         });
         console.log(this.tweets[0]);
-        this.activeTwitterMessageBotton = false;
         this.tweetMessage = "";
       } catch (error) {
         console.log(error);
       }
     },
+
     async fetchTweets() {
       try {
         const response = await tweetsAPI.getAllTweet();
