@@ -1,6 +1,7 @@
 <template>
   <div>
     <div>
+      <!-- Navbar  -->
       <adminNavbar />
     </div>
     <div class="userlist">
@@ -21,6 +22,9 @@
         <div>
           <span>{{ user.followingCount }} 個跟隨中</span>
           <span>{{ user.followerCount }} 個跟隨中</span>
+        </div>
+        <div>
+          <img :src="user.cover_image" alt="" />
         </div>
       </div>
     </div>

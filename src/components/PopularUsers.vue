@@ -10,29 +10,34 @@
           <p class="font-size-14">@{{ topUser.account }}</p>
         </div>
       </div>
-      <button
-        v-if="topUser.isFollowing"
-        @click.stop.prevent="cancelFollowing(topUser.id)"
-        class="btn-is-following"
-      >
-        正在跟隨
-      </button>
-
-      <button
-        v-else
-        @click.stop.prevent="addFollowing(topUser.id)"
-        class="btn-not-following"
-      >
-        跟隨
-      </button>
+      <div v-if="currentUser.id !== topUser.id">
+        <button
+          v-if="topUser.isFollowing"
+          @click.stop.prevent="cancelFollowing(topUser.id)"
+          class="btn-is-following"
+        >
+          正在跟隨
+        </button>
+        <button
+          v-else
+          @click.stop.prevent="addFollowing(topUser.id)"
+          class="btn-not-following"
+        >
+          跟隨
+        </button>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
 import usersAPI from "./../apis/users";
+import { mapState } from "vuex";
 
 export default {
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   data() {
     return {
       topUsers: [],

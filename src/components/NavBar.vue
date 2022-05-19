@@ -103,7 +103,7 @@
                 <textarea
                   cols="40"
                   rows="5"
-                  v-model="twitterMessage"
+                  v-model="tweetMessageModal"
                   required
                 ></textarea>
               </div>
@@ -126,30 +126,13 @@
 
 
 <script>
-/***********
-
-import { mapState } from 'vuex'
-  // Step1：移除 dummyUser
-
-export default {
-  // Step2：移除 data 屬性
-  // Step3：移除 created 和 fetchUser 的方法
-  
-  // Step4：新增 `mapState` 方法
-  computed: {
-    ...mapState(['currentUser', 'isAuthenticated'])
-  },
-}
-*******/ ////
-
 import { Toast } from "./../utils/helpers";
-import tweetsAPI from "./../apis/tweets.js";
 import userAPI from "./../apis/users";
 
 export default {
   data() {
     return {
-      twitterMessage: "",
+      tweetMessageModal: "",
       navbarHome: false,
       navbarprofile: false,
       navbarSetting: false,
@@ -157,16 +140,15 @@ export default {
     };
   },
   methods: {
-    async postTweetModal() {
-      if (this.twitterMessage.length === 0) {
-        console.log(this.twitterMessage.length);
+    postTweetModal() {
+      if (this.tweetMessageModal.length === 0) {
         Toast.fire({
           icon: "warning",
           title: "內容不可空白",
         });
       }
-      const response = await tweetsAPI.postTweet(this.twitterMessage);
-      console.log(response);
+      this.$emit("modal-sbmit", this.tweetMessageModal);
+      this.tweetMessageModal = "";
     },
     navbarHandler(name) {
       if (name === "home") {

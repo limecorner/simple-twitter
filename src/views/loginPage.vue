@@ -68,6 +68,8 @@
 
 <script>
 import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
+
 export default {
   data() {
     return {
@@ -83,33 +85,32 @@ export default {
     async handleSubmit() {
       try {
         if (!this.account || !this.password) {
+          Toast.fire({
+            icon: "warning",
+            title: "請填寫帳號/密碼",
+          });
           return;
         }
-
         const response = await authorizationAPI.signIn({
           account: this.account,
           password: this.password,
         });
-        console.log(response);
+        console.log("伺服器回應", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
         }
-        // // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
-        // 透過 setCurrentUser  將資料 傳給 vuex
-        // this.$store.commit('vuex, store的方法名稱' , 帶入的資料 )
-        // this.$store.commit("setCurrentUser", data.user);
-
-        // // 成功登入後轉址到.....
         const id = data.user.id;
         this.$router.push(`/home/${id}`);
       } catch (error) {
-        // 將密碼欄位清空
+        Toast.fire({
+          icon: "error",
+          title: "帳號不存在！",
+        });
         this.password = "";
-        // 顯示錯誤提示
         this.isProcessing = false;
-        console.log("error", error);
+        console.log("錯誤訊息", error);
       }
     },
   },

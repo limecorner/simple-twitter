@@ -14,13 +14,14 @@
           <div class="icon-group mr-5">
             <!-- 這邊 user_id 後續 可以用來 連結 到 該使用者 首頁  -->
             <img
-              :id="tweet.user_id"
+              :id="tweet.id"
               class="icon"
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
               data-toggle="modal"
-              data-target="#replyTwitterModal"
+              :data-target="'#replyTwitterModal' + tweet.id"
             />
+
             <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
           </div>
 
@@ -48,7 +49,7 @@
       <div>
         <div
           class="modal fade"
-          id="replyTwitterModal"
+          :id="'replyTwitterModal' + tweet.id"
           tabindex="-1"
           role="dialog"
           aria-labelledby="replyTwitterModal"
@@ -91,7 +92,11 @@
 
               <form action="">
                 <div>
-                  <p>這邊要放當前使用者頭像</p>
+                  這個是當前使用者照片<img
+                    class="avatar"
+                    :src="currentUser.avatar"
+                    alt=""
+                  />
                   <textarea
                     cols="40"
                     rows="5"
@@ -102,7 +107,7 @@
                 </div>
                 <button
                   type="button"
-                  @click.prevent.stop="postReplyHandler(tweet.id)"
+                  @click="postReplyHandler(tweet.id)"
                   class="btn btn-info btn-w64"
                 >
                   推文
@@ -120,9 +125,9 @@
 <script>
 import tweetsAPI from "./../apis/tweets.js";
 import { fromNowFilter } from "./../utils/mixins";
+import { mapState } from "vuex";
 
 export default {
-  computed: {},
   mixins: [fromNowFilter],
   data() {
     return {
@@ -134,11 +139,15 @@ export default {
   created() {
     this.fetchTweets();
   },
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   methods: {
     async fetchTweets() {
       try {
         const response = await tweetsAPI.getAllTweet();
         const { data } = response;
+        console.log(data);
         this.tweets = data;
       } catch (error) {
         console.log(error);
@@ -182,10 +191,22 @@ export default {
     },
     async postReplyHandler(tweetId) {
       try {
+        console.log(tweetId);
         const response = await tweetsAPI.postTweetReply({
           tweetId: tweetId,
           comment: this.replyMessage,
         });
+        this.tweets = this.tweets.map((tweet) => {
+          if (tweet.id === tweetId) {
+            return {
+              ...tweet,
+              replyCount: Number(tweet.replyCount) + 1,
+            };
+          } else {
+            return tweet;
+          }
+        });
+        this.replyMessage = "";
       } catch (error) {
         console.log(error);
       }

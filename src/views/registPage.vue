@@ -32,14 +32,11 @@
       </div>
       <!--顯示錯誤文字用-->
       <div class="errorMesssage">
-        <span v-show="accountError">{{ errorMesssage }}</span>
+        <span v-show="account.length > 50">字數超出上限！</span>
+        <span v-show="account.length > 50">帳號 重複</span>
       </div>
 
-      <div
-        class="form-wrapper mt-2"
-        :class="{ wrong: nameError }"
-        height="54px"
-      >
+      <div class="form-wrapper mt-2" height="54px">
         <label for="name">名稱</label>
         <div>
           <input
@@ -53,12 +50,12 @@
           />
         </div>
       </div>
+      <!--顯示錯誤文字用-->
+      <div class="errorMesssage">
+        <span v-show="name.length > 50">字數超出上限！</span>
+      </div>
 
-      <div
-        class="form-wrapper mt-4"
-        :class="{ wrong: emailError }"
-        height="54px"
-      >
+      <div class="form-wrapper mt-2" height="54px">
         <label for="email">Email</label>
         <div>
           <input
@@ -74,7 +71,7 @@
       </div>
 
       <div
-        class="form-wrapper mt-4"
+        class="form-wrapper mt-2"
         :class="{ wrong: passwordError }"
         height="54px"
       >
@@ -93,7 +90,7 @@
       </div>
 
       <div
-        class="form-wrapper mt-4"
+        class="form-wrapper mt-2"
         :class="{ wrong: passwordCheckError }"
         height="54px"
       >
@@ -170,27 +167,29 @@ export default {
         if (this.password !== this.checkPassword) {
           Toast.fire({
             icon: "warning",
-            title: "前端 , 兩次輸入的密碼不同",
+            title: "密碼確認 與 密碼不同",
           });
           this.checkPassword = "";
           return;
         }
 
-        const { response } = await authorizationAPI.regist({
+        const response = await authorizationAPI.regist({
           account: this.account,
           name: this.name,
           email: this.email,
           password: this.password,
           checkPassword: this.checkPassword,
         });
-        const { data } = response;
-        console.log(response);
-        if (data.status === "error") {
-          throw new Error(data.message);
-        }
 
-        this.$router.push("/login");
+        console.log("伺服器 回應", response);
+        //  const { data } = response;
+        // if (data.status === "error") {
+        //   throw new Error(data.message);
+        // }
+
+        // this.$router.push("/login");
       } catch (error) {
+        console.log(error);
         Toast.fire({
           icon: "warning",
           title: error,
