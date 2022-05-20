@@ -13,6 +13,7 @@
       <div class="col-11">
         <router-link
           class="row"
+          style="text-decoration: none; cursor: pointer"
           :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
         >
           <h5 class="user-name text-center">{{ like.Tweet.User.name }}</h5>
@@ -22,6 +23,7 @@
         </router-link>
         <router-link
           class="row"
+          style="text-decoration: none; cursor: pointer"
           :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
         >
           <p>{{ like.Tweet.description }}</p>
@@ -142,10 +144,13 @@
                         class="d-flex justify-content-end"
                         style="width: 430px"
                       >
-                        <span v-show="replyMessage.length > 140"
+                        <span
+                          class="error-message"
+                          v-show="replyMessage.length > 140"
                           >錯誤提示文字:字數不可超過140字
                         </span>
                         <span
+                          class="error-message"
                           v-show="blankContent && replyMessage.length === 0"
                         >
                           錯誤提示文字:內容不可空白
@@ -455,5 +460,8 @@ textarea::placeholder {
   color: #92929d;
   font-weight: 400;
   font-size: 14px;
+}
+.error-message {
+  color: red;
 }
 </style>

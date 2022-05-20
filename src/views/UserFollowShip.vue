@@ -4,7 +4,7 @@
     <NavBar class="sidebar" />
 
     <!-- UserSection -->
-    <section class="user-section">
+    <section class="user-section" style="margin-left: 40px; width: 52%">
       <!-- 巢狀路由 -->
       <div>
         <div class="mb-4">
@@ -76,15 +76,8 @@ export default {
     async fetchClickedUser(userId) {
       try {
         const response = await usersAPI.getUser(userId);
-        // console.log(
-        //   "clickedUser response:",
-        //   response,
-        //   "clickedUser id:",
-        //   response.data.id
-        // );
         const { data } = response;
         this.user = data;
-        // 改名;
 
         // this.user = currentUser.user;
         // console.log(this.user);

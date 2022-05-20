@@ -5,16 +5,17 @@
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card row">
       <div class="col-1">
         <router-link
-          class="avatar-container"
+          class="avatar-container to-reply-list-container"
           :to="{ name: 'user-tweets', params: { id: tweet.User.id } }"
         >
           <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
         </router-link>
       </div>
 
-      <div class="col-11">
+      <div class="col-11 to-reply-list-container">
         <router-link
           class="row"
+          style="text-decoration: none; cursor: pointer"
           :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
         >
           <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
@@ -25,6 +26,7 @@
 
         <router-link
           class="row"
+          style="text-decoration: none; cursor: pointer"
           :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
         >
           <p class="description">{{ tweet.description }}</p>
@@ -146,10 +148,13 @@
                         class="d-flex justify-content-end"
                         style="width: 430px"
                       >
-                        <span v-show="replyMessage.length > 140"
+                        <span
+                          class="error-message"
+                          v-show="replyMessage.length > 140"
                           >錯誤提示文字:字數不可超過140字
                         </span>
                         <span
+                          class="error-message"
                           v-show="blankContent && replyMessage.length === 0"
                         >
                           錯誤提示文字:內容不可空白
@@ -408,6 +413,13 @@ export default {
   font-family: "Roboto", sans-serif;
 }
 
+/* to-reply-list-container */
+.router-link {
+  /* text-decoration: none; */
+  /* all: unset; */
+  /* cursor: pointer; */
+}
+
 /* modal */
 .close {
   color: orangered;
@@ -449,5 +461,8 @@ textarea::placeholder {
   color: #92929d;
   font-weight: 400;
   font-size: 14px;
+}
+.error-message {
+  color: red;
 }
 </style>

@@ -7,7 +7,7 @@
     <section class="user-section">
       <div>
         <div class="d-flex align-items-center ml-4 mt-2">
-          <div>上頁</div>
+          <div style="cursor: pointer" @click="$router.back()">←</div>
           <div class="ml-4">
             <h3 class="font-weight-bold font-size-18">
               {{
