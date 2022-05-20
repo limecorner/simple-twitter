@@ -465,7 +465,7 @@ export default {
 
 .tweet-card {
   display: flex;
-  /* border: solid 1px #e6ecf0; */
+  border: solid 1px #e6ecf0;
   padding: 10px 10px;
 }
 
