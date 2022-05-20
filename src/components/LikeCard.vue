@@ -11,21 +11,32 @@
       </div>
 
       <div class="col-11">
-        <div class="row">
+        <router-link
+          class="row"
+          style="text-decoration: none; cursor: pointer"
+          :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
+        >
           <h5 class="user-name text-center">{{ like.Tweet.User.name }}</h5>
           <h6 class="account-time">
             @{{ like.Tweet.User.account }} · {{ like.createdAt | fromNow }}
           </h6>
-        </div>
-        <div class="row">
+        </router-link>
+        <router-link
+          class="row"
+          style="text-decoration: none; cursor: pointer"
+          :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
+        >
           <p>{{ like.Tweet.description }}</p>
-        </div>
+        </router-link>
         <div class="row">
           <div class="icon-group mr-5">
             <img
               class="icon"
               src="https://i.postimg.cc/3Rb08d24/message.png"
               alt=""
+              :id="like.TweetId"
+              data-toggle="modal"
+              :data-target="'#replyTwitterModal' + like.TweetId"
             />
             <p class="font-size-14 m-0">{{ like.replyCount }}</p>
           </div>
@@ -48,6 +59,120 @@
           </div>
         </div>
       </div>
+      <!-- Modal -->
+      <div>
+        <div
+          class="modal fade"
+          :id="'replyTwitterModal' + like.TweetId"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="replyTwitterModal"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <div>
+                  <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="row p-2">
+                <div class="col-1">
+                  <div class="avatar-container pl-4">
+                    <img class="avatar" :src="like.Tweet.User.avatar" alt="" />
+                  </div>
+                  <div
+                    class="ml-4 mt-3"
+                    style="border-left: 2px solid #92929d; height: 45%"
+                  ></div>
+                </div>
+
+                <div class="col-11">
+                  <div class="row pl-4">
+                    <div>
+                      <div>
+                        <span class="user-name">{{
+                          like.Tweet.User.name
+                        }}</span>
+                        <span class="account-time"
+                          >@{{ like.Tweet.User.account }} ·
+                          {{ like.createdAt | fromNow }}
+                        </span>
+                      </div>
+                      <p class="description">
+                        {{ like.Tweet.description }}
+                      </p>
+
+                      <p class="account-time">
+                        回覆給
+                        <span
+                          class="repliedAccount"
+                          style="
+                            color: #ff6600;
+                            font-family: 'Roboto', sans-serif;
+                            line-height: 22px;
+                          "
+                        >
+                          @{{ like.Tweet.User.account }}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-2 row">
+                <div class="col-1">
+                  <div class="avatar-container pl-4">
+                    <img class="avatar" :src="currentUser.avatar" alt="" />
+                  </div>
+                </div>
+                <div class="col-11">
+                  <div class="d-flex justify-content-center">
+                    <form class="pl-3">
+                      <textarea
+                        cols="45"
+                        rows="8"
+                        v-model="replyMessage"
+                        placeholder="推你的回覆"
+                        required
+                      ></textarea>
+                      <div
+                        class="d-flex justify-content-end"
+                        style="width: 430px"
+                      >
+                        <span
+                          class="error-message"
+                          v-show="replyMessage.length > 140"
+                          >錯誤提示文字:字數不可超過140字
+                        </span>
+                        <span
+                          class="error-message"
+                          v-show="blankContent && replyMessage.length === 0"
+                        >
+                          錯誤提示文字:內容不可空白
+                        </span>
+
+                        <button
+                          type="button"
+                          @click.prevent.stop="postReplyHandler(like.TweetId)"
+                          class="replyBtn"
+                        >
+                          回覆
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
     </div>
   </div>
 </template>
@@ -57,6 +182,7 @@ import usersAPI from "./../apis/users";
 import { fromNowFilter } from "./../utils/mixins";
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
+import { mapState } from "vuex";
 
 const dummyData = {
   likes: [
@@ -116,11 +242,17 @@ export default {
   data() {
     return {
       likes: [],
+      replyMessage: "",
+      isLike: "",
+      blankContent: false,
     };
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
   created() {
     const likedUserId = this.$route.params.id;
-    console.log("like clickedUser id", this.$route.params.id);
+    console.log("like this.$route.params.id", this.$route.params.id);
     this.fetchLikes(likedUserId);
   },
   methods: {
@@ -181,6 +313,33 @@ export default {
           }
         });
         this.likes = this.likes.filter((like) => like.TweetId !== tweetId);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async postReplyHandler(tweetId) {
+      try {
+        if (this.replyMessage.trim().length === 0) {
+          this.blankContent = true;
+          return;
+        }
+        if (this.replyMessage.length > 140) return;
+        const response = await tweetsAPI.postTweetReply({
+          tweetId: tweetId,
+          comment: this.replyMessage,
+        });
+        this.likes = this.likes.map((like) => {
+          if (like.id === tweetId) {
+            return {
+              ...like,
+              replyCount: Number(like.replyCount) + 1,
+            };
+          } else {
+            return like;
+          }
+        });
+        this.replyMessage = "";
+        this.blankContent = false;
       } catch (error) {
         console.log(error);
       }
@@ -258,5 +417,51 @@ export default {
 }
 .description {
   font-family: "Roboto", sans-serif;
+}
+
+/* modal */
+.close {
+  color: orangered;
+  font-size: 45px;
+  line-height: 18px;
+  padding-left: 5px;
+}
+.modal-header {
+  height: 50px;
+  padding-left: 0px;
+}
+
+.modal-content {
+  width: 500px;
+}
+
+.replyBtn {
+  outline: none;
+  width: 15%;
+  height: 40px;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
+}
+
+textarea {
+  margin-top: 10px;
+  outline: none;
+  resize: none;
+  border-color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+}
+textarea::placeholder {
+  font-family: "Roboto", sans-serif;
+  color: #92929d;
+  font-weight: 400;
+  font-size: 14px;
+}
+.error-message {
+  color: red;
 }
 </style>

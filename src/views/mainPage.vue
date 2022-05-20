@@ -382,7 +382,7 @@ export default {
 
 /* 巢狀路由 */
 .router-link-exact-active {
-  color: #ff6600;
+  color: red;
   border-bottom: solid 1px #ff6600;
 }
 
