@@ -66,8 +66,6 @@ export default {
     })
   },
   putAccountInfo({ data }) {
-    console.log('inapi')
-    console.log({ ...data })
     return apiHelper.put(`/users/setting`, { ...data }, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })

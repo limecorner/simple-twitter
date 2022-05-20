@@ -11,7 +11,11 @@
     <h3 class="text-center font-weight-bold">後台登入</h3>
 
     <form @submit.prevent.stop="handleSubmit">
-      <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
+      <div
+        class="form-wrapper mt-5"
+        :class="{ wrong: showError }"
+        height="54px"
+      >
         <label for="account">帳號</label>
         <div>
           <input
@@ -20,6 +24,7 @@
             name="account"
             type="text"
             class="form"
+            :class="{ wrong: showError }"
             placeholder="請輸入帳號"
             required
             autofocus
@@ -27,11 +32,15 @@
         </div>
       </div>
 
-      <div class="errorMesssage">
-        <span v-show="error">{{ errorMesssage }}</span>
+      <div class="error-message">
+        <span v-show="showError">帳號不存在！或密碼有誤！</span>
       </div>
 
-      <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+      <div
+        class="form-wrapper mt-4"
+        :class="{ wrong: showError }"
+        height="54px"
+      >
         <label for="password">密碼</label>
         <div>
           <input
@@ -40,6 +49,7 @@
             name="password"
             type="password"
             class="form"
+            :class="{ wrong: showError }"
             placeholder="請輸入密碼"
             autocomplete="current-password"
             required
@@ -73,8 +83,7 @@ export default {
       account: "",
       password: "",
       isProcessing: false,
-      error: false,
-      errorMesssage: "帳號不存在",
+      showError: false,
     };
   },
 
@@ -91,14 +100,15 @@ export default {
         const { data } = response;
         console.log(data);
         if (data.status === "error") {
-          throw new Error(data.message);
+          this.showError = true;
+          this.password = "";
+          this.isProcessing = false;
+          return;
         }
         localStorage.setItem("token", data.token);
         // 成功登入後轉址到.....
         this.$router.push(`/admin/tweet`);
       } catch (error) {
-        this.password = "";
-        this.isProcessing = false;
         console.log("error", error);
       }
     },
