@@ -15,6 +15,7 @@
               name="account"
               type="text"
               class="form"
+              :class="{ wrong: accountError }"
               placeholder="請輸入帳號"
               required
               autofocus
@@ -22,11 +23,11 @@
           </div>
         </div>
         <!--顯示錯誤文字用-->
-        <div class="errorMesssage">
-          <span v-show="error">{{ errorMesssage }}</span>
+        <div class="error-message">
+          <span v-show="accountError">帳號 已重複註冊！</span>
         </div>
 
-        <div class="form-wrapper mt-2" :class="{ wrong: error }" height="54px">
+        <div class="form-wrapper mt-2" height="54px">
           <label for="account">名稱</label>
           <div>
             <input
@@ -41,8 +42,11 @@
             />
           </div>
         </div>
+        <div class="error-message">
+          <span v-show="user.name.length > 50">字數超出上限 50字！</span>
+        </div>
 
-        <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+        <div class="form-wrapper mt-4" height="54px">
           <label for="account">Email</label>
           <div>
             <input
@@ -51,14 +55,18 @@
               name="email"
               type="email"
               class="form"
+              :class="{ wrong: emailError }"
               placeholder="請輸入 Email"
               required
               autofocus
             />
           </div>
         </div>
+        <div class="error-message">
+          <span v-show="emailError">email 已重複註冊！</span>
+        </div>
 
-        <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+        <div class="form-wrapper mt-4" height="54px">
           <label for="password">密碼</label>
           <div>
             <input
@@ -67,13 +75,17 @@
               name="password"
               type="password"
               class="form"
+              :class="{ wrong: passwordError }"
               placeholder="請輸入密碼"
               required
             />
           </div>
         </div>
+        <div class="error-message">
+          <span v-show="passwordError">密碼與確認密碼不符。</span>
+        </div>
 
-        <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+        <div class="form-wrapper mt-4" height="54px">
           <label for="checkPassword">密碼確認</label>
           <div>
             <input
@@ -82,10 +94,14 @@
               name="checkPassword"
               type="password"
               class="form"
+              :class="{ wrong: passwordError }"
               placeholder="請再次輸入密碼"
               required
             />
           </div>
+        </div>
+        <div class="error-message">
+          <span v-show="passwordError">密碼與確認密碼不符。</span>
         </div>
 
         <div class="mt-4">
@@ -108,6 +124,7 @@
 <script>
 import NavBar from "./../components/NavBar.vue";
 import userAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
   components: {
@@ -124,8 +141,9 @@ export default {
       password: "",
       checkPassword: "",
       isProcessing: false,
-      error: false,
-      errorMesssage: "帳號不存在",
+      accountError: false,
+      emailError: false,
+      passwordError: false,
     };
   },
 
@@ -133,16 +151,20 @@ export default {
     async getAccountInfo() {
       try {
         const response = await userAPI.getAccountInfo();
-        console.log(response);
         this.user = { ...response.data.user };
-        console.log(this.user);
       } catch (error) {
         console.log(error);
       }
     },
     async handleSubmit() {
       try {
-        const response = await userAPI.putAccountInfo({
+        if (this.user.name.length > 50) {
+          return;
+        }
+        this.accountError = false;
+        this.emailError = false;
+        this.passwordError = false;
+        const { data } = await userAPI.putAccountInfo({
           data: {
             account: this.user.account,
             name: this.user.name,
@@ -151,9 +173,28 @@ export default {
             checkPassword: this.checkPassword,
           },
         });
-        console.log(response);
+        console.log(data);
+        if (data.status === "error") {
+          const errorMessage = data.message;
+          if (errorMessage === "此帳號已經存在。") {
+            this.accountError = true;
+          } else if (errorMessage === "此email已經存在。") {
+            this.emailError = true;
+          } else if (errorMessage === "密碼與確認密碼不符。") {
+            this.passwordError = true;
+          }
+        } else if (data.message === "成功修改個人資料") {
+          Toast.fire({
+            icon: "success",
+            title: "成功修改個人資料",
+          });
+        }
       } catch (error) {
         console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: error,
+        });
       }
     },
   },

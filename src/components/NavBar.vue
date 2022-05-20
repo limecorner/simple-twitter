@@ -98,23 +98,42 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form action="">
-              <div>
+            <div class="d-flex">
+              <img
+                class="avatar mr-1"
+                src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
+                alt=""
+              />
+              <form>
                 <textarea
-                  cols="40"
-                  rows="5"
-                  v-model="tweetMessageModal"
                   required
-                ></textarea>
-              </div>
-              <button
-                type="button"
-                @click.prevent.stop="postTweetModal"
-                class="btn btn-info btn-w64"
-              >
-                推文
-              </button>
-            </form>
+                  cols="40"
+                  rows="3"
+                  class="form-control"
+                  placeholder="有什麼新鮮事？"
+                  aria-label="With textarea"
+                  v-model="tweetMessageModal"
+                >
+                </textarea>
+                <div>
+                  <span>字數不可超過140字</span>
+                  <!--  
+                    後續  判斷邏輯 
+                    <span v-show="tweetMessageModal.length> 140">  字數不可超過140字  </span>
+                     <span v-show="blankContent && tweetMessageModal.length === 0">
+                    錯誤提示文字:內容不可空白
+                  </span>                  
+                   -->
+                  <button
+                    type="submit"
+                    class="btn btn-info btn-w88"
+                    @click.prevent.stop="postTweetModal"
+                  >
+                    推文
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -126,7 +145,6 @@
 
 
 <script>
-import { Toast } from "./../utils/helpers";
 import userAPI from "./../apis/users";
 
 export default {
@@ -137,18 +155,21 @@ export default {
       navbarprofile: false,
       navbarSetting: false,
       id: "",
+      blankContent: false,
     };
   },
   methods: {
     postTweetModal() {
-      if (this.tweetMessageModal.length === 0) {
-        Toast.fire({
-          icon: "warning",
-          title: "內容不可空白",
-        });
+      if (this.tweetMessageModal.trim().length === 0) {
+        this.blankContent = true;
+        return;
+      } else if (this.tweetMessageModal.length > 140) {
+        return;
       }
+
       this.$emit("modal-sbmit", this.tweetMessageModal);
       this.tweetMessageModal = "";
+      this.blankContent = false;
     },
     navbarHandler(name) {
       if (name === "home") {
@@ -191,6 +212,12 @@ export default {
 
 
 <style scoped>
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
 .sidebar-navbar-wrapper {
   width: 16vw;
 }

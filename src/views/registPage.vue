@@ -31,9 +31,10 @@
         </div>
       </div>
       <!--顯示錯誤文字用-->
-      <div class="errorMesssage">
-        <span v-show="account.length > 50">字數超出上限！</span>
-        <span v-show="account.length > 50">帳號 重複</span>
+      <div class="error-message">
+        <!-- <span v-if="account.length > 50">字數超出上限！</span> -->
+        <span>字數超出上限！</span>
+        <span v-if="accountError">帳號 重複</span>
       </div>
 
       <div class="form-wrapper mt-2" height="54px">
@@ -51,7 +52,7 @@
         </div>
       </div>
       <!--顯示錯誤文字用-->
-      <div class="errorMesssage">
+      <div class="error-message">
         <span v-show="name.length > 50">字數超出上限！</span>
       </div>
 
@@ -144,7 +145,6 @@ export default {
       emailError: false,
       passwordError: false,
       passwordCheckError: false,
-      errorMesssage: "還沒決定好 如何呈現到 各欄位",
       isProcessing: false,
     };
   },

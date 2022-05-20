@@ -3,41 +3,43 @@
     <div>
       <adminNavbar />
     </div>
-    <div class="tweet-card font-size-24 font-weight-bolder">推文清單</div>
-    <div
-      style="height: 110px"
-      v-for="tweet in tweets"
-      :key="tweet.id"
-      class="tweet-card row"
-    >
-      <div class="col-1">
-        <img class="avatar" :src="tweet.User.avatar" alt="" />
-      </div>
-
-      <div class="col-10 pl-5">
-        <div class="row">
-          <h5 class="user-name">{{ tweet.User.name }}</h5>
-          <h6 class="account-time">
-            @{{ tweet.User.account }} • {{ tweet.createdAt | fromNow }}
-          </h6>
+    <div class="list-wrapper">
+      <div class="tweet-card font-size-24 font-weight-bolder">推文清單</div>
+      <div
+        style="height: 110px"
+        v-for="tweet in tweets"
+        :key="tweet.id"
+        class="tweet-card row"
+      >
+        <div class="col-1">
+          <img class="avatar" :src="tweet.User.avatar" alt="" />
         </div>
-        <div class="row">
-          <p class="description">
-            {{ tweet.description }}
-          </p>
-        </div>
-      </div>
 
-      <div class="col-1" style="padding: 5px 0px">
-        <div
-          class="d-flex justify-content-end"
-          @click.prevent.stop="deleteTweet(tweet.id)"
-        >
-          <img
-            class="iconX"
-            src="https://i.postimg.cc/CxWv1xH2/X-button.png"
-            alt=""
-          />
+        <div class="col-10 pl-5">
+          <div class="row">
+            <h5 class="user-name">{{ tweet.User.name }}</h5>
+            <h6 class="account-time">
+              @{{ tweet.User.account }} • {{ tweet.createdAt | fromNow }}
+            </h6>
+          </div>
+          <div class="row">
+            <p class="description">
+              {{ tweet.description }}
+            </p>
+          </div>
+        </div>
+
+        <div class="col-1" style="padding: 5px 0px">
+          <div
+            class="d-flex justify-content-end"
+            @click.prevent.stop="deleteTweet(tweet.id)"
+          >
+            <img
+              class="iconX"
+              src="https://i.postimg.cc/CxWv1xH2/X-button.png"
+              alt=""
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -78,9 +80,7 @@ export default {
       try {
         const response = await adminAPI.deleteTweets(tweetId);
         console.log(response);
-        // 要再補上 刷新頁面的方法
-        // const { data } = response;
-        // console.log(data);
+        this.tweets = this.tweets.map();
       } catch (error) {
         console.log(error);
       }
@@ -90,6 +90,10 @@ export default {
 </script>
 
 <style scoped>
+.list-wrapper {
+  margin-left: 100px;
+}
+
 .tweet-card {
   border: solid 1px #e6ecf0;
   padding: 10px 0px 2px 10px;

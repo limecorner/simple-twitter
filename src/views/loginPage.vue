@@ -11,7 +11,7 @@
     <h3 class="text-center font-weight-bold">登入 Alphitter</h3>
 
     <form @submit.prevent.stop="handleSubmit">
-      <div class="form-wrapper mt-5" :class="{ wrong: error }" height="54px">
+      <div class="form-wrapper mt-5" height="54px">
         <label for="account">帳號</label>
         <div>
           <input
@@ -20,18 +20,22 @@
             name="account"
             type="text"
             class="form"
+            :class="{ wrong: showError }"
             placeholder="請輸入帳號"
             required
             autofocus
           />
         </div>
       </div>
-
-      <div class="errorMesssage">
-        <span v-show="error">{{ errorMesssage }}</span>
+      <div class="error-message">
+        <span v-show="showError">帳號不存在！或密碼有誤!</span>
       </div>
 
-      <div class="form-wrapper mt-4" :class="{ wrong: error }" height="54px">
+      <div
+        class="form-wrapper mt-4"
+        :class="{ wrong: showError }"
+        height="54px"
+      >
         <label for="password">密碼</label>
         <div>
           <input
@@ -40,6 +44,7 @@
             name="password"
             type="password"
             class="form"
+            :class="{ wrong: showError }"
             placeholder="請輸入密碼"
             autocomplete="current-password"
             required
@@ -76,8 +81,7 @@ export default {
       account: "",
       password: "",
       isProcessing: false,
-      error: false,
-      errorMesssage: "帳號不存在",
+      showError: false,
     };
   },
 
@@ -98,7 +102,9 @@ export default {
         console.log("伺服器回應", response);
         const { data } = response;
         if (data.status === "error") {
-          throw new Error(data.message);
+          this.showError = true;
+          this.password = "";
+          return;
         }
         localStorage.setItem("token", data.token);
         const id = data.user.id;
@@ -106,11 +112,8 @@ export default {
       } catch (error) {
         Toast.fire({
           icon: "error",
-          title: "帳號不存在！",
+          title: error,
         });
-        this.password = "";
-        this.isProcessing = false;
-        console.log("錯誤訊息", error);
       }
     },
   },
