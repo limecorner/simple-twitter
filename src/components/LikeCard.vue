@@ -6,7 +6,11 @@
           class="avatar-container"
           :to="{ name: 'user-tweets', params: { id: like.Tweet.User.id } }"
         >
-          <img class="avatar mr-2" :src="like.Tweet.User.avatar" alt="" />
+          <img
+            class="avatar mr-2"
+            :src="like.Tweet.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </router-link>
       </div>
 
@@ -42,7 +46,7 @@
           </div>
           <div class="icon-group">
             <img
-              v-if="!like.isLiked"
+              v-if="like.isLiked"
               @click.prevent.stop="addlike(like.TweetId)"
               class="icon"
               src="https://i.postimg.cc/YSdhRhnn/iconLike.png"

@@ -21,13 +21,14 @@
             </p>
           </div>
         </div>
-        <div class="image-wrapper mb-3">
+        <div class="image-wrapper" style="margin-bottom: 50px">
           <img
             class="cover-image"
             :src="
               Number(currentUser.id) === Number(userId)
                 ? currentUserInfo.cover_image
-                : user.cover_image
+                : user.cover_image ||
+                  'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg'
             "
             alt=""
           />
@@ -36,7 +37,7 @@
             :src="
               Number(currentUser.id) === Number(userId)
                 ? currentUserInfo.avatar
-                : user.cover_image
+                : user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'
             "
             alt=""
           />
@@ -45,11 +46,15 @@
           <!-- user-info-edit-modal btn-->
           <button
             v-if="Number(currentUser.id) === Number(userId)"
-            class="btn-edit-info mr-3 mb-4"
+            class="btn-edit-info mr-3"
             data-toggle="modal"
             data-target="#user-info-edit-modal"
+            @click="copyOriginalInfo"
           >
             編輯個人資料
+          </button>
+          <button v-else class="btn-edit-info mr-3" style="visibility: hidden">
+            登入者再看別人的資料
           </button>
         </div>
 
@@ -136,6 +141,7 @@
               class="close"
               data-dismiss="modal"
               aria-label="Close"
+              @click="returnOriginalInfo"
             >
               <span aria-hidden="true">&times;</span>
             </button>
@@ -184,6 +190,13 @@
                   required
                 />
               </div>
+              <span
+                v-show="currentUserInfo.name.length > 50"
+                class="error-message"
+                style="background-color: white"
+                >字數超出上限！</span
+              >
+              <!-- v-show="currentUserInfo.name.length > 50" -->
 
               <label for="introduction"></label>
               <div class="form-wrapper mt-2">
@@ -195,8 +208,16 @@
                   class="form"
                   placeholder="請輸入自我介紹"
                   required
-                ></textarea>
+                >
+                </textarea>
               </div>
+              <span
+                v-show="currentUserInfo.introduction.length > 160"
+                class="error-message"
+                style="background-color: white"
+                >字數超出上限！</span
+              >
+              <!-- v-show="currentUserInfo.introduction.length > 160" -->
             </div>
             <input type="submit" value="儲存" />
             <!-- <button
@@ -222,6 +243,7 @@ import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 import usersAPI from "./../apis/users";
 import { mapState } from "vuex";
+import { Toast } from "./../utils/helpers";
 
 const dummyUser = {
   user: {
@@ -249,21 +271,29 @@ export default {
       name: "",
       introduction: "",
       userId: 1, // 此 userId 是 clickedUser 的
+      editSuccessfully: false,
       currentUserInfo: {
         cover_image: "",
         avatar: "",
         name: "",
         introduction: "",
       },
+      currentUserInfoCopy: {},
     };
   },
   computed: {
     ...mapState(["currentUser"]),
   },
+  // watch: {
+  //   user(newValue, oldValue) {
+  //     this.user = { ...newValue };
+  //   },
+  // },
   created() {
     this.userId = this.$route.params.id; // 點頁籤前看到的網址
     // this.userId = 14; // id從首頁來
     console.log("UserPage created this.$route.params.id ", this.userId);
+
     this.fetchClickedUser(this.userId);
     this.fetchCurrentUserInfo();
   },
@@ -277,6 +307,7 @@ export default {
     if (Number(this.$route.params.id) !== Number(id)) {
       this.userId = id; // userId 給新值
       this.fetchClickedUser(this.userId);
+      console.log("this.userId", this.userId);
     }
     next();
   },
@@ -296,7 +327,7 @@ export default {
     async fetchCurrentUserInfo() {
       try {
         const response = await usersAPI.getOriginalInfo();
-        // console.log("fetchCurrentUserInfo", response);
+        console.log("fetchCurrentUserInfo", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -333,29 +364,80 @@ export default {
         this.currentUserInfo.avatar = imageURL;
       }
     },
-
-    async handleSubmit(e) {
-      const form = e.target;
-      const formData = new FormData(form);
-      console.log("this.currentUser.id", this.currentUser.id);
-      // console.log("formData", formData);
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ": " + value);
+    copyOriginalInfo() {
+      this.currentUserInfoCopy = { ...this.currentUserInfo };
+      console.log("currentUserInfoCopy", this.currentUserInfoCopy);
+    },
+    returnOriginalInfo() {
+      if (this.editSuccessfully) {
+        this.editSuccessfully = false;
+        return;
       }
-      const response = await usersAPI.editCurrentUserInfo(
-        this.currentUser.id,
-        formData
-      );
-      console.log("handleSubmit", response);
-      const { avatar, cover_image, name, introduction } = response.data;
-      this.currentUserInfo = {
-        ...this.currentUserInfo,
-        avatar,
-        cover_image,
-        name,
-        introduction,
-      };
-      console.log("currentUserInfo", this.currentUserInfo);
+      this.currentUserInfo = { ...this.currentUserInfoCopy };
+    },
+    async handleSubmit(e) {
+      try {
+        if (
+          !this.currentUserInfo.name.trim() ||
+          !this.currentUserInfo.introduction.trim()
+        ) {
+          Toast.fire({
+            icon: "warning",
+            title: "未輸入編輯名稱或自我介紹！無法編輯",
+          });
+          return;
+        }
+
+        if (this.currentUserInfo.name.length > 50) {
+          Toast.fire({
+            icon: "warning",
+            title: "字數超出上限！無法編輯",
+          });
+          return;
+        }
+        if (this.currentUserInfo.introduction.length > 160) {
+          Toast.fire({
+            icon: "warning",
+            title: "字數超出上限！無法編輯",
+          });
+          return;
+        }
+        const form = e.target;
+        const formData = new FormData(form);
+        console.log("this.currentUser.id", this.currentUser.id);
+        // console.log("formData", formData);
+        for (let [name, value] of formData.entries()) {
+          console.log(name + ": " + value);
+        }
+        const response = await usersAPI.editCurrentUserInfo(
+          this.currentUser.id,
+          formData
+        );
+        const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.editSuccessfully = true;
+        console.log("handleSubmit", response);
+        const { avatar, cover_image, name, introduction } = data.userUpdate;
+        this.currentUserInfo = {
+          ...this.currentUserInfo,
+          avatar,
+          cover_image,
+          name,
+          introduction,
+        };
+        console.log("currentUserInfo", this.currentUserInfo);
+        Toast.fire({
+          icon: "success",
+          title: "編輯成功",
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "編輯失敗",
+        });
+      }
     },
   },
 };
@@ -376,10 +458,6 @@ export default {
 }
 
 /* 大區塊 */
-.user-page {
-  border: solid 1px;
-}
-
 .user-section {
   width: 55%;
 }

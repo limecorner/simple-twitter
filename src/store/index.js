@@ -55,14 +55,16 @@ export default new Vuex.Store({
         })
         return true
       } catch (error) {
-        console.log('can not fetch user information')
+        console.log('can not fetch current user information, if you are an admin, it is ok')
         // 驗證失敗的話一併觸發登出的行為，以清除 state 中的 token
-        commit('revokeAuthentication')
-        return false
+        // commit('revokeAuthentication')
+        // return false
+        return true
       }
     }
 
   },
+
   modules: {
   }
 })

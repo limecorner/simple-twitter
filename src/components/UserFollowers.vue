@@ -10,7 +10,11 @@
           class="avatar-container"
           :to="{ name: 'user-tweets', params: { id: follower.followerId } }"
         >
-          <img class="avatar" :src="follower.avatar" alt="" />
+          <img
+            class="avatar"
+            :src="follower.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </router-link>
       </div>
       <div class="col-11">

@@ -8,7 +8,11 @@
           class="avatar-container to-reply-list-container"
           :to="{ name: 'user-tweets', params: { id: tweet.User.id } }"
         >
-          <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+          <img
+            class="avatar mr-2"
+            :src="tweet.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </router-link>
       </div>
 

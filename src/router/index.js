@@ -11,6 +11,10 @@ import UserFollowers from "./../components/UserFollowers"
 import UserFollowings from "./../components/UserFollowings"
 import store from './../store'
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 Vue.use(VueRouter)
 
@@ -111,10 +115,25 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  // console.log('beforeEach to', to)
-  // console.log('beforeEach from', from)
-  store.dispatch('fetchCurrentUser')
+router.beforeEach(async (to, from, next) => {
+  const token = localStorage.getItem('token')
+  let isAuthenticated = false
+
+  // 比較 localStorage 和 store 中的 token 是否一樣
+  if (token) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+  // 對於不需要驗證 token 的頁面
+  const pathsWithoutAuthentication = ['regist', 'login', 'adminLogin',]
+
+  // 如果 token 無效且進入需要驗證的頁面則轉址到登入頁
+  // 拿掉!isAuthenticated &&
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next('/login')
+    return
+  }
+
   next()
 })
 

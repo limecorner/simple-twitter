@@ -12,7 +12,11 @@
         class="tweet-card row"
       >
         <div class="col-1">
-          <img class="avatar" :src="tweet.User.avatar" alt="" />
+          <img
+            class="avatar"
+            :src="tweet.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </div>
 
         <div class="col-10 pl-5">
@@ -80,7 +84,7 @@ export default {
       try {
         const response = await adminAPI.deleteTweets(tweetId);
         console.log(response);
-        this.tweets = this.tweets.map();
+        this.tweets = this.tweets.filter((tweet) => tweet.id !== tweetId);
       } catch (error) {
         console.log(error);
       }
