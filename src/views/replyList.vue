@@ -94,7 +94,7 @@
 
               <form action="">
                 <div>
-                  <p>這邊要放當前使用者頭像</p>
+                  <img class="avatar" :src="currentUser.avatar" alt="" />
                   <textarea
                     cols="40"
                     rows="5"
@@ -103,13 +103,24 @@
                     required
                   ></textarea>
                 </div>
-                <button
-                  type="button"
-                  @click.prevent.stop="postReplyHandler()"
-                  class="btn btn-info btn-w64"
-                >
-                  推文
-                </button>
+                <div>
+                  <span>錯誤提示文字:字數不可超過140字 </span>
+
+                  <!--  
+                    後續 邏輯  或是用 v-if  要再試試看 
+                    <span v-show="replyMessage.length > 140">
+                     <span v-show="blankContent && replyMessage.length === 0">
+                    錯誤提示文字:內容不可空白
+                  </span>
+                       -->
+                  <button
+                    type="button"
+                    @click.prevent.stop="postReplyHandler()"
+                    class="btn btn-info btn-w64"
+                  >
+                    推文
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -209,6 +220,7 @@ export default {
       },
       UserId: "",
       replies: [],
+      blankContent: false,
     };
   },
   methods: {
@@ -230,10 +242,9 @@ export default {
     async postReplyHandler() {
       try {
         if (this.replyMessage.trim().length === 0) {
-          Toast.fire({
-            icon: "warning",
-            title: "內容不可空白！",
-          });
+          this.blankContent = true;
+          return;
+        } else if (this.replyMessage.length > 140) {
           return;
         }
         const response = await tweetsAPI.postTweetReply({
@@ -252,6 +263,7 @@ export default {
           createdAt: new Date(),
         });
         this.replyMessage = "";
+        this.blankContent = false;
       } catch (error) {
         console.log(error);
       }

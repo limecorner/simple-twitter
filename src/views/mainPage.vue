@@ -6,6 +6,7 @@
     <!-- home twitter -->
     <section class="user-section">
       <div class="home-title">首頁</div>
+
       <div class="d-flex">
         <img
           class="avatar mr-1"
@@ -23,13 +24,20 @@
             v-model="tweetMessage"
           >
           </textarea>
-          <button
-            type="submit"
-            class="btn btn-info btn-w88"
-            @click.prevent.stop="submitTweetMessage"
-          >
-            推文
-          </button>
+          <div>
+            <span>字數不可超過140字</span>
+            <!--  <span v-show="tweetMessage.length> 140">  字數不可超過140字  </span> 
+            <span v-show="blankContent && tweetMessage.length === 0">
+              錯誤提示文字:內容不可空白
+            </span>-->
+            <button
+              type="submit"
+              class="btn btn-info btn-w88"
+              @click.prevent.stop="submitTweetMessage"
+            >
+              推文
+            </button>
+          </div>
         </form>
       </div>
       <!-- 巢狀路由 -->
@@ -43,17 +51,18 @@
           >
             <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
           </router-link>
-          <div>
-            <div @click="toReplyList(tweet.id)" class="d-flex">
+          <div class="message-wrapper">
+            <div class="d-flex message-wrapper" @click="toReplyList(tweet.id)">
               <h4>{{ tweet.User.name }}</h4>
-              <p>@{{ tweet.User.account }} ˙ {{ tweet.createdAt | fromNow }}</p>
+              <p class="message-wrapper">
+                @{{ tweet.User.account }} ˙ {{ tweet.createdAt | fromNow }}
+              </p>
             </div>
             <p @click="toReplyList(tweet.id)">
               {{ tweet.description }}
             </p>
             <div class="d-flex">
               <div class="icon-group mr-5">
-                <!-- 這邊 user_id 後續 可以用來 連結 到 該使用者 首頁  -->
                 <img
                   :id="tweet.id"
                   class="icon"
@@ -133,11 +142,7 @@
 
                   <form action="">
                     <div>
-                      這個是當前使用者照片<img
-                        class="avatar"
-                        :src="currentUser.avatar"
-                        alt=""
-                      />
+                      <img class="avatar" :src="currentUser.avatar" alt="" />
                       <textarea
                         cols="40"
                         rows="5"
@@ -146,13 +151,26 @@
                         required
                       ></textarea>
                     </div>
-                    <button
-                      type="button"
-                      @click="postReplyHandler(tweet.id)"
-                      class="btn btn-info btn-w64"
-                    >
-                      推文
-                    </button>
+                    <div>
+                      <span>錯誤提示文字:字數不可超過140字 </span>
+                      <span v-show="replyMessage.length > 140">
+                        錯誤提示文字:字數不可超過140字
+                      </span>
+                      <!-- 
+                        後續 更換 提醒樣式   
+                        <span v-show="replyMessage.length > 140"> 錯誤提示文字:字數不可超過140字 </span>                      
+                   <span v-show="blankContent && replyMessage.length === 0">
+                        錯誤提示文字:內容不可空白
+                      </span>
+                           -->
+                      <button
+                        type="button"
+                        @click="postReplyHandler(tweet.id)"
+                        class="btn btn-info btn-w64"
+                      >
+                        推文
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -190,6 +208,7 @@ export default {
       tweets: [],
       replyMessage: "",
       isLike: "",
+      blankContent: false,
     };
   },
   created() {
@@ -202,14 +221,13 @@ export default {
     async submitTweetMessage() {
       try {
         if (this.tweetMessage.trim().length === 0) {
-          Toast.fire({
-            icon: "warning",
-            title: "內容不可空白！",
-          });
+          this.blankContent = true;
+          return;
+        } else if (this.tweetMessage.length > 140) {
           return;
         }
+
         const response = await tweetsAPI.postTweet(this.tweetMessage);
-        console.log(response);
         const newTweet = response.data.newTweet;
         this.tweets.unshift({
           User: {
@@ -226,8 +244,8 @@ export default {
           likeCount: 0,
           replyCount: 0,
         });
-        console.log(this.tweets[0]);
         this.tweetMessage = "";
+        this.blankContent = false;
       } catch (error) {
         console.log(error);
       }
@@ -236,7 +254,6 @@ export default {
       this.tweetMessage = modalMessage;
       try {
         const response = await tweetsAPI.postTweet(this.tweetMessage);
-        console.log(response);
         const newTweet = response.data.newTweet;
         this.tweets.unshift({
           User: {
@@ -253,7 +270,6 @@ export default {
           likeCount: 0,
           replyCount: 0,
         });
-        console.log(this.tweets[0]);
         this.tweetMessage = "";
       } catch (error) {
         console.log(error);
@@ -308,7 +324,12 @@ export default {
     },
     async postReplyHandler(tweetId) {
       try {
-        console.log(tweetId);
+        if (this.replyMessage.trim().length === 0) {
+          this.blankContent = true;
+          return;
+        } else if (this.replyMessage.length > 140) {
+          return;
+        }
         const response = await tweetsAPI.postTweetReply({
           tweetId: tweetId,
           comment: this.replyMessage,
@@ -324,6 +345,7 @@ export default {
           }
         });
         this.replyMessage = "";
+        this.blankContent = false;
       } catch (error) {
         console.log(error);
       }
@@ -358,14 +380,6 @@ export default {
   width: 25%;
 }
 
-/*照片 */
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
 /* 巢狀路由 */
 .router-link-exact-active {
   color: red;
@@ -395,5 +409,9 @@ export default {
 .icon {
   width: 13px;
   height: 13px;
+}
+
+.message-wrapper {
+  width: 100%;
 }
 </style>

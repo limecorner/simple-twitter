@@ -10,7 +10,7 @@
           <p class="font-size-14">@{{ topUser.account }}</p>
         </div>
       </div>
-      <div v-if="currentUser.id !== topUser.id">
+      <template v-if="currentUser.id !== topUser.id">
         <button
           v-if="topUser.isFollowing"
           @click.stop.prevent="cancelFollowing(topUser.id)"
@@ -25,7 +25,7 @@
         >
           跟隨
         </button>
-      </div>
+      </template>
     </div>
   </section>
 </template>
