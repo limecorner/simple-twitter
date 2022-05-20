@@ -1,10 +1,12 @@
 <template>
-  <div class="user-page d-flex justify-content-between">
+  <div class="user-page d-flex">
     <!-- NavBar -->
-    <NavBar class="sidebar" />
+    <NavBar />
 
-    <div class="setting-area">
-      <div>帳戶設定</div>
+    <div class="user-section">
+      <div class="mt-5">
+        <h4>帳戶設定</h4>
+      </div>
       <form @submit.prevent.stop="handleSubmit">
         <div class="form-wrapper mt-4" height="54px">
           <label for="account">帳號</label>
@@ -104,7 +106,7 @@
           <span v-show="passwordError">密碼與確認密碼不符。</span>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 d-flex justify-content-end">
           <button
             @click.prevent.stop="handleSubmit"
             :disabled="isProcessing"
@@ -151,6 +153,7 @@ export default {
     async getAccountInfo() {
       try {
         const response = await userAPI.getAccountInfo();
+        console.log(response);
         this.user = { ...response.data.user };
       } catch (error) {
         console.log(error);
@@ -205,8 +208,17 @@ export default {
 </script>
 
 <style scoped>
-.sidebar {
-  width: 16%;
+@media screen and (min-width: 992px) {
+  .user-page {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .user-page {
+    max-width: 1140px;
+  }
 }
 
 .user-section {

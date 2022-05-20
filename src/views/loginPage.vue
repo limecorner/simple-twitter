@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="error-message">
-        <span v-show="showError">帳號不存在！或密碼有誤!</span>
+        <span v-show="showError">帳號不存在！或密碼有誤！</span>
       </div>
 
       <div

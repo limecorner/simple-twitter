@@ -1,4 +1,4 @@
-<template >
+<template>
   <div class="sidebar-navbar-wrapper">
     <section class="sidebar-navbar">
       <div>
@@ -86,53 +86,52 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="postTwitterModal">
-                後續 不需要文字 且 將關閉"X"符號 往左邊移動
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <div>
+                <button class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
             </div>
-            <div class="d-flex">
-              <img
-                class="avatar mr-1"
-                src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-                alt=""
-              />
-              <form>
-                <textarea
-                  required
-                  cols="40"
-                  rows="3"
-                  class="form-control"
-                  placeholder="有什麼新鮮事？"
-                  aria-label="With textarea"
-                  v-model="tweetMessageModal"
-                >
-                </textarea>
-                <div>
-                  <span>字數不可超過140字</span>
-                  <!--  
-                    後續  判斷邏輯 
-                    <span v-show="tweetMessageModal.length> 140">  字數不可超過140字  </span>
-                     <span v-show="blankContent && tweetMessageModal.length === 0">
-                    錯誤提示文字:內容不可空白
-                  </span>                  
-                   -->
-                  <button
-                    type="submit"
-                    class="btn btn-info btn-w88"
-                    @click.prevent.stop="postTweetModal"
-                  >
-                    推文
-                  </button>
+            <div class="row p-2">
+              <div class="col-1">
+                <div class="avatar-container pl-4">
+                  <img class="avatar" :src="currentUser.avatar" alt="" />
                 </div>
-              </form>
+              </div>
+
+              <div class="col-11">
+                <div class="d-flex justify-content-center">
+                  <form class="pl-3">
+                    <textarea
+                      cols="45"
+                      rows="8"
+                      placeholder="你有什麼新鮮事？"
+                      required
+                      v-model="tweetMessageModal"
+                    ></textarea>
+                    <div
+                      class="d-flex justify-content-end"
+                      style="width: 430px"
+                    >
+                      <span v-show="tweetMessageModal.length > 140">
+                        字數不可超過140字
+                      </span>
+                      <span
+                        v-show="blankContent && tweetMessageModal.length === 0"
+                      >
+                        錯誤提示文字:內容不可空白
+                      </span>
+                      <button
+                        type="button"
+                        @click.prevent.stop="postTweetModal"
+                        class="replyBtn"
+                      >
+                        推文
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -145,9 +144,14 @@
 
 
 <script>
+import { Toast } from "./../utils/helpers";
 import userAPI from "./../apis/users";
+import { mapState } from "vuex";
 
 export default {
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   data() {
     return {
       tweetMessageModal: "",
@@ -166,7 +170,6 @@ export default {
       } else if (this.tweetMessageModal.length > 140) {
         return;
       }
-
       this.$emit("modal-sbmit", this.tweetMessageModal);
       this.tweetMessageModal = "";
       this.blankContent = false;
@@ -212,21 +215,12 @@ export default {
 
 
 <style scoped>
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-
 .sidebar-navbar-wrapper {
   width: 16vw;
 }
 
 .sidebar-navbar {
   width: 16vw;
-  border-right-style: solid;
-  border-color: #e6ecf0;
-  border-width: 2px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -256,8 +250,10 @@ export default {
 }
 
 .btn-post-tweet {
-  width: 100%;
-  height: 46px;
+  width: 80%;
+  height: 42px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
   background-color: #ff6600;
   border-color: transparent;
   border-radius: 23px;
@@ -270,5 +266,60 @@ export default {
 
 .active {
   color: #ff6600;
+}
+
+/* modal */
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.avatar:hover {
+  cursor: pointer;
+}
+.avatar {
+  width: 50px;
+  height: 50px;
+  align-self: center;
+  border-radius: 50%;
+}
+
+.close {
+  color: orangered;
+  font-size: 45px;
+  line-height: 18px;
+  padding-left: 5px;
+}
+.modal-header {
+  height: 50px;
+  padding-left: 0px;
+}
+
+.replyBtn {
+  outline: none;
+  width: 15%;
+  height: 40px;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
+}
+
+textarea {
+  margin-top: 10px;
+  outline: none;
+  resize: none;
+  border-color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+}
+textarea::placeholder {
+  font-family: "Roboto", sans-serif;
+  color: #92929d;
+  font-weight: 400;
+  font-size: 14px;
 }
 </style>
