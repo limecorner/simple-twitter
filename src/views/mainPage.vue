@@ -1,96 +1,114 @@
 <template>
-  <div class="user-page d-flex justify-content-between border border-secondary">
+  <div class="user-page d-flex">
     <!-- NavBar -->
     <NavBar @modal-sbmit="submitTweetMessageModal" />
 
     <!-- home twitter -->
-    <section class="user-section">
-      <div class="home-title">首頁</div>
+    <section class="user-section ml-">
+      <div class="card col" style="z-index: 1">
+        <div class="row card-header title">首頁</div>
 
-      <div class="d-flex">
-        <img
-          class="avatar mr-1"
-          src="https://image.cache.storm.mg/styles/smg-800xauto-er/s3/media/image/2020/07/04/20200704-125106_U5965_M622512_2945.png?itok=jD_-1XjG"
-          alt=""
-        />
-        <form>
-          <textarea
-            required
-            cols="40"
-            rows="3"
-            class="form-control"
-            placeholder="有什麼新鮮事？"
-            aria-label="With textarea"
-            v-model="tweetMessage"
-          >
-          </textarea>
-          <div>
-            <span>字數不可超過140字</span>
-            <!--  <span v-show="tweetMessage.length> 140">  字數不可超過140字  </span> 
-            <span v-show="blankContent && tweetMessage.length === 0">
-              錯誤提示文字:內容不可空白
-            </span>-->
-            <button
-              type="submit"
-              class="btn btn-info btn-w88"
-              @click.prevent.stop="submitTweetMessage"
-            >
-              推文
-            </button>
+        <div class="row">
+          <div class="col-1">
+            <img class="avatar mt-2" :src="currentUser.avatar" alt="" />
           </div>
-        </form>
+
+          <div class="col-11">
+            <form>
+              <div class="d-flex pt-2">
+                <textarea
+                  class="mt-2"
+                  required
+                  cols="35"
+                  rows="5"
+                  placeholder="有什麼新鮮事？"
+                  aria-label="With textarea"
+                  v-model="tweetMessage"
+                >
+                </textarea>
+              </div>
+              <div class="d-flex justify-content-end">
+                <span v-show="tweetMessage.length > 140">
+                  字數不可超過140字
+                </span>
+                <span v-show="blankContent && tweetMessage.length === 0">
+                  錯誤提示文字:內容不可空白
+                </span>
+                <button
+                  type="submit"
+                  class="tweet-btn mb-3"
+                  @click.prevent.stop="submitTweetMessage"
+                >
+                  推文
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
+      <div class="col" style="height: 10px; background: #f0f8ff"></div>
+
       <!-- 巢狀路由 -->
-      <div>
-        <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card">
-          <router-link
-            :to="{
-              name: 'user-tweets',
-              params: { id: tweet.UserId },
-            }"
-          >
-            <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
-          </router-link>
-          <div class="message-wrapper">
-            <div class="d-flex message-wrapper" @click="toReplyList(tweet.id)">
-              <h4>{{ tweet.User.name }}</h4>
-              <p class="message-wrapper">
-                @{{ tweet.User.account }} ˙ {{ tweet.createdAt | fromNow }}
+      <div class="col">
+        <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card row">
+          <div class="col-1">
+            <router-link
+              class="avatar-container"
+              :to="{
+                name: 'user-tweets',
+                params: { id: tweet.UserId },
+              }"
+            >
+              <img class="avatar" :src="tweet.User.avatar" alt="" />
+            </router-link>
+          </div>
+
+          <div class="col-11">
+            <div @click="toReplyList(tweet.id)" class="row">
+              <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
+              <h6 class="account-time">
+                @{{ tweet.User.account }} · {{ tweet.createdAt | fromNow }}
+              </h6>
+            </div>
+
+            <div class="row">
+              <p @click="toReplyList(tweet.id)" class="description">
+                {{ tweet.description }}
               </p>
             </div>
-            <p @click="toReplyList(tweet.id)">
-              {{ tweet.description }}
-            </p>
-            <div class="d-flex">
-              <div class="icon-group mr-5">
-                <img
-                  :id="tweet.id"
-                  class="icon"
-                  src="https://i.postimg.cc/3Rb08d24/message.png"
-                  alt=""
-                  data-toggle="modal"
-                  :data-target="'#replyTwitterModal' + tweet.id"
-                />
 
-                <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
-              </div>
+            <div class="row">
+              <div class="d-flex">
+                <div class="icon-group mr-5">
+                  <img
+                    :id="tweet.id"
+                    class="icon"
+                    src="https://i.postimg.cc/3Rb08d24/message.png"
+                    alt=""
+                    data-toggle="modal"
+                    :data-target="'#replyTwitterModal' + tweet.id"
+                  />
 
-              <div class="icon-group">
-                <img
-                  v-if="!tweet.isLiked"
-                  class="icon"
-                  src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
-                  alt=""
-                  @click.prevent.stop="addlike(tweet.id)"
-                />
-                <img
-                  v-else
-                  @click.prevent.stop="unlike(tweet.id)"
-                  class="icon"
-                  src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
-                  alt=""
-                />
-                <p class="font-size-14 m-0">{{ tweet.likeCount }}</p>
+                  <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
+                </div>
+
+                <div class="icon-group">
+                  <img
+                    v-if="!tweet.isLiked"
+                    class="icon"
+                    src="https://i.postimg.cc/YSdhRhnn/iconLike.png"
+                    alt=""
+                    @click.prevent.stop="addlike(tweet.id)"
+                  />
+                  <img
+                    v-else
+                    @click.prevent.stop="unlike(tweet.id)"
+                    class="icon"
+                    src="https://i.postimg.cc/DwdWWCqK/icon-Liked.png"
+                    alt=""
+                  />
+                  <p class="font-size-14 m-0">{{ tweet.likeCount }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -108,70 +126,101 @@
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title">
-                      後續 不需要文字 且 將關閉"X"符號 往左邊移動
-                    </h5>
-                    <button
-                      type="button"
-                      class="close"
-                      data-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-
-                  <div>
-                    <div class="d-flex">
-                      <div>
-                        <img class="avatar" :src="tweet.User.avatar" alt="" />
-                      </div>
-                      <div>
-                        <div>
-                          <span>{{ tweet.User.name }}</span>
-                          <span> @{{ tweet.User.account }} </span>
-                          <span>
-                            {{ tweet.createdAt | fromNow }}
-                          </span>
-                        </div>
-                        <p>{{ tweet.description }}</p>
-                        <p>回覆給@{{ tweet.User.account }}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <form action="">
                     <div>
-                      <img class="avatar" :src="currentUser.avatar" alt="" />
-                      <textarea
-                        cols="40"
-                        rows="5"
-                        v-model="replyMessage"
-                        placeholder="推你的回覆"
-                        required
-                      ></textarea>
-                    </div>
-                    <div>
-                      <span>錯誤提示文字:字數不可超過140字 </span>
-                      <span v-show="replyMessage.length > 140">
-                        錯誤提示文字:字數不可超過140字
-                      </span>
-                      <!-- 
-                        後續 更換 提醒樣式   
-                        <span v-show="replyMessage.length > 140"> 錯誤提示文字:字數不可超過140字 </span>                      
-                   <span v-show="blankContent && replyMessage.length === 0">
-                        錯誤提示文字:內容不可空白
-                      </span>
-                           -->
                       <button
-                        type="button"
-                        @click="postReplyHandler(tweet.id)"
-                        class="btn btn-info btn-w64"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
                       >
-                        推文
+                        <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
-                  </form>
+                  </div>
+
+                  <div class="row p-2">
+                    <div class="col-1">
+                      <div class="avatar-container pl-4">
+                        <img class="avatar" :src="tweet.User.avatar" alt="" />
+                      </div>
+                      <div
+                        class="ml-4 mt-3"
+                        style="border-left: 2px solid #92929d; height: 45%"
+                      ></div>
+                    </div>
+
+                    <div class="col-11">
+                      <div class="row pl-4">
+                        <div>
+                          <div>
+                            <span class="user-name">{{ tweet.User.name }}</span>
+                            <span class="account-time"
+                              >@{{ tweet.User.account }} ·
+                              {{ tweet.createdAt | fromNow }}</span
+                            >
+                          </div>
+                          <p class="description">
+                            Hi, we are twitter teammates.{{ tweet.tweetText }}
+                          </p>
+
+                          <p class="account-time">
+                            回覆給
+                            <span
+                              class="repliedAccount"
+                              style="
+                                color: #ff6600;
+                                font-family: 'Roboto', sans-serif;
+                                line-height: 22px;
+                              "
+                            >
+                              @{{ tweet.User.account }}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-2 row">
+                    <div class="col-1">
+                      <div class="avatar-container pl-4">
+                        <img class="avatar" :src="currentUser.avatar" alt="" />
+                      </div>
+                    </div>
+                    <div class="col-11">
+                      <div class="d-flex justify-content-center">
+                        <form class="pl-3">
+                          <textarea
+                            cols="45"
+                            rows="8"
+                            v-model="replyMessage"
+                            placeholder="推你的回覆"
+                            required
+                          ></textarea>
+
+                          <div
+                            class="d-flex justify-content-end"
+                            style="width: 430px"
+                          >
+                            <span v-show="replyMessage.length > 140">
+                              錯誤提示文字:字數不可超過140字
+                            </span>
+                            <span
+                              v-show="blankContent && replyMessage.length === 0"
+                            >
+                              錯誤提示文字:內容不可空白
+                            </span>
+                            <button
+                              type="button"
+                              @click="postReplyHandler(tweet.id)"
+                              class="replyBtn"
+                            >
+                              推文
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -371,47 +420,137 @@ export default {
   }
 }
 
-/* 大區塊 */
-.user-page {
-  border: solid 1px;
+.user-name:hover {
+  cursor: pointer;
+}
+.user-name {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+.title {
+  font-family: "Roboto", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  background: white;
 }
 
 .popular-users {
   width: 25%;
 }
 
+/*照片 */
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.avatar:hover {
+  cursor: pointer;
+}
+.avatar {
+  width: 50px;
+  height: 50px;
+  align-self: center;
+  border-radius: 50%;
+}
+
 /* 巢狀路由 */
 .router-link-exact-active {
-  color: red;
+  color: #ff6600;
   border-bottom: solid 1px #ff6600;
 }
 
 .tweet-card {
   display: flex;
   border: solid 1px #e6ecf0;
-  padding: 10px 20px;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  padding: 10px 10px;
 }
 
 .icon-group {
-  outline: solid 1px green;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   width: 38px;
 }
 
+.icon:hover {
+  cursor: pointer;
+}
 .icon {
   width: 13px;
   height: 13px;
 }
 
-.message-wrapper {
-  width: 100%;
+textarea {
+  outline: none;
+  resize: none;
+  border-color: white;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: black;
+}
+textarea::placeholder {
+  font-family: "Roboto", sans-serif;
+  color: #92929d;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.tweet-btn {
+  width: 12%;
+  height: 40px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
+}
+
+.account-time:hover {
+  color: #808080;
+  cursor: default;
+}
+.account-time {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+  margin-left: 5px;
+  line-height: 22px;
+}
+
+.description:hover {
+  cursor: default;
+}
+.description {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+
+/* modal */
+.close {
+  color: orangered;
+  font-size: 45px;
+  line-height: 18px;
+  padding-left: 5px;
+}
+.modal-header {
+  height: 50px;
+  padding-left: 0px;
+}
+
+.replyBtn {
+  outline: none;
+  width: 15%;
+  height: 40px;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
 }
 </style>

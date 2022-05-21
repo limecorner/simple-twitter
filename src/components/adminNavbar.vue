@@ -7,7 +7,6 @@
           src="https://i.postimg.cc/Qx2dm12F/Pclogo.png"
           alt=""
         />
-
         <div @click.stop.prevent="navbarHandler('tweetList')" class="tab">
           <img
             v-if="!tweetList"
@@ -38,15 +37,18 @@
           />
           <p :class="{ active: userList }">使用者列表</p>
         </div>
+      </div>
 
-        <div @click.prevent.stop="logoutHandler" class="d-flex ml-2">
-          <img
-            class="logout"
-            src="https://i.postimg.cc/NjVnH4Yp/logoOut.png"
-            alt=""
-          />
-          <p class="ml-2">登出</p>
-        </div>
+      <div
+        @click.prevent.stop="logoutHandler"
+        class="logout-button d-flex ml-2"
+      >
+        <img
+          class="logout"
+          src="https://i.postimg.cc/NjVnH4Yp/logoOut.png"
+          alt=""
+        />
+        <p class="ml-2">登出</p>
       </div>
     </section>
   </div>
@@ -98,11 +100,17 @@ export default {
   justify-content: space-between;
   height: 100%;
   position: fixed;
+  padding-left: 130px;
 }
 
 .tab {
   display: flex;
   margin-bottom: 12px;
+}
+
+.tab:hover,
+.logout-button:hover {
+  cursor: pointer;
 }
 
 .product-mark {
