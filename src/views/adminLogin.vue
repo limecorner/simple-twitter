@@ -33,7 +33,7 @@
       </div>
 
       <div class="error-message">
-        <span v-show="showError">帳號不存在！或密碼有誤！</span>
+        <span v-show="showError">{{ errorMessage }} </span>
       </div>
 
       <div
@@ -84,6 +84,7 @@ export default {
       password: "",
       isProcessing: false,
       showError: false,
+      errorMessage: "",
     };
   },
 
@@ -101,6 +102,7 @@ export default {
         console.log(data);
         if (data.status === "error") {
           this.showError = true;
+          this.errorMessage = data.message;
           this.password = "";
           this.isProcessing = false;
           return;

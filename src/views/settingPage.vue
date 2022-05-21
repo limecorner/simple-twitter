@@ -38,6 +38,7 @@
               name="name"
               type="text"
               class="form"
+              :class="{ wrong: user.name.length > 50 }"
               placeholder="請輸入使用者名稱"
               required
               autofocus
