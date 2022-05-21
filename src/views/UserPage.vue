@@ -21,13 +21,14 @@
             </p>
           </div>
         </div>
-        <div class="image-wrapper mb-3">
+        <div class="image-wrapper" style="margin-bottom: 50px">
           <img
             class="cover-image"
             :src="
               Number(currentUser.id) === Number(userId)
                 ? currentUserInfo.cover_image
-                : user.cover_image
+                : user.cover_image ||
+                  'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg'
             "
             alt=""
           />
@@ -36,7 +37,7 @@
             :src="
               Number(currentUser.id) === Number(userId)
                 ? currentUserInfo.avatar
-                : user.cover_image
+                : user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'
             "
             alt=""
           />
@@ -45,48 +46,58 @@
           <!-- user-info-edit-modal btn-->
           <button
             v-if="Number(currentUser.id) === Number(userId)"
-            class="btn-edit-info mr-3 mb-4"
+            class="btn-edit-info mr-3"
             data-toggle="modal"
             data-target="#user-info-edit-modal"
+            @click="copyOriginalInfo"
           >
             編輯個人資料
           </button>
+          <button v-else class="btn-edit-info mr-3" style="visibility: hidden">
+            登入者再看別人的資料
+          </button>
         </div>
 
-        <div>
-          <div>
-            <h4 class="font-size-18">
+        <div class="mt-3">
+          <div class="pl-1">
+            <h4 class="user-name">
               {{
                 Number(currentUser.id) === Number(userId)
                   ? currentUserInfo.name
                   : user.name
               }}
+              <div class="account-time">@{{ user.account }}</div>
             </h4>
-            <p class="font-size-14">{{ user.account }}</p>
           </div>
-          <p>
+          <p class="description pl-1">
             {{
               Number(currentUser.id) === Number(userId)
                 ? currentUserInfo.introduction
                 : user.introduction
             }}
           </p>
-          <div class="d-flex">
+          <div class="d-flex pl-1 mb-3">
             <router-link
               :to="{
                 name: 'user-followings',
                 params: { id: userId },
               }"
-              class="mr-5"
-              >{{ user.folloingCount }}個跟隨中
-              <!--  -->
+              class="mr-4 account-time"
+              style="color: black"
+              >{{ user.folloingCount }}個<span class="account-time"
+                >跟隨中</span
+              >
             </router-link>
             <router-link
               :to="{
                 name: 'user-followers',
                 params: { id: userId },
               }"
-              >{{ user.followerCount }}位跟隨者
+              class="account-time"
+              style="color: black"
+              >{{ user.followerCount }}位<span class="account-time"
+                >跟隨者</span
+              >
             </router-link>
           </div>
         </div>
@@ -94,19 +105,25 @@
 
       <!-- 巢狀路由 -->
       <div>
-        <div class="mb-4">
+        <div class="pt-2 d-flex">
           <router-link
             :to="{ name: 'user-tweets', params: { id: userId } }"
-            class="mr-3"
-            >推文</router-link
+            class="tap text-center"
           >
+            <div style="font-weight: 800">推文</div>
+          </router-link>
+
           <router-link
             :to="{ name: 'user-replies', params: { id: userId } }"
-            class="mr-3"
-            >回覆</router-link
+            class="tap text-center"
           >
-          <router-link :to="{ name: 'user-likes', params: { id: userId } }"
-            >喜歡的內容
+            <div style="font-weight: 800">回覆</div>
+          </router-link>
+          <router-link
+            :to="{ name: 'user-likes', params: { id: userId } }"
+            class="tap text-center"
+          >
+            <div style="font-weight: 800">喜歡的內容</div>
           </router-link>
         </div>
         <router-view />
@@ -118,7 +135,7 @@
 
     <!-- user-info-edit-modal -->
     <div
-      class="modal fade"
+      class="modal"
       id="user-info-edit-modal"
       tabindex="-1"
       role="dialog"
@@ -127,87 +144,117 @@
     >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="user-info-edit-modal">
-              編輯個人資料 ( 後續將關閉"X"符號 往左邊移動)
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
           <form
             @submit.stop.prevent="handleSubmit"
             method="PUT"
             enctype="multipart/form-data"
           >
-            <div class="image-wrapper mb-5">
-              <!-- <label for="image">Image</label> -->
-              <input
-                id="image1"
-                type="file"
-                name="cover_image"
-                accept="image/*"
-                class="form-control-file"
-                @change="handleFile1Change"
-              />
-              <img
-                class="cover-image"
-                :src="currentUserInfo.cover_image"
-                style="width: 498px"
-                alt=""
-              />
-              <input
-                id="image2"
-                type="file"
-                name="avatar"
-                accept="image/*"
-                class="form-control-file"
-                @change="handleFile2Change"
-              />
-              <img class="avatar" :src="currentUserInfo.avatar" alt="" />
-            </div>
-            <div>
-              <label for="name"></label>
-              <div class="form-wrapper mt-2">
-                <input
-                  id="name"
-                  v-model="currentUserInfo.name"
-                  name="name"
-                  type="text"
-                  class="form"
-                  placeholder="請輸入使用者名稱"
-                  required
-                />
+            <div class="modal-header">
+              <div>
+                <button
+                  type="button"
+                  class="close pl-1"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  @click="returnOriginalInfo"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
 
-              <label for="introduction"></label>
-              <div class="form-wrapper mt-2">
-                <textarea
-                  id="introduction"
-                  v-model="currentUserInfo.introduction"
-                  name="introduction"
-                  type="text"
-                  class="form"
-                  placeholder="請輸入自我介紹"
-                  required
-                ></textarea>
+              <h5 class="modal-title" id="user-info-edit-modal">
+                編輯個人資料
+              </h5>
+
+              <input type="submit" class="submit-btn" value="儲存" />
+            </div>
+            <div class="modal-body">
+              <div>
+                <div class="image-wrapper">
+                  <!-- <label for="image">Image</label> -->
+                  <img
+                    class="cover-image"
+                    :src="currentUserInfo.cover_image"
+                    style="height: 180px"
+                    alt=""
+                  />
+                  <input
+                    id="image1"
+                    type="file"
+                    name="cover_image"
+                    accept="image/*"
+                    class="cover-image-btn"
+                    @change="handleFile1Change"
+                  />
+
+                  <img
+                    class="modal-avatar"
+                    :src="currentUserInfo.avatar"
+                    alt=""
+                  />
+                  <div class="edit-image-wrapper ml-3">
+                    <label style="outline: 1px solid black">
+                      <input
+                        v-show="false"
+                        id="image2"
+                        type="file"
+                        name="avatar"
+                        accept="image/*"
+                        class="avatar-btn"
+                        @change="handleFile2Change"
+                      />
+                      <img
+                        class="camera"
+                        src="https://i.postimg.cc/mDQ7TQTd/camera.png"
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div class="p-4 mt-4">
+                  <div class="form-wrapper mb-3 d-flex flex-column">
+                    <label for="name">名稱</label>
+                    <textarea
+                      id="name"
+                      v-model="currentUserInfo.name"
+                      name="name"
+                      type="text"
+                      rows="1"
+                      class="form"
+                      required
+                    >
+                    </textarea>
+                  </div>
+                  <span
+                    v-show="currentUserInfo.name.length > 50"
+                    class="error-message"
+                    style="background-color: white"
+                    >字數超出上限！</span
+                  >
+
+                  <div class="form-wrapper mt-2 d-flex flex-column">
+                    <label for="introduction">自我介紹</label>
+                    <textarea
+                      id="introduction"
+                      v-model="currentUserInfo.introduction"
+                      name="introduction"
+                      rows="6"
+                      type="text"
+                      class="form"
+                      required
+                    >
+                    </textarea>
+                  </div>
+                  <span
+                    v-show="currentUserInfo.introduction.length > 160"
+                    class="error-message"
+                    style="background-color: white"
+                    >字數超出上限！</span
+                  >
+                  <!-- v-show="currentUserInfo.introduction.length > 160" -->
+                </div>
               </div>
             </div>
-            <input type="submit" value="儲存" />
-            <!-- <button
-              @click.stop.prevent="editInfo"
-              type="submit"
-              class="btn btn-info btn-w64"
-            >
-              儲存
-            </button> -->
           </form>
-          <div class="modal-footer"></div>
         </div>
       </div>
     </div>
@@ -222,6 +269,7 @@ import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 import usersAPI from "./../apis/users";
 import { mapState } from "vuex";
+import { Toast } from "./../utils/helpers";
 
 const dummyUser = {
   user: {
@@ -249,19 +297,21 @@ export default {
       name: "",
       introduction: "",
       userId: 1, // 此 userId 是 clickedUser 的
+      editSuccessfully: false,
       currentUserInfo: {
         cover_image: "",
         avatar: "",
         name: "",
         introduction: "",
       },
+      currentUserInfoCopy: {},
     };
   },
   computed: {
     ...mapState(["currentUser"]),
   },
   created() {
-    this.userId = this.$route.params.id; // 點頁籤前看到的網址
+    this.userId = this.$route.params.id; // id從首頁來
     // this.userId = 14; // id從首頁來
     console.log("UserPage created this.$route.params.id ", this.userId);
     this.fetchClickedUser(this.userId);
@@ -271,13 +321,16 @@ export default {
     console.log("this.$route.params.id", this.$route.params.id);
     console.log("to.params", to.params.id);
 
+    this.userId = this.$route.params.id;
     const { id } = to.params;
 
     // 若點頁籤前後的userId不同
     if (Number(this.$route.params.id) !== Number(id)) {
       this.userId = id; // userId 給新值
       this.fetchClickedUser(this.userId);
+      console.log("this.userId", this.userId);
     }
+
     next();
   },
   methods: {
@@ -296,7 +349,7 @@ export default {
     async fetchCurrentUserInfo() {
       try {
         const response = await usersAPI.getOriginalInfo();
-        // console.log("fetchCurrentUserInfo", response);
+        console.log("fetchCurrentUserInfo", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -333,29 +386,81 @@ export default {
         this.currentUserInfo.avatar = imageURL;
       }
     },
+    copyOriginalInfo() {
+      this.currentUserInfoCopy = { ...this.currentUserInfo };
+      console.log("currentUserInfoCopy", this.currentUserInfoCopy);
+    },
+    returnOriginalInfo() {
+      if (this.editSuccessfully) {
+        this.editSuccessfully = false;
+        return;
+      }
+      this.currentUserInfo = { ...this.currentUserInfoCopy };
+    },
 
     async handleSubmit(e) {
-      const form = e.target;
-      const formData = new FormData(form);
-      console.log("this.currentUser.id", this.currentUser.id);
-      // console.log("formData", formData);
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ": " + value);
+      try {
+        if (
+          !this.currentUserInfo.name.trim() ||
+          !this.currentUserInfo.introduction.trim()
+        ) {
+          Toast.fire({
+            icon: "warning",
+            title: "未輸入編輯名稱或自我介紹！無法編輯",
+          });
+          return;
+        }
+
+        if (this.currentUserInfo.name.length > 50) {
+          Toast.fire({
+            icon: "warning",
+            title: "字數超出上限！無法編輯",
+          });
+          return;
+        }
+        if (this.currentUserInfo.introduction.length > 160) {
+          Toast.fire({
+            icon: "warning",
+            title: "字數超出上限！無法編輯",
+          });
+          return;
+        }
+        const form = e.target;
+        const formData = new FormData(form);
+        console.log("this.currentUser.id", this.currentUser.id);
+        // console.log("formData", formData);
+        for (let [name, value] of formData.entries()) {
+          console.log(name + ": " + value);
+        }
+        const response = await usersAPI.editCurrentUserInfo(
+          this.currentUser.id,
+          formData
+        );
+        const { data } = response;
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.editSuccessfully = true;
+        console.log("handleSubmit", response);
+        const { avatar, cover_image, name, introduction } = data.userUpdate;
+        this.currentUserInfo = {
+          ...this.currentUserInfo,
+          avatar,
+          cover_image,
+          name,
+          introduction,
+        };
+        console.log("currentUserInfo", this.currentUserInfo);
+        Toast.fire({
+          icon: "success",
+          title: "編輯成功",
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "warning",
+          title: "編輯失敗",
+        });
       }
-      const response = await usersAPI.editCurrentUserInfo(
-        this.currentUser.id,
-        formData
-      );
-      console.log("handleSubmit", response);
-      const { avatar, cover_image, name, introduction } = response.data;
-      this.currentUserInfo = {
-        ...this.currentUserInfo,
-        avatar,
-        cover_image,
-        name,
-        introduction,
-      };
-      console.log("currentUserInfo", this.currentUserInfo);
     },
   },
 };
@@ -376,10 +481,6 @@ export default {
 }
 
 /* 大區塊 */
-.user-page {
-  border: solid 1px;
-}
-
 .user-section {
   width: 55%;
 }
@@ -399,15 +500,58 @@ export default {
   width: 100%;
   height: 100%;
   margin-bottom: 16px;
+  z-index: 1;
 }
 
+.avatar:hover {
+  cursor: pointer;
+}
 .avatar {
   width: 140px;
   height: 140px;
   position: absolute;
   left: 10px;
   top: 120px;
+  border: white 3px solid;
   border-radius: 50%;
+}
+.edit-image-wrapper {
+  position: relative;
+}
+.camera {
+  position: absolute;
+  left: 50px;
+  bottom: 18px;
+}
+
+.user-name:hover {
+  cursor: pointer;
+}
+.user-name {
+  font-family: "Roboto", sans-serif;
+  font-weight: bold;
+  line-height: 20px;
+}
+
+.account-time:hover {
+  color: #808080;
+  cursor: pointer;
+}
+.account-time {
+  margin-top: 2px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #92929d;
+  line-height: 22px;
+}
+
+.description:hover {
+  cursor: default;
+}
+.description {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
 }
 
 .btn-edit-info {
@@ -421,6 +565,16 @@ export default {
 }
 
 /* 巢狀路由 */
+.tap {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  width: 150px;
+  height: 30px;
+  font-size: 14px;
+  color: #92929d;
+  text-decoration: none;
+}
+
 .router-link-exact-active {
   color: #ff6600;
   border-bottom: solid 1px #ff6600;
@@ -434,5 +588,70 @@ export default {
   width: 100%;
   height: 50px;
   margin-bottom: 16px;
+}
+.modal-header {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 0px;
+  height: 56px;
+}
+.modal-title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  margin-left: 15px;
+  margin-right: 265px;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+.cover-image-btn {
+  position: absolute;
+  z-index: 2;
+  left: 190px;
+  top: 80px;
+}
+textarea {
+  resize: none;
+}
+label {
+  margin-bottom: 0px;
+}
+.avatar-btn {
+  position: absolute;
+  left: 30px;
+  top: 165px;
+}
+.label {
+  position: absolute;
+  z-index: 1;
+  widows: 20px;
+  height: 20px;
+}
+.modal-avatar {
+  position: absolute;
+  height: 120px;
+  width: 120px;
+  left: 25px;
+  top: 120px;
+  border: 3px white solid;
+  border-radius: 50%;
+}
+.close {
+  font-size: 50px;
+  font-weight: 100;
+  color: orangered;
+}
+
+.submit-btn {
+  outline: none;
+  width: 60px;
+  height: 35px;
+  background-color: #ff6600;
+  border-color: transparent;
+  border-radius: 23px;
+  color: white;
 }
 </style>

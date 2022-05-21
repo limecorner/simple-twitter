@@ -10,7 +10,11 @@
           class="avatar-container"
           :to="{ name: 'user-tweets', params: { id: following.followingId } }"
         >
-          <img class="avatar" :src="following.avatar" alt="" />
+          <img
+            class="avatar"
+            :src="following.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </router-link>
       </div>
 
@@ -92,14 +96,14 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("id followings", userId);
+    console.log("followings this.$route.params.id", userId);
     this.fetchFollowings(userId);
   },
   methods: {
     async fetchFollowings(userId) {
       try {
         const response = await usersAPI.getUserFollowings(userId);
-        console.log("followings response", response);
+        // console.log("followings response", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);

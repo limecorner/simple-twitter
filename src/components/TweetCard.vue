@@ -8,7 +8,11 @@
           class="avatar-container to-reply-list-container"
           :to="{ name: 'user-tweets', params: { id: tweet.User.id } }"
         >
-          <img class="avatar mr-2" :src="tweet.User.avatar" alt="" />
+          <img
+            class="avatar mr-2"
+            :src="tweet.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+            alt=""
+          />
         </router-link>
       </div>
 
@@ -253,6 +257,15 @@ export default {
     console.log("tweet this.$route.params.id", userId);
     this.fetchTweets(userId);
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+
+    // 若點頁籤前後的userId不同
+    if (Number(this.$route.params.id) !== Number(id)) {
+      this.fetchTweets(id);
+    }
+    next();
+  },
   methods: {
     async fetchTweets(userId) {
       try {
@@ -414,11 +427,6 @@ export default {
 }
 
 /* to-reply-list-container */
-.router-link {
-  /* text-decoration: none; */
-  /* all: unset; */
-  /* cursor: pointer; */
-}
 
 /* modal */
 .close {
