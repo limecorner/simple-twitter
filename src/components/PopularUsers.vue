@@ -5,7 +5,7 @@
         class="card-header"
         style="background-color: #fafafb; border-radius: 30px 30px 0 0"
       >
-        <h4 class="mt-2">跟隨誰</h4>
+        <h4 class="mt-2">人氣用戶</h4>
       </div>
       <div class="popular-card" v-for="topUser in topUsers" :key="topUser.id">
         <div class="d-flex">

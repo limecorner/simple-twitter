@@ -96,14 +96,14 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("id followings", userId);
+    console.log("followings this.$route.params.id", userId);
     this.fetchFollowings(userId);
   },
   methods: {
     async fetchFollowings(userId) {
       try {
         const response = await usersAPI.getUserFollowings(userId);
-        console.log("followings response", response);
+        // console.log("followings response", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
