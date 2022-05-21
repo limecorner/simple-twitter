@@ -1,5 +1,5 @@
 <template>
-  <div class="user-page d-flex justify-content-between border border-secondary">
+  <div class="user-page d-flex justify-content-between">
     <!-- NavBar -->
     <NavBar />
 
@@ -10,11 +10,7 @@
           <div style="cursor: pointer" @click="$router.back()">←</div>
           <div class="ml-4">
             <h3 class="font-weight-bold font-size-18">
-              {{
-                Number(currentUser.id) === Number(userId)
-                  ? currentUserInfo.name
-                  : user.name
-              }}
+              {{ user.name }}
             </h3>
             <p class="text-secondary font-size-14">
               {{ user.tweetCount }} 推文
@@ -25,20 +21,14 @@
           <img
             class="cover-image"
             :src="
-              Number(currentUser.id) === Number(userId)
-                ? currentUserInfo.cover_image
-                : user.cover_image ||
-                  'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg'
+              user.cover_image ||
+              'https://www.ncenet.com/wp-content/uploads/2020/04/No-image-found.jpg'
             "
             alt=""
           />
           <img
             class="avatar"
-            :src="
-              Number(currentUser.id) === Number(userId)
-                ? currentUserInfo.avatar
-                : user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'
-            "
+            :src="user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
             alt=""
           />
         </div>
@@ -61,20 +51,12 @@
         <div class="mt-3">
           <div class="pl-1">
             <h4 class="user-name">
-              {{
-                Number(currentUser.id) === Number(userId)
-                  ? currentUserInfo.name
-                  : user.name
-              }}
+              {{ user.name }}
               <div class="account-time">@{{ user.account }}</div>
             </h4>
           </div>
           <p class="description pl-1">
-            {{
-              Number(currentUser.id) === Number(userId)
-                ? currentUserInfo.introduction
-                : user.introduction
-            }}
+            {{ user.introduction }}
           </p>
           <div class="d-flex pl-1 mb-3">
             <router-link
@@ -166,26 +148,39 @@
                 編輯個人資料
               </h5>
 
-              <input type="submit" class="submit-btn" value="儲存" />
+              <input
+                :disabled="isProcessing"
+                type="submit"
+                class="submit-btn"
+                value="儲存"
+              />
             </div>
             <div class="modal-body">
               <div>
                 <div class="image-wrapper">
-                  <!-- <label for="image">Image</label> -->
                   <img
                     class="cover-image"
                     :src="currentUserInfo.cover_image"
                     style="height: 180px"
                     alt=""
                   />
-                  <input
-                    id="image1"
-                    type="file"
-                    name="cover_image"
-                    accept="image/*"
-                    class="cover-image-btn"
-                    @change="handleFile1Change"
-                  />
+                  <div class="edit-image-wrapper">
+                    <label>
+                      <input
+                        v-show="false"
+                        id="image1"
+                        type="file"
+                        name="cover_image"
+                        accept="image/*"
+                        class="cover-image-btn"
+                        @change="handleFile1Change"
+                      />
+                      <img
+                        class="camera-1"
+                        src="https://i.postimg.cc/mDQ7TQTd/camera.png"
+                      />
+                    </label>
+                  </div>
 
                   <img
                     class="modal-avatar"
@@ -193,7 +188,7 @@
                     alt=""
                   />
                   <div class="edit-image-wrapper ml-3">
-                    <label style="outline: 1px solid black">
+                    <label>
                       <input
                         v-show="false"
                         id="image2"
@@ -204,7 +199,7 @@
                         @change="handleFile2Change"
                       />
                       <img
-                        class="camera"
+                        class="camera-2"
                         src="https://i.postimg.cc/mDQ7TQTd/camera.png"
                       />
                     </label>
@@ -230,6 +225,12 @@
                     style="background-color: white"
                     >字數超出上限！</span
                   >
+                  <span
+                    v-show="currentUserInfo.name.trim().length === 0"
+                    class="error-message"
+                    style="background-color: white"
+                    >名稱不可空白</span
+                  >
 
                   <div class="form-wrapper mt-2 d-flex flex-column">
                     <label for="introduction">自我介紹</label>
@@ -249,6 +250,12 @@
                     class="error-message"
                     style="background-color: white"
                     >字數超出上限！</span
+                  >
+                  <span
+                    v-show="currentUserInfo.introduction.trim().length === 0"
+                    class="error-message"
+                    style="background-color: white"
+                    >自我介紹不可空白</span
                   >
                   <!-- v-show="currentUserInfo.introduction.length > 160" -->
                 </div>
@@ -305,6 +312,7 @@ export default {
         introduction: "",
       },
       currentUserInfoCopy: {},
+      isProcessing: false,
     };
   },
   computed: {
@@ -313,13 +321,13 @@ export default {
   created() {
     this.userId = this.$route.params.id; // id從首頁來
     // this.userId = 14; // id從首頁來
-    console.log("UserPage created this.$route.params.id ", this.userId);
+    // console.log("UserPage created this.$route.params.id ", this.userId);
     this.fetchClickedUser(this.userId);
     this.fetchCurrentUserInfo();
   },
   beforeRouteUpdate(to, from, next) {
-    console.log("this.$route.params.id", this.$route.params.id);
-    console.log("to.params", to.params.id);
+    // console.log("this.$route.params.id", this.$route.params.id);
+    // console.log("to.params", to.params.id);
 
     this.userId = this.$route.params.id;
     const { id } = to.params;
@@ -328,7 +336,7 @@ export default {
     if (Number(this.$route.params.id) !== Number(id)) {
       this.userId = id; // userId 給新值
       this.fetchClickedUser(this.userId);
-      console.log("this.userId", this.userId);
+      // console.log("this.userId", this.userId);
     }
 
     next();
@@ -349,7 +357,7 @@ export default {
     async fetchCurrentUserInfo() {
       try {
         const response = await usersAPI.getOriginalInfo();
-        console.log("fetchCurrentUserInfo", response);
+        // console.log("fetchCurrentUserInfo", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -395,7 +403,10 @@ export default {
         this.editSuccessfully = false;
         return;
       }
-      this.currentUserInfo = { ...this.currentUserInfoCopy };
+      this.currentUserInfo = {
+        ...this.currentUserInfo,
+        ...this.currentUserInfoCopy,
+      };
     },
 
     async handleSubmit(e) {
@@ -425,13 +436,12 @@ export default {
           });
           return;
         }
+        this.isProcessing = true;
         const form = e.target;
         const formData = new FormData(form);
         console.log("this.currentUser.id", this.currentUser.id);
         // console.log("formData", formData);
-        for (let [name, value] of formData.entries()) {
-          console.log(name + ": " + value);
-        }
+
         const response = await usersAPI.editCurrentUserInfo(
           this.currentUser.id,
           formData
@@ -450,12 +460,21 @@ export default {
           name,
           introduction,
         };
+        this.user = {
+          ...this.user,
+          avatar,
+          cover_image,
+          name,
+          introduction,
+        };
         console.log("currentUserInfo", this.currentUserInfo);
         Toast.fire({
           icon: "success",
           title: "編輯成功",
         });
+        this.isProcessing = false;
       } catch (error) {
+        this.isProcessing = false;
         Toast.fire({
           icon: "warning",
           title: "編輯失敗",
@@ -516,16 +535,28 @@ export default {
   border-radius: 50%;
 }
 .edit-image-wrapper {
+  /* outline: 2px solid red; */
   position: relative;
 }
-.camera {
+.camera-1,
+.camera-2 {
   position: absolute;
-  left: 50px;
-  bottom: 18px;
+  width: 22px;
+}
+
+.camera-1 {
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 115px;
+}
+
+.camera-2 {
+  left: 60px;
+  bottom: 46px;
 }
 
 .user-name:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .user-name {
   font-family: "Roboto", sans-serif;
@@ -535,7 +566,7 @@ export default {
 
 .account-time:hover {
   color: #808080;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .account-time {
   margin-top: 2px;

@@ -7,36 +7,40 @@
           src="https://i.postimg.cc/Qx2dm12F/Pclogo.png"
           alt=""
         />
-        <div @click.stop.prevent="navbarHandler('tweetList')" class="tab">
+        <router-link
+          :to="{ name: 'admimTweet' }"
+          @click.stop.prevent="navbarHandler('tweetList')"
+          class="tab"
+        >
           <img
-            v-if="!tweetList"
             class="icon"
             src="https://i.postimg.cc/L4rVt08L/PcHome.png"
             alt=""
           />
           <img
-            v-else
-            class="icon"
+            class="icon-active"
             src="https://i.postimg.cc/nh1YtFYG/Pc-Home-Active.png"
             alt=""
           />
           <p :class="{ active: tweetList }">推文清單</p>
-        </div>
-        <div @click.stop.prevent="navbarHandler('userList')" class="tab">
+        </router-link>
+        <router-link
+          :to="{ name: 'admimUser' }"
+          @click.stop.prevent="navbarHandler('userList')"
+          class="tab"
+        >
           <img
-            v-if="!userList"
             class="icon"
             src="https://i.postimg.cc/qvB6y8y2/PcUser.png"
             alt=""
           />
           <img
-            v-else
-            class="icon"
+            class="icon-active"
             src="https://i.postimg.cc/28kSKCyD/Pc-User-Active.png"
             alt=""
           />
           <p :class="{ active: userList }">使用者列表</p>
-        </div>
+        </router-link>
       </div>
 
       <div
@@ -103,6 +107,8 @@ export default {
 .tab {
   display: flex;
   margin-bottom: 12px;
+  text-decoration: none;
+  color: #44444f;
 }
 
 .tab:hover,
@@ -137,5 +143,26 @@ export default {
 
 .active {
   color: #ff6600;
+}
+
+.tab .icon-active {
+  display: none;
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+}
+
+.router-link-exact-active {
+  color: #ff6600;
+}
+
+.router-link-exact-active .icon {
+  display: none;
+}
+
+.router-link-exact-active .icon-active {
+  display: block;
+  width: 24px;
 }
 </style>

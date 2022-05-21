@@ -107,6 +107,7 @@ export default {
         // console.log("follower response", response);
         const { data } = response;
         if (data.status === "error") {
+          this.followers = [];
           throw new Error(data.message);
         }
         this.followers = data;
