@@ -4,13 +4,12 @@
     <NavBar />
 
     <!-- 顯示 詳細推文  -->
-    <section class="col ml-2">
+    <section class="col ml-2 center-area">
       <div class="title card-header row">
         <span class="arrow mr-2" style="cursor: pointer" @click="$router.back()"
           >←</span
         >推文
       </div>
-
       <div class="row pl-3 pt-2">
         <div class="d-flex flex-row justify-content-around">
           <router-link
@@ -31,10 +30,11 @@
       </div>
 
       <span class="row pl-3 mb-1 time">
+        <!-- {{ tweet.createdAt }} -->
         {{ tweet.createdAt | fromNow }}
       </span>
       <hr />
-      <div class="row pl-3 pt-3 pb-3 d-flex">
+      <div class="row pl-3 pt-2 pb-2 d-flex">
         <span>{{ tweet.replyCount }} <span class="reply-like">回覆</span></span>
         <span class="ml-5"
           >{{ tweet.likeCount }} <span class="reply-like">喜歡次數</span></span
@@ -288,7 +288,6 @@ export default {
       try {
         const response = await tweetsAPI.getTweetDetail(tweetId);
         const { data } = response;
-        console.log(data);
         this.tweet = data;
         this.user = {
           account: data.User.account,
@@ -296,6 +295,11 @@ export default {
           name: data.User.name,
         };
         this.UserId = data.UserId;
+        //  時間測試
+        console.log("時間測試", this.tweet.createdAt);
+        const time = new Date();
+        console.log(time);
+        //  時間測試
       } catch (error) {
         console.log(error);
       }
@@ -312,7 +316,7 @@ export default {
           tweetId: this.tweetId,
           comment: this.replyMessage,
         });
-        console.log(response);
+
         if (response.statusText !== "OK") {
           return;
         }
@@ -341,7 +345,6 @@ export default {
           this.tweet.likeCount = this.tweet.likeCount + 1;
         }
         this.tweet.isLiked = true;
-        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -390,9 +393,13 @@ export default {
 }
 
 /* 大區塊 */
-
 .popular-users {
   width: 25%;
+}
+
+.center-area {
+  border: solid #e6ecf0 1px;
+  border-top: 0px;
 }
 
 .title {
@@ -400,13 +407,13 @@ export default {
   font-size: 20px;
   font-weight: 600;
   background: white;
+  border: solid #e6ecf0 1px;
+  border-top: 0px;
 }
 
 .arrow:hover {
   cursor: pointer;
 }
-
-/*照片 */
 
 .avatar-container {
   display: flex;
@@ -465,10 +472,6 @@ export default {
   color: #86868b;
 }
 
-hr {
-  margin: 0 auto;
-}
-
 .description:hover {
   cursor: default;
 }
@@ -491,7 +494,7 @@ hr {
 }
 .tweet-card {
   display: flex;
-  border: solid 1px #e6ecf0;
+  border-bottom: solid 1px #e6ecf0;
   padding: 10px 20px;
 }
 
