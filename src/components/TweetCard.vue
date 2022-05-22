@@ -33,7 +33,9 @@
           style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
         >
-          <p class="description">{{ tweet.description }}</p>
+          <p class="description" style="overflow-wrap: anywhere">
+            {{ tweet.description }}
+          </p>
         </router-link>
 
         <!-- style="outline: 1px black solid" -->
@@ -191,53 +193,7 @@ import { fromNowFilter } from "./../utils/mixins";
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
 import { mapState } from "vuex";
-
-const dummyData = {
-  tweets: [
-    {
-      id: 1,
-      createdAt: new Date(),
-      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 1,
-      likeCount: 1,
-      isLiked: false,
-      User: {
-        id: 14,
-        avatar: "https://loremflickr.com/280/280/admin",
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-    {
-      id: 2,
-      createdAt: new Date(),
-      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 2,
-      likeCount: 2,
-      isLiked: false,
-      User: {
-        id: 24,
-        avatar: "https://loremflickr.com/280/280/admin",
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-    {
-      id: 3,
-      createdAt: new Date(),
-      description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      replyCount: 3,
-      likeCount: 3,
-      isLiked: true,
-      User: {
-        id: 34,
-        avatar: "https://loremflickr.com/280/280/admin",
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-  ],
-};
+import $ from "jquery";
 
 export default {
   mixins: [fromNowFilter],
@@ -254,7 +210,6 @@ export default {
   },
   created() {
     const userId = this.$route.params.id; // 點大頭貼連錯了
-    // console.log("tweet this.$route.params.id", userId);
     this.fetchTweets(userId);
   },
   beforeRouteUpdate(to, from, next) {
@@ -270,15 +225,12 @@ export default {
     async fetchTweets(userId) {
       try {
         const response = await usersAPI.getUserTweets(userId);
-        // console.log("tweet response", response);
         const { data } = response;
         if (data.status === "error") {
           this.tweets = [];
           throw new Error(data.message);
         }
         this.tweets = data;
-        // this.tweets = dummyData.tweets;
-        // console.log(this.tweets);
       } catch (error) {
         Toast.fire({
           icon: "warning",
@@ -290,7 +242,6 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        // console.log("addLike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -309,7 +260,6 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        // console.log("unlike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -348,6 +298,7 @@ export default {
         });
         this.replyMessage = "";
         this.blankContent = false;
+        $(`#replyTwitterModal${tweetId}`).modal("hide");
       } catch (error) {
         console.log(error);
       }

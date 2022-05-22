@@ -10,7 +10,11 @@
 
         <div class="row">
           <div class="col-1">
-            <img class="avatar mt-2" :src="currentUser.avatar" alt="" />
+            <img
+              class="avatar mt-2"
+              :src="currentUser.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+              alt=""
+            />
           </div>
 
           <div class="col-11">
@@ -64,7 +68,11 @@
                 params: { id: tweet.UserId },
               }"
             >
-              <img class="avatar" :src="tweet.User.avatar" alt="" />
+              <img
+                class="avatar"
+                :src="tweet.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+                alt=""
+              />
             </router-link>
           </div>
 
@@ -80,8 +88,15 @@
               </h6>
             </div>
 
-            <div class="row ml-1" style="cursor: pointer">
-              <p @click="toReplyList(tweet.id)" class="description">
+            <div
+              class="row ml-1"
+              @click="toReplyList(tweet.id)"
+              style="cursor: pointer"
+            >
+              <p
+                style="overflow-wrap: anywhere; width: 100%; cursor: pointer"
+                class="description"
+              >
                 {{ tweet.description }}
               </p>
             </div>
@@ -149,7 +164,14 @@
                   <div class="row p-2">
                     <div class="col-1">
                       <div class="avatar-container pl-4">
-                        <img class="avatar" :src="tweet.User.avatar" alt="" />
+                        <img
+                          class="avatar"
+                          :src="
+                            tweet.User.avatar ||
+                            'https://i.imgur.com/hAKcS3E.jpg'
+                          "
+                          alt=""
+                        />
                       </div>
                       <div
                         class="ml-4 mt-3"
@@ -192,7 +214,14 @@
                   <div class="p-2 row">
                     <div class="col-1">
                       <div class="avatar-container pl-4">
-                        <img class="avatar" :src="currentUser.avatar" alt="" />
+                        <img
+                          class="avatar"
+                          :src="
+                            currentUser.avatar ||
+                            'https://i.imgur.com/hAKcS3E.jpg'
+                          "
+                          alt=""
+                        />
                       </div>
                     </div>
                     <div class="col-11">

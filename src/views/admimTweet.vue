@@ -4,12 +4,14 @@
       <adminNavbar />
     </div>
     <div class="list-wrapper">
-      <div class="tweet-card font-size-24 font-weight-bolder">推文清單</div>
+      <div class="tweet-card font-size-24 font-weight-bolder pl-4 pt-3 pb-3">
+        推文清單
+      </div>
       <div
         style="height: 110px"
         v-for="tweet in tweets"
         :key="tweet.id"
-        class="tweet-card row"
+        class="tweet-card row pt-4"
       >
         <div class="col-1">
           <img
