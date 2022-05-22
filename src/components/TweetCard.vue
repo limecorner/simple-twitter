@@ -290,7 +290,7 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log("addLike response", response);
+        // console.log("addLike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -309,7 +309,7 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        console.log("unlike response", response);
+        // console.log("unlike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {

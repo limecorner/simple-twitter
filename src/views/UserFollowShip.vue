@@ -58,7 +58,7 @@ export default {
   },
   created() {
     this.userId = this.$route.params.id;
-    console.log("UserFollowShip created userId ", this.userId);
+    // console.log("UserFollowShip created userId ", this.userId);
     this.fetchClickedUser(this.userId);
   },
   beforeRouteUpdate(to, from, next) {

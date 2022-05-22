@@ -144,9 +144,7 @@
                 </button>
               </div>
 
-              <h5 class="modal-title" id="user-info-edit-modal">
-                編輯個人資料
-              </h5>
+              <h5 class="modal-title">編輯個人資料</h5>
 
               <input
                 :disabled="isProcessing"
@@ -277,6 +275,7 @@ import PopularUsers from "./../components/PopularUsers.vue";
 import usersAPI from "./../apis/users";
 import { mapState } from "vuex";
 import { Toast } from "./../utils/helpers";
+import $ from "jquery";
 
 const dummyUser = {
   user: {
@@ -326,9 +325,6 @@ export default {
     this.fetchCurrentUserInfo();
   },
   beforeRouteUpdate(to, from, next) {
-    // console.log("this.$route.params.id", this.$route.params.id);
-    // console.log("to.params", to.params.id);
-
     this.userId = this.$route.params.id;
     const { id } = to.params;
 
@@ -370,7 +366,7 @@ export default {
     },
     handleFile1Change(e) {
       const files = e.target.files;
-      console.log("files", files);
+      // console.log("files", files);
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.currentUserInfo.cover_image = "";
@@ -383,7 +379,7 @@ export default {
     },
     handleFile2Change(e) {
       const files = e.target.files;
-      console.log("files", files);
+      // console.log("files", files);
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.currentUserInfo.avatar = "";
@@ -396,7 +392,7 @@ export default {
     },
     copyOriginalInfo() {
       this.currentUserInfoCopy = { ...this.currentUserInfo };
-      console.log("currentUserInfoCopy", this.currentUserInfoCopy);
+      // console.log("currentUserInfoCopy", this.currentUserInfoCopy);
     },
     returnOriginalInfo() {
       if (this.editSuccessfully) {
@@ -439,9 +435,8 @@ export default {
         this.isProcessing = true;
         const form = e.target;
         const formData = new FormData(form);
-        console.log("this.currentUser.id", this.currentUser.id);
+        // console.log("this.currentUser.id", this.currentUser.id);
         // console.log("formData", formData);
-
         const response = await usersAPI.editCurrentUserInfo(
           this.currentUser.id,
           formData
@@ -451,7 +446,7 @@ export default {
           throw new Error(data.message);
         }
         this.editSuccessfully = true;
-        console.log("handleSubmit", response);
+        // console.log("handleSubmit", response);
         const { avatar, cover_image, name, introduction } = data.userUpdate;
         this.currentUserInfo = {
           ...this.currentUserInfo,
@@ -467,12 +462,13 @@ export default {
           name,
           introduction,
         };
-        console.log("currentUserInfo", this.currentUserInfo);
+        // console.log("currentUserInfo", this.currentUserInfo);
         Toast.fire({
           icon: "success",
           title: "編輯成功",
         });
         this.isProcessing = false;
+        $("#user-info-edit-modal").modal("hide");
       } catch (error) {
         this.isProcessing = false;
         Toast.fire({
@@ -555,9 +551,9 @@ export default {
   bottom: 46px;
 }
 
-.user-name:hover {
-  /* cursor: pointer; */
-}
+/* .user-name:hover {
+  cursor: pointer;
+} */
 .user-name {
   font-family: "Roboto", sans-serif;
   font-weight: bold;

@@ -112,7 +112,7 @@ export default {
   },
   created() {
     const repliedUserId = this.$route.params.id;
-    console.log("reply this.$route.params.id", repliedUserId);
+    // console.log("reply this.$route.params.id", repliedUserId);
     this.fetchReplies(repliedUserId);
   },
   methods: {
