@@ -31,7 +31,7 @@
 
       <span class="row pl-3 mb-1 time">
         <!-- {{ tweet.createdAt }} -->
-        {{ tweet.createdAt | fromNow }}
+        {{ timeAt }}
       </span>
       <hr />
       <div class="row pl-3 pt-2 pb-2 d-flex">
@@ -47,7 +47,7 @@
           src="https://i.postimg.cc/3Rb08d24/message.png"
           alt=""
           data-toggle="modal"
-          data-target="#replyTwitterModal"
+          data-target="#replyTweeterModal"
         />
         <img
           v-if="!tweet.isLiked"
@@ -68,10 +68,10 @@
       <div>
         <div
           class="modal fade"
-          id="replyTwitterModal"
+          id="replyTweeterModal"
           tabindex="-1"
           role="dialog"
-          aria-labelledby="replyTwitterModal"
+          aria-labelledby="replyTweeterModal"
           aria-hidden="true"
         >
           <div class="modal-dialog" role="document">
@@ -148,13 +148,16 @@
                         class="d-flex justify-content-end"
                         style="width: 410px"
                       >
-                        <span v-show="replyMessage.length > 140"
-                          >錯誤提示文字:字數不可超過140字
+                        <span
+                          class="error-notice"
+                          v-show="replyMessage.length > 140"
+                          >字數不可超過140字
                         </span>
                         <span
+                          class="error-notice"
                           v-show="blankContent && replyMessage.length === 0"
                         >
-                          錯誤提示文字:內容不可空白
+                          內容不可空白
                         </span>
 
                         <button
@@ -256,8 +259,9 @@ import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 import { mapState } from "vuex";
 import { fromNowFilter } from "./../utils/mixins";
-import { Toast } from "./../utils/helpers";
+import $ from "jquery";
 import tweetsAPI from "./../apis/tweets.js";
+import moment from "moment";
 
 export default {
   computed: {
@@ -281,6 +285,7 @@ export default {
       UserId: "",
       replies: [],
       blankContent: false,
+      timeAt: "",
     };
   },
   methods: {
@@ -295,11 +300,23 @@ export default {
           name: data.User.name,
         };
         this.UserId = data.UserId;
-        //  時間測試
-        console.log("時間測試", this.tweet.createdAt);
-        const time = new Date();
-        console.log(time);
-        //  時間測試
+        //  時間格式調整
+        const time = moment(this.tweet.createdAt).format(
+          "YYYY MM D, hh:mm:ss a"
+        );
+        const year = time.substr(0, 4);
+        const month = time.substr(5, 2);
+        const date = time.substr(8, 2);
+        const hour = Number(time.substr(12, 2));
+        const min = time.substr(15, 2);
+        let AMPM = time.substr(-2, 2);
+        if (AMPM === "pm") {
+          AMPM = "下午";
+        } else {
+          AMPM = "上午";
+        }
+        const timeAt = `${AMPM}${hour}:${min}分・${year}年${month}月${date}日`;
+        this.timeAt = timeAt;
       } catch (error) {
         console.log(error);
       }
@@ -334,6 +351,7 @@ export default {
         this.tweet.replyCount = this.tweet.replyCount + 1;
         this.replyMessage = "";
         this.blankContent = false;
+        $("#replyTweeterModal").modal("hide");
       } catch (error) {
         console.log(error);
       }
@@ -394,7 +412,7 @@ export default {
 
 /* 大區塊 */
 .popular-users {
-  width: 25%;
+  width: 22%;
 }
 
 .center-area {

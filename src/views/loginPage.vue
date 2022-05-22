@@ -100,7 +100,7 @@ export default {
           account: this.account,
           password: this.password,
         });
-        console.log("伺服器回應", response);
+        // console.log("伺服器回應", response);
         const { data } = response;
         if (data.status === "error") {
           this.showError = true;
@@ -110,7 +110,7 @@ export default {
         }
         localStorage.setItem("token", data.token);
         const id = data.user.id;
-        this.$router.push(`/home/${id}`);
+        this.$router.push(`/home`);
       } catch (error) {
         Toast.fire({
           icon: "error",

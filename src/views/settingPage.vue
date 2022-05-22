@@ -156,7 +156,7 @@ export default {
     async getAccountInfo() {
       try {
         const response = await userAPI.getAccountInfo();
-        console.log(response);
+
         this.user = { ...response.data.user };
       } catch (error) {
         console.log(error);
@@ -179,7 +179,7 @@ export default {
             checkPassword: this.checkPassword,
           },
         });
-        console.log(data);
+
         if (data.status === "error") {
           const errorMessage = data.message;
           if (errorMessage === "此帳號已經存在。") {

@@ -28,21 +28,64 @@
           </div>
           <div class="row">
             <p class="description">
-              {{ tweet.description }}
+              {{ tweet.description | wordsLimit }}
             </p>
           </div>
         </div>
 
         <div class="col-1" style="padding: 5px 0px">
-          <div
-            class="d-flex justify-content-end"
-            @click.prevent.stop="deleteTweet(tweet.id)"
-          >
+          <div class="d-flex justify-content-end">
+            <!-- Modal -->
             <img
-              class="iconX"
+              class="iconX mr-3 mt-1"
               src="https://i.postimg.cc/CxWv1xH2/X-button.png"
               alt=""
+              data-toggle="modal"
+              :data-target="'#deleteTweet' + tweet.id"
             />
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              :id="'deleteTweet' + tweet.id"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">是否刪除該筆貼文</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      取消
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      @click="deleteTweet(tweet.id)"
+                    >
+                      確定刪除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal -->
           </div>
         </div>
       </div>
@@ -54,12 +97,10 @@
 import adminAPI from "./../apis/admin.js";
 import { fromNowFilter } from "./../utils/mixins";
 import adminNavbar from "./../components/adminNavbar.vue";
+import $ from "jquery";
+import { Toast } from "./../utils/helpers";
 
 export default {
-  components: {
-    adminNavbar,
-  },
-  mixins: [fromNowFilter],
   data() {
     return {
       tweets: [],
@@ -67,6 +108,10 @@ export default {
       isLike: "",
     };
   },
+  components: {
+    adminNavbar,
+  },
+  mixins: [fromNowFilter],
   created() {
     this.fetchTweets();
   },
@@ -83,10 +128,25 @@ export default {
     async deleteTweet(tweetId) {
       try {
         const response = await adminAPI.deleteTweets(tweetId);
-        console.log(response);
         this.tweets = this.tweets.filter((tweet) => tweet.id !== tweetId);
+        $(`#deleteTweet${tweetId}`).modal("hide");
+
+        Toast.fire({
+          icon: "success",
+          title: "已成功刪除貼文",
+        });
       } catch (error) {
         console.log(error);
+      }
+    },
+  },
+  filters: {
+    wordsLimit(description) {
+      if (description.length < 50) {
+        return description;
+      } else {
+        description = description.substr(0, 50) + "...";
+        return description;
       }
     },
   },

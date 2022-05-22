@@ -86,7 +86,7 @@ const routes = [
   {
     path: '/home/tweet/:id',
     name: 'tweetMessage',
-    component: () => import('./../views/replyList')
+    component: () => import('./../views/replyPage')
   },
   {
     path: "/admin/tweet",
@@ -100,7 +100,7 @@ const routes = [
     component: () => import('./../views/admimUser')
   },
   {
-    path: '/home/:id',
+    path: '/home',
     name: 'home',
     component: () => import('./../views/mainPage')
   },

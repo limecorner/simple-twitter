@@ -103,7 +103,6 @@ export default {
         const response = await adminAPI.adminGetUsersList();
         const { data } = response;
         this.users = data;
-        console.log(this.users);
       } catch (error) {
         console.log(error);
       }
@@ -130,7 +129,7 @@ export default {
 }
 
 .cover {
-  width: 250px;
+  width: 248px;
   height: 140px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;

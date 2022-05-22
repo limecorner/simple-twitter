@@ -179,9 +179,6 @@ export default {
           password: this.password,
           checkPassword: this.checkPassword,
         });
-
-        console.log("伺服器 回應", response);
-
         if (response.data.status === "error") {
           const errorMessage = response.data.message;
           if (errorMessage === "帳號已經註冊。") {
@@ -197,10 +194,14 @@ export default {
         } else if (response.data.message === "註冊成功") {
           Toast.fire({
             icon: "success",
-            title: "註冊成功",
+            title: "註冊成功，3秒後導至登入頁面",
           });
         }
-        // this.$router.push("/login");
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, "5000");
+
+
       } catch (error) {
         console.log(error);
         Toast.fire({
