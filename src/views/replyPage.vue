@@ -16,7 +16,11 @@
             class="avatar-container"
             :to="{ name: 'user-tweets', params: { id: UserId } }"
           >
-            <img class="avatar mr-2" :src="user.avatar" alt="" />
+            <img
+              class="avatar mr-2"
+              :src="user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+              alt=""
+            />
           </router-link>
           <div class="d-flex flex-column justify-content-around">
             <div class="user-name">{{ user.name }}</div>
@@ -26,7 +30,7 @@
       </div>
 
       <div class="description row pl-3">
-        <p>{{ tweet.description }}</p>
+        <p style="overflow-wrap: anywhere">{{ tweet.description }}</p>
       </div>
 
       <span class="row pl-3 mb-1 time">
@@ -87,7 +91,11 @@
               <div class="row p-2">
                 <div class="col-1">
                   <div class="avatar-container pl-4">
-                    <img class="avatar" :src="user.avatar" alt="" />
+                    <img
+                      class="avatar"
+                      :src="user.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+                      alt=""
+                    />
                   </div>
                   <div
                     class="ml-4 mt-3"
@@ -106,7 +114,10 @@
                         >
                       </div>
 
-                      <p class="description pl-2">
+                      <p
+                        class="description pl-2"
+                        style="overflow-wrap: anywhere"
+                      >
                         {{ tweet.description }}
                       </p>
 
@@ -131,7 +142,13 @@
               <div class="p-2 row mt-2">
                 <div class="col-1">
                   <div class="avatar-container pl-4">
-                    <img class="avatar" :src="currentUser.avatar" alt="" />
+                    <img
+                      class="avatar"
+                      :src="
+                        currentUser.avatar || 'https://i.imgur.com/hAKcS3E.jpg'
+                      "
+                      alt=""
+                    />
                   </div>
                 </div>
                 <div class="col-11">
@@ -189,7 +206,11 @@
                 params: { id: reply.UserId },
               }"
             >
-              <img class="avatar" :src="reply.User.avatar" alt="" />
+              <img
+                class="avatar"
+                :src="reply.User.avatar || 'https://i.imgur.com/hAKcS3E.jpg'"
+                alt=""
+              />
             </router-link>
           </div>
 
@@ -211,7 +232,7 @@
               >
             </div>
             <div class="row">
-              <p class="description">
+              <p class="description" style="overflow-wrap: anywhere">
                 {{ reply.comment }}
               </p>
             </div>

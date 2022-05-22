@@ -104,7 +104,13 @@
             <div class="row p-2">
               <div class="col-1">
                 <div class="avatar-container pl-4">
-                  <img class="avatar" :src="currentUser.avatar" alt="" />
+                  <img
+                    class="avatar"
+                    :src="
+                      currentUser.avatar || 'https://i.imgur.com/hAKcS3E.jpg'
+                    "
+                    alt=""
+                  />
                 </div>
               </div>
 
@@ -283,7 +289,7 @@ export default {
 }
 
 .btn-post-tweet {
-  width: 80%;
+  width: 150px;
   height: 42px;
   font-family: "Roboto", sans-serif;
   font-weight: 400;

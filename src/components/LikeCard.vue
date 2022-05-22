@@ -30,7 +30,7 @@
           style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
         >
-          <p>{{ like.Tweet.description }}</p>
+          <p style="overflow-wrap: anywhere">{{ like.Tweet.description }}</p>
         </router-link>
         <div class="row">
           <div class="icon-group mr-5">
@@ -187,59 +187,7 @@ import { fromNowFilter } from "./../utils/mixins";
 import { Toast } from "./../utils/helpers";
 import tweetsAPI from "./../apis/tweets.js";
 import { mapState } from "vuex";
-
-const dummyData = {
-  likes: [
-    {
-      TweetId: 1,
-      createdAt: new Date(),
-      replyCount: 1,
-      likeCount: 1,
-      isLiked: true,
-      Tweet: {
-        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-        User: {
-          id: 14,
-          avatar: "https://loremflickr.com/280/280/admin",
-          name: "Austin",
-          account: "Austin",
-        },
-      },
-    },
-    {
-      TweetId: 2,
-      createdAt: new Date(),
-      replyCount: 2,
-      likeCount: 2,
-      isLiked: true,
-      Tweet: {
-        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-        User: {
-          id: 24,
-          avatar: "https://loremflickr.com/280/280/admin",
-          name: "Austin",
-          account: "Austin",
-        },
-      },
-    },
-    {
-      TweetId: 3,
-      createdAt: new Date(),
-      replyCount: 3,
-      likeCount: 3,
-      isLiked: true,
-      Tweet: {
-        description: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-        User: {
-          id: 34,
-          avatar: "https://loremflickr.com/280/280/admin",
-          name: "Austin",
-          account: "Austin",
-        },
-      },
-    },
-  ],
-};
+import $ from "jquery";
 
 export default {
   mixins: [fromNowFilter],
@@ -256,25 +204,19 @@ export default {
   },
   created() {
     const likedUserId = this.$route.params.id;
-    // console.log("like this.$route.params.id", this.$route.params.id);
     this.fetchLikes(likedUserId);
   },
   methods: {
     async fetchLikes(userId) {
       try {
         const response = await usersAPI.getUserLikes(userId);
-        // console.log("like response", response);
         const { data } = response;
 
         if (data.status === "error") {
           this.likes = [];
           throw new Error(data.message);
         }
-
         this.likes = data;
-
-        // this.likes = dummyData.likes;
-        // console.log("likes", this.likes);
       } catch (error) {
         Toast.fire({
           icon: "warning",
@@ -286,7 +228,6 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        // console.log("addLike response", response);
         this.likes = this.likes.map((like) => {
           if (like.TweetId === tweetId) {
             return {
@@ -305,7 +246,6 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        // console.log("unlike response", response);
         this.likes = this.likes.map((like) => {
           if (like.TweetId === tweetId) {
             return {
@@ -345,6 +285,7 @@ export default {
         });
         this.replyMessage = "";
         this.blankContent = false;
+        $(`#replyTwitterModal${tweetId}`).modal("hide");
       } catch (error) {
         console.log(error);
       }

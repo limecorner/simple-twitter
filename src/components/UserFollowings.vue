@@ -54,35 +54,6 @@ import { fromNowFilter } from "../utils/mixins";
 import { Toast } from "./../utils/helpers";
 import { mapState } from "vuex";
 
-const dummyData = {
-  followings: [
-    {
-      followingId: 1,
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
-      introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      isFollowing: true,
-      // followingId: 10,
-    },
-    {
-      followingId: 2,
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
-      introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      isFollowing: true,
-      // userId: 20,
-    },
-    {
-      followingId: 3,
-      name: "limecorner",
-      avatar: "https://loremflickr.com/280/280/admin",
-      introduction: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      isFollowing: true,
-      // userId: 30,
-    },
-  ],
-};
-
 export default {
   mixins: [fromNowFilter],
   data() {
@@ -96,22 +67,18 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    // console.log("followings this.$route.params.id", userId);
     this.fetchFollowings(userId);
   },
   methods: {
     async fetchFollowings(userId) {
       try {
         const response = await usersAPI.getUserFollowings(userId);
-        // console.log("followings response", response);
         const { data } = response;
         if (data.status === "error") {
           this.followings = [];
           throw new Error(data.message);
         }
         this.followings = data;
-        // this.followings = dummyData.followings;
-        // console.log(this.followings);
       } catch (error) {
         Toast.fire({
           icon: "warning",
@@ -122,10 +89,7 @@ export default {
     },
     async deleteFollowing(followingId) {
       try {
-        // console.log("deleteFollowing ");
-
         const response = await usersAPI.deleteUserFollowing(followingId);
-        // console.log("deleteFollowing response", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -151,11 +115,8 @@ export default {
     },
     async addFollowing(followerId) {
       try {
-        // console.log("addFollowing followerId", followerId);
-
         const response = await usersAPI.addUserFollowing(followerId);
         const { data } = response;
-        // console.log("addFollowing response", response);
 
         if (data.status === "error") {
           throw new Error(data.message);

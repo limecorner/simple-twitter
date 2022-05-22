@@ -1,5 +1,5 @@
 <template>
-  <div class="p-3" style="background: white; width: 320px">
+  <div class="p-3" style="background: white; width: 350px">
     <section class="popular-users">
       <div
         class="card-header"
@@ -89,7 +89,6 @@ export default {
       try {
         const response = await usersAPI.cancelFollowing(id);
         this.topUsers = this.topUsers.map((user) => {
- 
           if (user.id === id) {
             return {
               ...user,

@@ -7,8 +7,10 @@
     <section class="user-section">
       <div>
         <div class="d-flex align-items-center ml-4 mt-2">
-          <div style="cursor: pointer" @click="$router.back()">←</div>
-          <div class="ml-4">
+          <div class="mr-3" style="cursor: pointer" @click="$router.back()">
+            ←
+          </div>
+          <div class="ml-4 mt-2">
             <h3 class="font-weight-bold font-size-18">
               {{ user.name }}
             </h3>
@@ -277,21 +279,6 @@ import { mapState } from "vuex";
 import { Toast } from "./../utils/helpers";
 import $ from "jquery";
 
-const dummyUser = {
-  user: {
-    id: 124,
-    account: "limecorner",
-    name: "limecorner",
-    email: "limecorner@example.com",
-    avatar: "https://loremflickr.com/280/280/admin",
-    role: "user",
-    introduction: "Nihil nulla necessitatibus fugiat.",
-    followingCount: 10,
-    followerCount: 20,
-    tweetCount: 4,
-  },
-};
-
 export default {
   components: {
     NavBar,
@@ -319,8 +306,6 @@ export default {
   },
   created() {
     this.userId = this.$route.params.id; // id從首頁來
-    // this.userId = 14; // id從首頁來
-    // console.log("UserPage created this.$route.params.id ", this.userId);
     this.fetchClickedUser(this.userId);
     this.fetchCurrentUserInfo();
   },
@@ -332,7 +317,6 @@ export default {
     if (Number(this.$route.params.id) !== Number(id)) {
       this.userId = id; // userId 給新值
       this.fetchClickedUser(this.userId);
-      // console.log("this.userId", this.userId);
     }
 
     next();
@@ -343,9 +327,6 @@ export default {
         const response = await usersAPI.getUser(userId);
         const { data } = response;
         this.user = data;
-
-        // this.user = dummyUser.user;
-        // console.log("UserPage user", this.user);
       } catch (error) {
         console.log(error);
       }
@@ -353,20 +334,17 @@ export default {
     async fetchCurrentUserInfo() {
       try {
         const response = await usersAPI.getOriginalInfo();
-        // console.log("fetchCurrentUserInfo", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
         }
         this.currentUserInfo = { ...data.user };
-        // console.log("currentUserInfo", this.currentUserInfo);
       } catch (error) {
         console.log(error);
       }
     },
     handleFile1Change(e) {
       const files = e.target.files;
-      // console.log("files", files);
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.currentUserInfo.cover_image = "";
@@ -379,7 +357,6 @@ export default {
     },
     handleFile2Change(e) {
       const files = e.target.files;
-      // console.log("files", files);
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.currentUserInfo.avatar = "";
@@ -392,7 +369,6 @@ export default {
     },
     copyOriginalInfo() {
       this.currentUserInfoCopy = { ...this.currentUserInfo };
-      // console.log("currentUserInfoCopy", this.currentUserInfoCopy);
     },
     returnOriginalInfo() {
       if (this.editSuccessfully) {
@@ -435,8 +411,6 @@ export default {
         this.isProcessing = true;
         const form = e.target;
         const formData = new FormData(form);
-        // console.log("this.currentUser.id", this.currentUser.id);
-        // console.log("formData", formData);
         const response = await usersAPI.editCurrentUserInfo(
           this.currentUser.id,
           formData
@@ -446,7 +420,6 @@ export default {
           throw new Error(data.message);
         }
         this.editSuccessfully = true;
-        // console.log("handleSubmit", response);
         const { avatar, cover_image, name, introduction } = data.userUpdate;
         this.currentUserInfo = {
           ...this.currentUserInfo,
@@ -462,7 +435,6 @@ export default {
           name,
           introduction,
         };
-        // console.log("currentUserInfo", this.currentUserInfo);
         Toast.fire({
           icon: "success",
           title: "編輯成功",
@@ -618,7 +590,7 @@ export default {
 }
 .modal-header {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   padding: 0px;
   height: 56px;

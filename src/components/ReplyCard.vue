@@ -38,7 +38,9 @@
           >
         </div>
         <div class="row pl-2">
-          <p class="comment">{{ reply.comment }}</p>
+          <p class="comment" style="overflow-wrap: anywhere">
+            {{ reply.comment }}
+          </p>
         </div>
         <!-- </router-link> -->
       </div>
@@ -50,58 +52,6 @@
 import usersAPI from "./../apis/users";
 import { fromNowFilter } from "./../utils/mixins";
 import { Toast } from "./../utils/helpers";
-const dummyData = {
-  replies: [
-    {
-      id: 1,
-      createdAt: new Date(),
-      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      Tweet: {
-        User: {
-          id: 14,
-          avatar: "https://loremflickr.com/280/280/admin",
-          account: "limecorner",
-        },
-      },
-      User: {
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-    {
-      id: 2,
-      createdAt: new Date(),
-      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      Tweet: {
-        User: {
-          id: 24,
-          avatar: "https://loremflickr.com/280/280/admin",
-          account: "limecorner",
-        },
-      },
-      User: {
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-    {
-      id: 3,
-      createdAt: new Date(),
-      comment: "Nulla Lorem mollit cupidatat irure. Laborum magna",
-      Tweet: {
-        User: {
-          id: 34,
-          avatar: "https://loremflickr.com/280/280/admin",
-          account: "limecorner",
-        },
-      },
-      User: {
-        name: "limecorner",
-        account: "limecorner",
-      },
-    },
-  ],
-};
 
 export default {
   mixins: [fromNowFilter],
@@ -112,25 +62,19 @@ export default {
   },
   created() {
     const repliedUserId = this.$route.params.id;
-    // console.log("reply this.$route.params.id", repliedUserId);
     this.fetchReplies(repliedUserId);
   },
   methods: {
     async fetchReplies(userId) {
       try {
         const response = await usersAPI.getUserReplies(userId);
-        // console.log("reply response", response);
         const { data } = response;
 
         if (data.status === "error") {
           this.replies = [];
           throw new Error(data.message);
         }
-
         this.replies = data;
-
-        // this.replies = dummyData.replies;
-        // console.log("replies", this.replies);
       } catch (error) {
         Toast.fire({
           icon: "warning",
@@ -167,9 +111,9 @@ export default {
   border-radius: 50%;
 }
 
-.user-name:hover {
-  /* cursor: pointer; */
-}
+/* .user-name:hover {
+  cursor: pointer;
+} */
 .user-name {
   font-family: "Roboto", sans-serif;
   font-weight: bold;
@@ -196,22 +140,22 @@ export default {
   width: 38px;
 }
 
-.icon:hover {
-  /* cursor: pointer; */
-}
+/* .icon:hover {
+  cursor: pointer;
+} */
 .icon {
   width: 13px;
   height: 13px;
 }
 
-.comment:hover {
-  /* cursor: pointer; */
-}
+/* .comment:hover {
+  cursor: pointer;
+} */
 .comment {
   font-family: "Roboto", sans-serif;
 }
 
-.repliedAccount:hover {
-  /* cursor: pointer; */
-}
+/* .repliedAccount:hover {
+  cursor: pointer;
+} */
 </style>

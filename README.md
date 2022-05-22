@@ -1,24 +1,73 @@
-# simple-twitter
+# Simple Twitter
 
-## Project setup
-```
-npm install
-```
+## 介紹
+Simple Twitter是由 2 位前端、2 位後端共同打造的前後分離專案，依據指定的設計稿及使用者故事，打造 1 個簡單版的Twitter。
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 功能
+### 一般使用者:
+- 使用者登入後，可從前台登入頁面進入網站
+- 註冊時，使用者可以設定 account、name、email 和 password
+- 使用者能編輯自己的名稱、自我介紹、個人頭像與封面和個人頁橫幅背景
+- 使用者能在首頁瀏覽所有的推文 
+- 使用者點擊貼文方塊時，能查看貼文與回覆串
+- 使用者能回覆別人的推文
+- 點擊貼文中使用者頭像時，能瀏覽該使用者的個人資料及推文
+- 使用者能新增推文
+- 使用者可以追蹤/取消追蹤其他使用者
+- 使用者能對別人的推文按 Like/Unlike
+- 使用者能在首頁的側邊欄，看見跟隨者 (followers) 數量排列前 10 的使用者推薦名單
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### 管理者:
+- 管理者可從專門的後台登入頁面進入網站後台
+- 管理者可以瀏覽全站的 Tweet 清單
+- 管理者可以瀏覽站內所有的使用者清單
+## 可使用帳號:
+- 使用者帳號: user1 密碼: 12345678 （不具有管理者權限，只可登入前台）
+- 管理者帳號: root 密碼: 12345678 （具有管理者權限，只可登入後台）
 
-### Lints and fixes files
-```
-npm run lint
-```
+## 開始使用
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+1. 請先確認有安裝 node.js 與 npm
+2. 將專案 clone 到本地
+3. 在本地開啟之後，透過終端機進入資料夾，輸入：
+
+  ```bash
+  npm install
+  ```
+
+4. 安裝完畢後，繼續輸入：
+
+  ```bash
+  npm run serve
+  ```
+  
+5. 若看見此行訊息則代表順利運行
+  ```bash
+   Compiled successfully
+
+   App running at:
+  - Local:   http://localhost:8080/
+  - Network: http://172.20.10.4:8080/
+  ```
+
+6. 接著複製 Local 端網址，貼到瀏覽器，即可進行開發
+
+7. 欲暫停使用
+
+  ```bash
+  ctrl + c
+  ```
+
+## 開發工具
+- node.js: 14.16.0
+- bootstrap: 4.4.1
+- core-js": "^3.8.3",
+- jquery: 3.4.1
+- popper.js: 1.16.0
+- axios: 0.27.2
+- sweetalert2: 9.8.2
+- moment: 2.29.3
+- normalize.css: 8.0.1
+- vue: 2.6.14",
+- vuex: 3.6.2
+- vue-router: 3.5.1

@@ -1,23 +1,39 @@
 <template>
-  <div class="user-page d-flex justify-content-between border border-secondary">
+  <div class="user-page d-flex justify-content-between">
     <!-- NavBar -->
     <NavBar class="sidebar" />
 
     <!-- UserSection -->
     <section class="user-section" style="margin-left: 40px; width: 52%">
+      <div class="d-flex align-items-center mt-2">
+        <div class="mr-3" style="cursor: pointer" @click="$router.back()">
+          ←
+        </div>
+        <div class="ml-4 mt-2">
+          <h3 class="font-weight-bold font-size-18">
+            {{ user.name }}
+          </h3>
+          <p class="text-secondary font-size-14" style="margin-bottom: 0px">
+            {{ user.tweetCount }} 推文
+          </p>
+        </div>
+      </div>
+
       <!-- 巢狀路由 -->
       <div>
-        <div class="mb-4">
+        <div class="mb-4 pt-2 d-flex">
           <router-link
             :to="{ name: 'user-followers', params: { id: userId } }"
-            class="mr-3"
-            >追隨者</router-link
+            class="tap text-center"
           >
+            <div style="font-weight: 800">追隨者</div>
+          </router-link>
           <router-link
             :to="{ name: 'user-followings', params: { id: userId } }"
-            class="mr-3"
-            >正在追隨</router-link
+            class="tap text-center"
           >
+            <div style="font-weight: 800">正在追隨</div>
+          </router-link>
         </div>
         <router-view />
       </div>
@@ -33,18 +49,6 @@ import NavBar from "./../components/NavBar.vue";
 import PopularUsers from "./../components/PopularUsers.vue";
 import usersAPI from "./../apis/users";
 
-const currentUser = {
-  user: {
-    id: 124,
-    account: "limecorner",
-    name: "limecorner",
-    email: "limecorner@example.com",
-    avatar: "https://loremflickr.com/280/280/admin",
-    role: "user",
-    introduction: "Nihil nulla necessitatibus fugiat.",
-  },
-};
-
 export default {
   components: {
     NavBar,
@@ -58,7 +62,6 @@ export default {
   },
   created() {
     this.userId = this.$route.params.id;
-    // console.log("UserFollowShip created userId ", this.userId);
     this.fetchClickedUser(this.userId);
   },
   beforeRouteUpdate(to, from, next) {
@@ -78,9 +81,6 @@ export default {
         const response = await usersAPI.getUser(userId);
         const { data } = response;
         this.user = data;
-
-        // this.user = currentUser.user;
-        // console.log(this.user);
       } catch (error) {
         console.log(error);
       }
@@ -104,9 +104,9 @@ export default {
 }
 
 /* 大區塊 */
-.user-page {
+/* .user-page {
   border: solid 1px;
-}
+} */
 
 .sidebar {
   width: 16%;
@@ -126,7 +126,15 @@ export default {
   width: 30px;
   height: 30px;
 }
-
+.tap {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  width: 150px;
+  height: 30px;
+  font-size: 14px;
+  color: #92929d;
+  text-decoration: none;
+}
 /* 巢狀路由 */
 .router-link-exact-active {
   color: #ff6600;
