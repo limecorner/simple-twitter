@@ -4,13 +4,16 @@ module.exports = defineConfig({
 })
 
 
-// /*  後續 部屬  要有以下內容
+const webpack = require('webpack')
 
-// module.exports = {
-//   publicPath: process.env.NODE_ENV === 'production'
-//     ? '/simple-twitter/'        //這邊是 repo 專案名稱
-//     : '/'
-// }
-
-
-// // */
+module.exports = {
+  //引入jquery
+  chainWebpack: config => {
+    config.plugin('provide').use(webpack.ProvidePlugin, [{
+      $: 'jquery',
+      jquery: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery'
+    }])
+  }
+}

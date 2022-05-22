@@ -92,9 +92,6 @@ export default {
 
 .sidebar-navbar {
   width: 16vw;
-  border-right-style: solid;
-  border-color: #e6ecf0;
-  border-width: 2px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

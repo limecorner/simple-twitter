@@ -105,9 +105,14 @@ label {
 }
 
 .error-message {
-  font-size: 12px;
+  font-size: 14px;
   color: #FC5A5A;
   height: 24px
+}
+
+.error-notice {
+  font-size: 15px;
+  color: #FC5A5A;
 }
 
 /* 按鈕樣式 */

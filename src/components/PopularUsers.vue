@@ -88,9 +88,8 @@ export default {
     async cancelFollowing(id) {
       try {
         const response = await usersAPI.cancelFollowing(id);
-        console.log(id);
         this.topUsers = this.topUsers.map((user) => {
-          console.log(this.isFollowing);
+ 
           if (user.id === id) {
             return {
               ...user,

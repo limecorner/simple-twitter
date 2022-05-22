@@ -99,7 +99,6 @@ export default {
           password: this.password,
         });
         const { data } = response;
-        console.log(data);
         if (data.status === "error") {
           this.showError = true;
           this.errorMessage = data.message;

@@ -4,7 +4,7 @@
     <NavBar @modal-sbmit="submitTweetMessageModal" />
 
     <!-- home twitter -->
-    <section class="user-section ml-">
+    <section class="user-section">
       <div class="card col" style="z-index: 1">
         <div class="row card-header title">首頁</div>
 
@@ -27,16 +27,21 @@
                 >
                 </textarea>
               </div>
-              <div class="d-flex justify-content-end">
-                <span v-show="tweetMessage.length > 140">
-                  字數不可超過140字
-                </span>
-                <span v-show="blankContent && tweetMessage.length === 0">
-                  錯誤提示文字:內容不可空白
-                </span>
+              <div class="d-flex justify-content-end align-items-center mb-3">
+                <div class="mr-4">
+                  <span class="error-notice" v-show="tweetMessage.length > 140">
+                    字數不可超過140字
+                  </span>
+                  <span
+                    class="error-notice"
+                    v-show="blankContent && tweetMessage.length === 0"
+                  >
+                    內容不可空白
+                  </span>
+                </div>
                 <button
                   type="submit"
-                  class="tweet-btn mb-3"
+                  class="tweet-btn"
                   @click.prevent.stop="submitTweetMessage"
                 >
                   推文
@@ -64,14 +69,18 @@
           </div>
 
           <div class="col-11">
-            <div @click="toReplyList(tweet.id)" class="row">
+            <div
+              @click="toReplyList(tweet.id)"
+              style="cursor: pointer"
+              class="row ml-1"
+            >
               <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
               <h6 class="account-time">
                 @{{ tweet.User.account }} · {{ tweet.createdAt | fromNow }}
               </h6>
             </div>
 
-            <div class="row">
+            <div class="row ml-1" style="cursor: pointer">
               <p @click="toReplyList(tweet.id)" class="description">
                 {{ tweet.description }}
               </p>
@@ -86,7 +95,7 @@
                     src="https://i.postimg.cc/3Rb08d24/message.png"
                     alt=""
                     data-toggle="modal"
-                    :data-target="'#replyTwitterModal' + tweet.id"
+                    :data-target="'#replyTweeterModal' + tweet.id"
                   />
 
                   <p class="font-size-14 m-0">{{ tweet.replyCount }}</p>
@@ -117,10 +126,10 @@
           <div>
             <div
               class="modal fade"
-              :id="'replyTwitterModal' + tweet.id"
+              :id="'replyTweeterModal' + tweet.id"
               tabindex="-1"
               role="dialog"
-              aria-labelledby="replyTwitterModal"
+              aria-labelledby="replyTweeterModal"
               aria-hidden="true"
             >
               <div class="modal-dialog" role="document">
@@ -159,7 +168,7 @@
                             >
                           </div>
                           <p class="description">
-                            Hi, we are twitter teammates.{{ tweet.tweetText }}
+                            {{ tweet.description }}
                           </p>
 
                           <p class="account-time">
@@ -198,17 +207,30 @@
                           ></textarea>
 
                           <div
-                            class="d-flex justify-content-end"
+                            class="
+                              d-flex
+                              justify-content-end
+                              align-items-center
+                              mb-3
+                            "
                             style="width: 430px"
                           >
-                            <span v-show="replyMessage.length > 140">
-                              錯誤提示文字:字數不可超過140字
-                            </span>
-                            <span
-                              v-show="blankContent && replyMessage.length === 0"
-                            >
-                              錯誤提示文字:內容不可空白
-                            </span>
+                            <div class="mr-3">
+                              <span
+                                class="error-notice"
+                                v-show="replyMessage.length > 140"
+                              >
+                                字數不可超過140字
+                              </span>
+                              <span
+                                class="error-notice"
+                                v-show="
+                                  blankContent && replyMessage.length === 0
+                                "
+                              >
+                                內容不可空白
+                              </span>
+                            </div>
                             <button
                               type="button"
                               @click="postReplyHandler(tweet.id)"
@@ -243,7 +265,7 @@ import PopularUsers from "./../components/PopularUsers.vue";
 import tweetsAPI from "./../apis/tweets.js";
 import { fromNowFilter } from "./../utils/mixins";
 import { mapState } from "vuex";
-import { Toast } from "./../utils/helpers";
+import $ from "jquery";
 
 export default {
   mixins: [fromNowFilter],
@@ -267,6 +289,15 @@ export default {
     ...mapState(["currentUser"]),
   },
   methods: {
+    async fetchTweets() {
+      try {
+        const response = await tweetsAPI.getAllTweet();
+        const { data } = response;
+        this.tweets = data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async submitTweetMessage() {
       try {
         if (this.tweetMessage.trim().length === 0) {
@@ -275,7 +306,6 @@ export default {
         } else if (this.tweetMessage.length > 140) {
           return;
         }
-
         const response = await tweetsAPI.postTweet(this.tweetMessage);
         const newTweet = response.data.newTweet;
         this.tweets.unshift({
@@ -320,17 +350,6 @@ export default {
           replyCount: 0,
         });
         this.tweetMessage = "";
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async fetchTweets() {
-      try {
-        const response = await tweetsAPI.getAllTweet();
-        const { data } = response;
-        console.log(data);
-        this.tweets = data;
       } catch (error) {
         console.log(error);
       }
@@ -395,6 +414,8 @@ export default {
         });
         this.replyMessage = "";
         this.blankContent = false;
+        // 增加關閉 事件
+        $(`#replyTweeterModal${tweetId}`).modal("hide");
       } catch (error) {
         console.log(error);
       }
@@ -437,7 +458,7 @@ export default {
 }
 
 .popular-users {
-  width: 25%;
+  width: 22%;
 }
 
 /*照片 */

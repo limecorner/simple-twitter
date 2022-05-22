@@ -7,54 +7,59 @@
           src="https://i.postimg.cc/Qx2dm12F/Pclogo.png"
           alt=""
         />
-
-        <div @click.stop.prevent="navbarHandler('home')" class="tab">
+        <router-link
+          :to="{ name: 'home' }"
+          @click.stop.prevent="navbarHandler('home')"
+          class="tab"
+        >
           <img
-            v-if="!navbarHome"
             class="icon"
             src="https://i.postimg.cc/L4rVt08L/PcHome.png"
             alt=""
           />
           <img
-            v-else
-            class="icon"
+            class="icon-active"
             src="https://i.postimg.cc/nh1YtFYG/Pc-Home-Active.png"
             alt=""
           />
           <p :class="{ active: navbarHome }">首頁</p>
-        </div>
+        </router-link>
 
-        <div @click.stop.prevent="navbarHandler('profile')" class="tab">
+        <router-link
+          :to="{ name: 'user-tweets', params: { id: currentUser.id } }"
+          @click.stop.prevent="navbarHandler('profile')"
+          class="tab"
+        >
           <img
-            v-if="!navbarprofile"
             class="icon"
             src="https://i.postimg.cc/qvB6y8y2/PcUser.png"
             alt=""
           />
           <img
-            v-else
-            class="icon"
+            class="icon-active"
             src="https://i.postimg.cc/28kSKCyD/Pc-User-Active.png"
             alt=""
           />
           <p :class="{ active: navbarprofile }">個人資料</p>
-        </div>
+        </router-link>
 
-        <div @click.stop.prevent="navbarHandler('Setting')" class="tab">
+        <router-link
+          :to="{ name: 'setting' }"
+          @click.stop.prevent="navbarHandler('Setting')"
+          class="tab"
+        >
           <img
-            v-if="!navbarSetting"
             class="icon"
             src="https://i.postimg.cc/nVQ4hYGz/Pc-Setting.png"
             alt=""
           />
           <img
-            v-else
-            class="icon"
+            class="icon-active"
             src="https://i.postimg.cc/pdT8bDdP/Pc-Setting-Active.png"
             alt=""
           />
           <p :class="{ active: navbarSetting }">設定</p>
-        </div>
+        </router-link>
         <button
           class="btn btn-primary btn-post-tweet"
           data-toggle="modal"
@@ -64,7 +69,11 @@
         </button>
       </div>
 
-      <div @click.prevent.stop="logoutHandler" class="d-flex ml-2">
+      <div
+        @click.prevent.stop="logoutHandler"
+        style="cursor: pointer"
+        class="d-flex ml-2"
+      >
         <img
           class="logout"
           src="https://i.postimg.cc/NjVnH4Yp/logoOut.png"
@@ -110,17 +119,31 @@
                       v-model="tweetMessageModal"
                     ></textarea>
                     <div
-                      class="d-flex justify-content-end"
+                      class="
+                        d-flex
+                        justify-content-end
+                        align-items-center
+                        mt-2
+                        mb-3
+                      "
                       style="width: 430px"
                     >
-                      <span v-show="tweetMessageModal.length > 140">
-                        字數不可超過140字
-                      </span>
-                      <span
-                        v-show="blankContent && tweetMessageModal.length === 0"
-                      >
-                        錯誤提示文字:內容不可空白
-                      </span>
+                      <div class="mr-4">
+                        <span
+                          class="error-notice"
+                          v-show="tweetMessageModal.length > 140"
+                        >
+                          字數不可超過140字
+                        </span>
+                        <span
+                          class="error-notice"
+                          v-show="
+                            blankContent && tweetMessageModal.length === 0
+                          "
+                        >
+                          內容不可空白
+                        </span>
+                      </div>
                       <button
                         type="button"
                         @click.prevent.stop="postTweetModal"
@@ -144,9 +167,10 @@
 
 
 <script>
-import { Toast } from "./../utils/helpers";
 import userAPI from "./../apis/users";
 import { mapState } from "vuex";
+import $ from "jquery";
+import { Toast } from "./../utils/helpers";
 
 export default {
   computed: {
@@ -173,13 +197,14 @@ export default {
       this.$emit("modal-sbmit", this.tweetMessageModal);
       this.tweetMessageModal = "";
       this.blankContent = false;
+      $("#postTwitterModal").modal("hide");
     },
     navbarHandler(name) {
       if (name === "home") {
         this.navbarHome = true;
         this.navbarprofile = false;
         this.navbarSetting = false;
-        this.$router.push(`/home/${this.id}`);
+        this.$router.push(`/home`);
       } else if (name === "profile") {
         this.navbarHome = false;
         this.navbarprofile = true;
@@ -195,7 +220,13 @@ export default {
     logoutHandler() {
       localStorage.setItem("token", "");
       this.$store.commit("revokeAuthentication");
-      this.$router.push("/login");
+      Toast.fire({
+        icon: "success",
+        title: "已成功登出，於3秒後跳轉至登入頁面",
+      });
+      setTimeout(() => {
+        this.$router.push("/login");
+      }, 3000);
     },
     async getAccountInfo() {
       try {
@@ -231,6 +262,8 @@ export default {
 .tab {
   display: flex;
   margin-bottom: 12px;
+  text-decoration: none;
+  color: #44444f;
 }
 
 .product-mark {
@@ -268,6 +301,26 @@ export default {
   color: #ff6600;
 }
 
+.tab .icon-active {
+  display: none;
+  margin-left: 8px;
+  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+}
+
+.router-link-exact-active {
+  color: #ff6600;
+}
+
+.router-link-exact-active .icon {
+  display: none;
+}
+
+.router-link-exact-active .icon-active {
+  display: block;
+  width: 24px;
+}
 /* modal */
 
 .avatar-container {
