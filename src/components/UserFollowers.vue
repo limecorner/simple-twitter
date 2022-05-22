@@ -97,7 +97,7 @@ export default {
   },
   created() {
     const userId = this.$route.params.id;
-    console.log("followers this.$route.params.id", userId);
+    // console.log("followers this.$route.params.id", userId);
     this.fetchFollowers(userId);
   },
   methods: {
@@ -107,6 +107,7 @@ export default {
         // console.log("follower response", response);
         const { data } = response;
         if (data.status === "error") {
+          this.followers = [];
           throw new Error(data.message);
         }
         this.followers = data;
@@ -123,10 +124,10 @@ export default {
 
     async deleteFollowing(followingId) {
       try {
-        console.log("deleteFollowing ");
+        // console.log("deleteFollowing ");
 
         const response = await usersAPI.deleteUserFollowing(followingId);
-        console.log("deleteFollowing response", response);
+        // console.log("deleteFollowing response", response);
         const { data } = response;
         if (data.status === "error") {
           throw new Error(data.message);
@@ -153,10 +154,10 @@ export default {
 
     async addFollowing(followerId) {
       try {
-        console.log("addFollowing followerId", followerId);
+        // console.log("addFollowing followerId", followerId);
 
         const response = await usersAPI.addUserFollowing(followerId);
-        console.log("addFollowing response", response);
+        // console.log("addFollowing response", response);
 
         const { data } = response;
         if (data.status === "error") {

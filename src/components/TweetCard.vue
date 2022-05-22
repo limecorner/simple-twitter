@@ -3,9 +3,9 @@
   <!-- // // 跟對方要程式碼 避免覆蓋對方檔案  -->
   <div>
     <div v-for="tweet in tweets" :key="tweet.id" class="tweet-card row">
-      <div class="col-1">
+      <div class="col-2">
         <router-link
-          class="avatar-container to-reply-list-container"
+          class="avatar-container to-reply-list-container mt-3"
           :to="{ name: 'user-tweets', params: { id: tweet.User.id } }"
         >
           <img
@@ -16,10 +16,10 @@
         </router-link>
       </div>
 
-      <div class="col-11 to-reply-list-container">
+      <div class="col-10 to-reply-list-container">
         <router-link
           class="row"
-          style="text-decoration: none; cursor: pointer"
+          style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
         >
           <h5 class="user-name text-center">{{ tweet.User.name }}</h5>
@@ -30,7 +30,7 @@
 
         <router-link
           class="row"
-          style="text-decoration: none; cursor: pointer"
+          style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: tweet.id } }"
         >
           <p class="description">{{ tweet.description }}</p>
@@ -254,7 +254,7 @@ export default {
   },
   created() {
     const userId = this.$route.params.id; // 點大頭貼連錯了
-    console.log("tweet this.$route.params.id", userId);
+    // console.log("tweet this.$route.params.id", userId);
     this.fetchTweets(userId);
   },
   beforeRouteUpdate(to, from, next) {
@@ -273,6 +273,7 @@ export default {
         // console.log("tweet response", response);
         const { data } = response;
         if (data.status === "error") {
+          this.tweets = [];
           throw new Error(data.message);
         }
         this.tweets = data;
@@ -289,7 +290,7 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log("addLike response", response);
+        // console.log("addLike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {
@@ -308,7 +309,7 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        console.log("unlike response", response);
+        // console.log("unlike response", response);
         this.tweets = this.tweets.map((tweet) => {
           if (tweet.id === tweetId) {
             return {

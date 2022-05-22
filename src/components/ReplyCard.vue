@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-for="reply in replies" :key="reply.id" class="reply-card row">
-      <div class="col-1">
+      <div class="col-2">
         <router-link
-          class="avatar-container"
+          class="avatar-container mt-3"
           :to="{ name: 'user-tweets', params: { id: reply.Tweet.User.id } }"
         >
           <img
@@ -13,7 +13,7 @@
           />
         </router-link>
       </div>
-      <div class="col-11">
+      <div class="col-10">
         <!-- <router-link
         class="col-11"
         :to="{ name: 'tweetMessage', params: { id: reply.id } }"
@@ -112,7 +112,7 @@ export default {
   },
   created() {
     const repliedUserId = this.$route.params.id;
-    console.log("reply this.$route.params.id", repliedUserId);
+    // console.log("reply this.$route.params.id", repliedUserId);
     this.fetchReplies(repliedUserId);
   },
   methods: {
@@ -123,6 +123,7 @@ export default {
         const { data } = response;
 
         if (data.status === "error") {
+          this.replies = [];
           throw new Error(data.message);
         }
 
@@ -160,13 +161,14 @@ export default {
   cursor: pointer;
 }
 .avatar {
-  max-width: 60px;
+  width: 60px;
+  height: 60px;
   align-self: center;
   border-radius: 50%;
 }
 
 .user-name:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .user-name {
   font-family: "Roboto", sans-serif;
@@ -195,7 +197,7 @@ export default {
 }
 
 .icon:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .icon {
   width: 13px;
@@ -203,13 +205,13 @@ export default {
 }
 
 .comment:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .comment {
   font-family: "Roboto", sans-serif;
 }
 
 .repliedAccount:hover {
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 </style>

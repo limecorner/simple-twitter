@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-for="like in likes" :key="like.TweetId" class="like-card row">
-      <div class="col-1">
+      <div class="col-2">
         <router-link
-          class="avatar-container"
+          class="avatar-container mt-3"
           :to="{ name: 'user-tweets', params: { id: like.Tweet.User.id } }"
         >
           <img
@@ -14,10 +14,10 @@
         </router-link>
       </div>
 
-      <div class="col-11">
+      <div class="col-10">
         <router-link
           class="row"
-          style="text-decoration: none; cursor: pointer"
+          style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
         >
           <h5 class="user-name text-center">{{ like.Tweet.User.name }}</h5>
@@ -27,7 +27,7 @@
         </router-link>
         <router-link
           class="row"
-          style="text-decoration: none; cursor: pointer"
+          style="text-decoration: none; cursor: pointer; color: #44444f"
           :to="{ name: 'tweetMessage', params: { id: like.TweetId } }"
         >
           <p>{{ like.Tweet.description }}</p>
@@ -256,7 +256,7 @@ export default {
   },
   created() {
     const likedUserId = this.$route.params.id;
-    console.log("like this.$route.params.id", this.$route.params.id);
+    // console.log("like this.$route.params.id", this.$route.params.id);
     this.fetchLikes(likedUserId);
   },
   methods: {
@@ -267,6 +267,7 @@ export default {
         const { data } = response;
 
         if (data.status === "error") {
+          this.likes = [];
           throw new Error(data.message);
         }
 
@@ -285,7 +286,7 @@ export default {
     async addlike(tweetId) {
       try {
         const response = await tweetsAPI.likeTweet(tweetId);
-        console.log("addLike response", response);
+        // console.log("addLike response", response);
         this.likes = this.likes.map((like) => {
           if (like.TweetId === tweetId) {
             return {
@@ -304,7 +305,7 @@ export default {
     async unlike(tweetId) {
       try {
         const response = await tweetsAPI.unlikeTweet(tweetId);
-        console.log("unlike response", response);
+        // console.log("unlike response", response);
         this.likes = this.likes.map((like) => {
           if (like.TweetId === tweetId) {
             return {
